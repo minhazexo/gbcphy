@@ -1,0 +1,105 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  font-family: "Arial", sans-serif;
+  padding: 2rem;
+  overflow-y: auto;
+  animation: slideDown 1s ease-in-out;
+
+  .home-content {
+    background: linear-gradient(45deg, #ff6b6b, #ffcc5c, #de411ad8, #4a90e2, #4cee0c); // Initial gradient colors
+  background-size: 300% 300%; // Larger background for smooth animation
+  animation: rainbowBackground 10s ease infinite;
+    padding: 3rem;
+    border-radius: 10px;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+     
+    width: 100%;
+
+    h1 {
+      font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 2rem;
+    text-align: center;
+   
+    }
+
+    .intro-text {
+      font-size: 1.2rem;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    /* 3D Photo Slider Styles */
+    .photo-slider {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      margin-bottom: 3rem;
+      overflow: hidden;
+      border-radius: 10px;
+      perspective: 1000px; /* Add depth to the slider */
+    }
+
+    .slide-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: rotateY(-90deg) scale(0.8); /* Start hidden with 3D rotation */
+      transition: transform 1.2s ease, opacity 1.2s ease; /* Smooth transition */
+      backface-visibility: hidden; /* Hide the back of images */
+    }
+
+    .slide-image.active {
+      opacity: 1;
+      transform: rotateY(0deg) scale(1); /* Rotate into view with zoom */
+    }
+
+    .news-section {
+      h2 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 1rem;
+        position: relative;
+
+        &:after {
+          content: "";
+          width: 80px;
+          height: 4px;
+          background-color: #00f2fe;
+          position: absolute;
+          left: 50%;
+          bottom: -10px;
+          transform: translateX(-50%);
+        }
+      }
+
+      .news-list {
+        list-style: none;
+        padding: 0;
+
+        li {
+          background: #f1f1f1;
+          padding: 1rem;
+          margin-bottom: 0.5rem;
+          border-radius: 5px;
+          transition: transform 0.3s ease, background-color 0.3s ease;
+          font-size: 1rem;
+          color: #555;
+
+          &:hover {
+            background-color: #e0f7fa;
+            transform: scale(1.02);
+          }
+        }
+      }
+    }
+  }
+}
