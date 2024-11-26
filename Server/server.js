@@ -16,14 +16,20 @@ console.log(process.env.MONGODB_URI); // Load environment variables from .env fi
 const app = express();
 
 // Enable CORS for all routes
+const cors = require("cors");
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // Adjust if React app runs on a different port
+    origin: [
+      "http://localhost:3000",  // Allow during local development
+      "https://gbc-dop.netlify.app", // Allow your Netlify deployment
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
+    credentials: true, // Allow cookies if needed
   })
 );
+
 
 // Middleware for parsing JSON and URL-encoded requests
 app.use(express.json());
