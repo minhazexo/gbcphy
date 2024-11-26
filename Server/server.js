@@ -20,13 +20,10 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",  // Allow during local development
-      "https://gbc-dop.netlify.app", // Allow your Netlify deployment
-    ],
+    origin: "https://gbc-dop.netlify.app", // Adjust if React app runs on a different port
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // Allow cookies if needed
+    credentials: true,
   })
 );
 
