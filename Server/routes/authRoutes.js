@@ -7,7 +7,12 @@ const router = express.Router();
 router.post('/register', register); // Register new users
 
 // POST /api/auth/login
-router.post('/login', login); // Log in users
+router.post('/login', (req, res, next) => {
+    login(req, res, next).catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'Error logging in' });
+    });
+  }); // Log in users
 
 // Example of a protected route (optional)
 router.get('/profile', verifyToken, (req, res) => {

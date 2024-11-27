@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const multer = require("multer");
@@ -18,15 +17,20 @@ const app = express();
 // Enable CORS for all routes
 const cors = require("cors");
 
+const allowedOrigins = ["https://gbc-dop.netlify.app", "http://localhost:3000"];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",  // Allow during local development
-      "https://gbc-dop.netlify.app", // Allow your Netlify deployment
-    ],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // Allow cookies if needed
+    credentials: true,
   })
 );
 
@@ -98,7 +102,9 @@ app.get("/api/user/:userId/profileImage", async (req, res) => {
   try {
     const user = await User.findById(userId);
     if (!user || !user.profileImageId) {
-      return res.status(404).json({ message: "User or profile image not found" });
+      return res
+        .status(404)
+        .json({ message: "User or profile image not found" });
     }
 
     // Find the file in the GridFSBucket
