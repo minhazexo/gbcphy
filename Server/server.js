@@ -17,7 +17,7 @@ const app = express();
 // Enable CORS for all routes
 const cors = require("cors");
 
-const allowedOrigins = ["https://gbc-dop.netlify.app", "http://localhost:3000"];
+const allowedOrigins = ["https://gbc-dop.netlify.app",];
 
 app.use(
   cors({
