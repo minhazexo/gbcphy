@@ -15,6 +15,10 @@ console.log(process.env.MONGODB_URI); // Load environment variables from .env fi
 const app = express();
 
 // Enable CORS for all routes
+const cors = require("cors");
+
+const allowedOrigins = ["https://gbc-dop.netlify.app", "http://localhost:3000"];
+
 app.use(
   cors({
     origin: (origin, callback) => {
