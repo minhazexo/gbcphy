@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null); // User profile state
 
   // Base URL for API requests
-  const baseURL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const baseURL = process.env.REACT_APP_API_URL || "https://gbc-dop.netlify.app/";
 
   // Fetch user profile with token
   const fetchUserProfile = useCallback(async (token) => {
