@@ -5,55 +5,52 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import axios from "axios"; // Ensure axios is imported to make HTTP requests
+import axios from "axios";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // State for user authentication status
-  const [userProfile, setUserProfile] = useState(null); // State for storing user profile data
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // User authentication state
+  const [userProfile, setUserProfile] = useState(null); // User profile state
 
+  // Base URL for API requests
+  const baseURL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+  // Fetch user profile with token
   const fetchUserProfile = useCallback(async (token) => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/user/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${baseURL}/api/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      setUserProfile(response.data); // Set the user profile data in state
+      setUserProfile(response.data); // Store profile data
       console.log("User profile fetched:", response.data);
     } catch (error) {
       console.error("Error fetching user profile:", error);
       if (error.response && error.response.status === 401) {
-        console.warn("Unauthorized - token might be expired or invalid.");
-        logout(); // Logout if unauthorized
-      } else {
-        console.error("Network error or unexpected error occurred:", error);
-        logout(); // Logout for other errors
+        console.warn("Unauthorized - token may be expired or invalid.");
+        logout(); // Logout if token is invalid
       }
     }
-  }, []);
+  }, [baseURL]);
 
+  // Check authentication state on component mount
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
-      setIsAuthenticated(true); // Set authentication state to true
-      fetchUserProfile(token); // Fetch the user profile with the token
+      setIsAuthenticated(true);
+      fetchUserProfile(token);
     }
   }, [fetchUserProfile]);
 
+  // Login function
   const login = async (email, password) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-          email,
-          password,
-        },
+        `${baseURL}/api/auth/login`,
+        { email, password },
         {
           headers: {
             "Content-Type": "application/json",
@@ -61,28 +58,30 @@ export const AuthProvider = ({ children }) => {
         }
       );
 
-      localStorage.setItem("authToken", response.data.token); // Store the token in localStorage
-      setIsAuthenticated(true); // Update authentication state
-      fetchUserProfile(response.data.token); // Fetch user profile after login
+      localStorage.setItem("authToken", response.data.token); // Store token
+      setIsAuthenticated(true);
+      fetchUserProfile(response.data.token); // Fetch profile after login
     } catch (error) {
       console.error("Login error:", error);
       setIsAuthenticated(false);
       if (error.response) {
         throw new Error(
           error.response.data.message ||
-            "Login failed. Please check your credentials."
+          "Login failed. Please check your credentials."
         );
       }
     }
   };
 
+  // Logout function
   const logout = () => {
     console.log("Logging out...");
-    localStorage.removeItem("authToken"); // Remove the token from localStorage
-    setIsAuthenticated(false); // Update authentication state
-    setUserProfile(null); // Clear user profile
+    localStorage.removeItem("authToken");
+    setIsAuthenticated(false);
+    setUserProfile(null);
   };
 
+  // Upload profile picture
   const uploadProfilePicture = async (file) => {
     try {
       const token = localStorage.getItem("authToken");
@@ -94,7 +93,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       await axios.post(
-        `http://localhost:5000/api/user/${userProfile._id}/uploadprofileImage`,
+        `${baseURL}/api/user/${userProfile._id}/uploadProfileImage`,
         formData,
         {
           headers: {
@@ -103,46 +102,39 @@ export const AuthProvider = ({ children }) => {
         }
       );
 
-      fetchUserProfile(token); // Re-fetch updated profile
-      console.log("Profile picture uploaded successfully");
+      fetchUserProfile(token); // Refresh profile after upload
+      console.log("Profile picture uploaded successfully.");
     } catch (error) {
       console.error("Error uploading profile picture:", error);
-      // Logout if there's an error during upload
     }
   };
 
+  // Update user profile
   const updateUserProfile = async (userData, profileImage) => {
     try {
       const token = localStorage.getItem("authToken");
-      console.log("Token retrieved:", token);
 
-      // Check if there's an existing profile image to delete
+      // Delete old profile image if necessary
       if (userData.profileImageId) {
-        console.log("Deleting profile image with ID:", userData.profileImageId);
-        const deleteResponse = await axios.delete(
-          `http://localhost:5000/api/user/deleteFile/${userData.profileImageId}`,
+        await axios.delete(
+          `${baseURL}/api/user/deleteFile/${userData.profileImageId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-
-        if (deleteResponse.status !== 200) {
-          console.error("Failed to delete old profile image");
-          return; // Exit if deletion fails
-        }
+        console.log("Old profile image deleted.");
       }
 
-      // Proceed to update the user profile
+      // Update user profile
       const formData = new FormData();
       if (profileImage) {
         formData.append("profileImage", profileImage);
-        console.log("Uploading new profile image:", profileImage);
       }
 
       const response = await axios.put(
-        `http://localhost:5000/api/user/${userData._id}/profile`,
+        `${baseURL}/api/user/${userData._id}/profile`,
         formData,
         {
           headers: {
@@ -152,8 +144,8 @@ export const AuthProvider = ({ children }) => {
         }
       );
 
-      console.log("Upload response:", response.data);
-      setUserProfile(response.data.user);
+      setUserProfile(response.data.user); // Update state
+      console.log("Profile updated:", response.data.user);
     } catch (error) {
       console.error("Error updating profile:", error);
     }
