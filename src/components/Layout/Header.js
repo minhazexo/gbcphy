@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext"; // Make sure the path is correct
+import { useAuth } from "../../context/AuthContext"; // Ensure the path is correct
 import "./header.scss";
 
 function Header() {
@@ -23,9 +23,14 @@ function Header() {
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>
-          <li><Link to="/academic">Academic</Link></li>
-         
+          <li><Link to="/academic">Academic</Link></li> {/* No authentication required */}
 
+          {isAuthenticated ? (
+            <>
+              <li><button onClick={handleLogout} className="logout-btn">Logout</button></li>
+            </>
+          ) : (
+            <>
               <li><Link to="/login">Login</Link></li>
               <li><Link to="/register">Register</Link></li>
             </>
