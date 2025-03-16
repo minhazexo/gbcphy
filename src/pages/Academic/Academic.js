@@ -26,20 +26,21 @@ const Notes = () => {
   };
 
   // Correct Syllabus Paths
-  const syllabus = {
-    "First Year": [
-      { title: "1st & 2nd Year Syllabus", url: "/Shyllebus/1st and 2nd Year.pdf" },
-    ],
-    "Second Year": [
-      { title: "1st & 2nd Year Syllabus", url: "/Shyllebus/1st and 2nd Year.pdf" },
-    ],
-    "Third Year": [
-      { title: "3rd Year Syllabus", url: "/Shyllebus/3rd Year.pdf" },
-    ],
-    "Fourth Year": [
-      { title: "4th Year Syllabus", url: "/Shyllebus/4th Year.pdf" },
-    ],
-  };
+ const syllabus = {
+  "First Year": [
+    { title: "1st & 2nd Year Syllabus", url: "/Shyllebus/1st%20and%202nd%20Year.pdf" },
+  ],
+  "Second Year": [
+    { title: "1st & 2nd Year Syllabus", url: "/Shyllebus/1st%20and%202nd%20Year.pdf" },
+  ],
+  "Third Year": [
+    { title: "3rd Year Syllabus", url: "/Shyllebus/3rd%20Year.pdf" },
+  ],
+  "Fourth Year": [
+    { title: "4th Year Syllabus", url: "/Shyllebus/4th%20Year.pdf" },
+  ],
+};
+
 
   const handleYearChange = (e) => {
     setSelectedYear(e.target.value);
