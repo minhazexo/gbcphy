@@ -19,9 +19,11 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProfileImageUpload from "./pages/ProfileImageUpload/ProfileImageUpload";
 import ClassRoutine from "./pages/ClassRoutine";
 
-// Component to protect routes
+// Protected Route Component
 function ProtectedRoute({ element }) {
   const { isAuthenticated } = useAuth();
+  console.log("Auth Check:", isAuthenticated); // Debugging log
+
   return isAuthenticated ? element : <Navigate to="/login" replace />;
 }
 
@@ -34,7 +36,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/academic" element={<Academic />} /> {/* ✅ Now accessible to all */}
+            <Route path="/academic" element={<Academic />} />  {/* ✅ Now Public */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
