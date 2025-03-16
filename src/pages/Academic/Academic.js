@@ -25,22 +25,19 @@ const Notes = () => {
     ],
   };
 
+  // Correct Syllabus Paths
   const syllabus = {
     "First Year": [
-      { title: "Physics Syllabus 1", url: "#" },
-      { title: "Physics Syllabus 2", url: "#" },
+      { title: "1st & 2nd Year Syllabus", url: "/Shyllebus/1st and 2nd Year.pdf" },
     ],
     "Second Year": [
-      { title: "Physics Syllabus 1", url: "#" },
-      { title: "Physics Syllabus 2", url: "#" },
+      { title: "1st & 2nd Year Syllabus", url: "/Shyllebus/1st and 2nd Year.pdf" },
     ],
     "Third Year": [
-      { title: "Physics Syllabus 1", url: "#" },
-      { title: "Physics Syllabus 2", url: "#" },
+      { title: "3rd Year Syllabus", url: "/Shyllebus/3rd Year.pdf" },
     ],
     "Fourth Year": [
-      { title: "Physics Syllabus 1", url: "#" },
-      { title: "Physics Syllabus 2", url: "#" },
+      { title: "4th Year Syllabus", url: "/Shyllebus/4th Year.pdf" },
     ],
   };
 
@@ -59,10 +56,7 @@ const Notes = () => {
   return (
     <div className="notes-container">
       {/* Class Routine Button */}
-      <button
-        className="class-routine-button"
-        onClick={toggleRoutineImage}
-      >
+      <button className="class-routine-button" onClick={toggleRoutineImage}>
         Class Routine
       </button>
 
@@ -74,10 +68,7 @@ const Notes = () => {
             alt="Class Routine"
             className="routine-image"
           />
-          <button
-            className="close-button"
-            onClick={toggleRoutineImage}
-          >
+          <button className="close-button" onClick={toggleRoutineImage}>
             Close
           </button>
         </div>
@@ -91,35 +82,29 @@ const Notes = () => {
 
       <h1>Session-wise {selectedType}</h1>
       <div className="dropdown-container">
-        <select
-          value={selectedYear}
-          onChange={handleYearChange}
-          className="year-select"
-        >
+        <select value={selectedYear} onChange={handleYearChange} className="year-select">
           <option value="First Year">First Year</option>
           <option value="Second Year">Second Year</option>
           <option value="Third Year">Third Year</option>
           <option value="Fourth Year">Fourth Year</option>
         </select>
 
-        <select
-          value={selectedType}
-          onChange={handleTypeChange}
-          className="type-select"
-        >
+        <select value={selectedType} onChange={handleTypeChange} className="type-select">
           <option value="Notes">Notes</option>
           <option value="Syllabus">Syllabus</option>
         </select>
       </div>
 
       <ul className="notes-list">
-        {(selectedType === "Notes" ? notes[selectedYear] : syllabus[selectedYear]).map((item, index) => (
-          <li key={index} className="note-item">
-            <a href={item.url} className="note-link">
-              {item.title}
-            </a>
-          </li>
-        ))}
+        {(selectedType === "Notes" ? notes[selectedYear] : syllabus[selectedYear]).map(
+          (item, index) => (
+            <li key={index} className="note-item">
+              <a href={item.url} className="note-link" target="_blank" rel="noopener noreferrer">
+                {item.title}
+              </a>
+            </li>
+          )
+        )}
       </ul>
     </div>
   );
