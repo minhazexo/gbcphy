@@ -28,16 +28,16 @@ const Notes = () => {
   // Correct Syllabus Paths
  const syllabus = {
   "First Year": [
-    { title: "1st & 2nd Year Syllabus", url: "/Shyllebus/1st%20and%202nd%20Year.pdf" },
+    { title: "1st & 2nd Year Syllabus", url: "/Syllabus/1st%20and%202nd%20Year.pdf" },
   ],
   "Second Year": [
-    { title: "1st & 2nd Year Syllabus", url: "/Shyllebus/1st%20and%202nd%20Year.pdf" },
+    { title: "1st & 2nd Year Syllabus", url: "/Syllabus/1st%20and%202nd%20Year.pdf" },
   ],
   "Third Year": [
-    { title: "3rd Year Syllabus", url: "/Shyllebus/3rd%20Year.pdf" },
+    { title: "3rd Year Syllabus", url: "/Syllabus/3rd%20Year.pdf" },
   ],
   "Fourth Year": [
-    { title: "4th Year Syllabus", url: "/Shyllebus/4th%20Year.pdf" },
+    { title: "4th Year Syllabus", url: "/Syllabus/4th%20Year.pdf" },
   ],
 };
 
