@@ -19,11 +19,10 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProfileImageUpload from "./pages/ProfileImageUpload/ProfileImageUpload";
 import ClassRoutine from "./pages/ClassRoutine";
 
+// Component to protect routes
 function ProtectedRoute({ element }) {
   const { isAuthenticated } = useAuth();
-
-  // Redirect to login if not authenticated
-  return isAuthenticated ? element : <Navigate to="/profile" replace />;
+  return isAuthenticated ? element : <Navigate to="/login" replace />;
 }
 
 function App() {
@@ -35,26 +34,17 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route
-              path="/academic"
-              element={<ProtectedRoute element={<Academic />} />}
-            />
+            <Route path="/academic" element={<Academic />} /> {/* ✅ Now accessible to all */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route
-              path="/editprofile"
-              element={<ProtectedRoute element={<EditProfile />} />}
-            />
-            <Route
-              path="/upload"
-              element={<ProtectedRoute element={<ProfileImageUpload />} />}
-            />
-            <Route
-              path="/profile"
-              element={<ProtectedRoute element={<Profile />} />}
-            />
-            <Route path="/class-routine" element={<ClassRoutine />} />
+            
+            {/* Protected Routes */}
+            <Route path="/editprofile" element={<ProtectedRoute element={<EditProfile />} />} />
+            <Route path="/upload" element={<ProtectedRoute element={<ProfileImageUpload />} />} />
+            <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+            <Route path="/class-routine" element={<ProtectedRoute element={<ClassRoutine />} />} />
 
+            {/* 404 Not Found */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
