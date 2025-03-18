@@ -1,5 +1,6 @@
 import React from "react";
 import "./footer.scss";
+
 function Footer() {
   return (
     <footer className="footer">
@@ -9,11 +10,11 @@ function Footer() {
           reserved.
         </p>
         <p>
-          <a href="/about" className="footer-link">
+          <a href="https://www.facebook.com/minhazexo" className="footer-link" target="_blank" rel="noopener noreferrer">
             About Us
           </a>{" "}
           |
-          <a href="/contact" className="footer-link">
+          <a href="https://www.facebook.com/minhazexo" className="footer-link" target="_blank" rel="noopener noreferrer">
             {" "}
             Contact Us
           </a>
