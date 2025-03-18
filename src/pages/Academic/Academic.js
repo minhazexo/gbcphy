@@ -13,11 +13,11 @@ const Notes = () => {
       { title: "Lecture 2: Mechanics", url: "#" },
     ],
     "Second Year": [
-      { title: "Electromagnetism (PHA 201)", url: "/2nd Year Notes/EMON { PHA 201 (OPTICS) }_compressed.pdf" },
+      { title: "Optics (PHA 201)", url: "/2nd Year Notes/EMON { PHA 201 (OPTICS) }_compressed.pdf" },
       { title: "Electronics 1 (PHA 202)", url: "/2nd Year Notes/EMON { PHA 202 (ELECTRONICS 1) }_compressed.pdf" },
       { title: "Mathematical Physics (PHA 203)", url: "/2nd Year Notes/EMON { PHA 203 (MP) }_compressed.pdf" },
       { title: "Atomic & Molecular Physics (PHA 204)", url: "/2nd Year Notes/EMON { PHA 204 (AMP) }_compressed.pdf" },
-      { title: "Waves and Oscillations (PHA 205)", url: "/2nd Year Notes/EMON {PHA 205 (WOAM) }_compressed.pdf" },
+      { title: "Waves,Oscillations and Advance Mechanics (PHA 205)", url: "/2nd Year Notes/EMON {PHA 205 (WOAM) }_compressed.pdf" },
     ],
     "Third Year": [
       { title: "Lecture 1: Quantum Mechanics", url: "#" },
