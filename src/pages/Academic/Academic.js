@@ -6,14 +6,18 @@ const Notes = () => {
   const [selectedType, setSelectedType] = useState("Notes");
   const [showRoutineImage, setShowRoutineImage] = useState(false); // State to toggle the image viewer
 
+  // Notes Data (Updated Second Year Notes with PDF Links)
   const notes = {
     "First Year": [
       { title: "Lecture 1: Introduction to Physics", url: "#" },
       { title: "Lecture 2: Mechanics", url: "#" },
     ],
     "Second Year": [
-      { title: "Lecture 1: Electromagnetism", url: "#" },
-      { title: "Lecture 2: Waves and Oscillations", url: "#" },
+      { title: "Electromagnetism (PHA 201)", url: "/2nd Year Notes/EMON { PHA 201 (OPTICS) }_compressed.pdf" },
+      { title: "Electronics 1 (PHA 202)", url: "/2nd Year Notes/EMON { PHA 202 (ELECTRONICS 1) }_compressed.pdf" },
+      { title: "Mathematical Physics (PHA 203)", url: "/2nd Year Notes/EMON { PHA 203 (MP) }_compressed.pdf" },
+      { title: "Atomic & Molecular Physics (PHA 204)", url: "/2nd Year Notes/EMON { PHA 204 (AMP) }_compressed.pdf" },
+      { title: "Waves and Oscillations (PHA 205)", url: "/2nd Year Notes/EMON {PHA 205 (WOAM) }_compressed.pdf" },
     ],
     "Third Year": [
       { title: "Lecture 1: Quantum Mechanics", url: "#" },
@@ -26,21 +30,12 @@ const Notes = () => {
   };
 
   // Correct Syllabus Paths
- const syllabus = {
-  "First Year": [
-    { title: "1st & 2nd Year Syllabus", url: "/Syllabus/1st%20and%202nd%20Year.pdf" },
-  ],
-  "Second Year": [
-    { title: "1st & 2nd Year Syllabus", url: "/Syllabus/1st%20and%202nd%20Year.pdf" },
-  ],
-  "Third Year": [
-    { title: "3rd Year Syllabus", url: "/Syllabus/3rd%20Year.pdf" },
-  ],
-  "Fourth Year": [
-    { title: "4th Year Syllabus", url: "/Syllabus/4th%20Year.pdf" },
-  ],
-};
-
+  const syllabus = {
+    "First Year": [{ title: "1st & 2nd Year Syllabus", url: "/Syllabus/1st%20and%202nd%20Year.pdf" }],
+    "Second Year": [{ title: "1st & 2nd Year Syllabus", url: "/Syllabus/1st%20and%202nd%20Year.pdf" }],
+    "Third Year": [{ title: "3rd Year Syllabus", url: "/Syllabus/3rd%20Year.pdf" }],
+    "Fourth Year": [{ title: "4th Year Syllabus", url: "/Syllabus/4th%20Year.pdf" }],
+  };
 
   const handleYearChange = (e) => {
     setSelectedYear(e.target.value);
@@ -64,11 +59,7 @@ const Notes = () => {
       {/* Show JPG Image */}
       {showRoutineImage && (
         <div className="routine-image-container">
-          <img
-            src="/Class Routine/Class Routine.jpg"
-            alt="Class Routine"
-            className="routine-image"
-          />
+          <img src="/Class Routine/Class Routine.jpg" alt="Class Routine" className="routine-image" />
           <button className="close-button" onClick={toggleRoutineImage}>
             Close
           </button>
@@ -97,15 +88,13 @@ const Notes = () => {
       </div>
 
       <ul className="notes-list">
-        {(selectedType === "Notes" ? notes[selectedYear] : syllabus[selectedYear]).map(
-          (item, index) => (
-            <li key={index} className="note-item">
-              <a href={item.url} className="note-link" target="_blank" rel="noopener noreferrer">
-                {item.title}
-              </a>
-            </li>
-          )
-        )}
+        {(selectedType === "Notes" ? notes[selectedYear] : syllabus[selectedYear]).map((item, index) => (
+          <li key={index} className="note-item">
+            <a href={item.url} className="note-link" target="_blank" rel="noopener noreferrer">
+              {item.title}
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
   );
