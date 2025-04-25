@@ -8,6 +8,7 @@ const { GridFSBucket } = require("mongodb");
 const User = require("./models/User"); // Adjust the path according to your file structure
 const authRoutes = require("./routes/auth"); // Auth routes
 const userRoutes = require("./routes/user"); // User routes
+const postRoutes = require("./routes/posts"); // Import the post routes
 
 dotenv.config();
 console.log(process.env.MONGODB_URI); // Load environment variables from .env file
@@ -33,7 +34,6 @@ app.use(
     credentials: true,
   })
 );
-
 
 // Middleware for parsing JSON and URL-encoded requests
 app.use(express.json());
@@ -129,6 +129,9 @@ app.get("/api/user/:userId/profileImage", async (req, res) => {
   }
 });
 
+// Use the post routes for fetching and handling posts
+app.use("/api/posts", postRoutes);
+
 // Import and use routes for authentication and user updates
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
@@ -149,8 +152,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start the server
-const PORT = process.env.REACT_APP_API_URL || ;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

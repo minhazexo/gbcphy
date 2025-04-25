@@ -10,14 +10,20 @@
   animation: slideDown 1s ease-in-out;
 
   .home-content {
-    background: linear-gradient(45deg, #ff6b6b, #ffcc5c, #de411ad8, #4a90e2, #4cee0c); // Initial gradient colors
-  background-size: 300% 300%; // Larger background for smooth animation
-  animation: rainbowBackground 10s ease infinite;
+    background: linear-gradient(
+      45deg,
+      #ff6b6b,
+      #ffcc5c,
+      #de411ad8,
+      #4a90e2,
+      #4cee0c
+    );
+    background-size: 300% 300%;
+    animation: rainbowBackground 10s ease infinite;
     padding: 3rem;
     border-radius: 10px;
     box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
     max-width: 1200px;
-     
     width: 100%;
 
     h1 {
@@ -27,26 +33,9 @@
       text-align: center;
       margin-bottom: 2rem;
       color: white;
-      animation: blink 1.5s infinite alternate ease-in-out, glow 3s infinite alternate ease-in-out;
+      animation: blink 1.5s infinite alternate ease-in-out,
+        glow 3s infinite alternate ease-in-out;
       text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
-    }
-    
-    @keyframes blink {
-      0% {
-        color: rgb(84, 188, 244);
-      }
-      100% {
-        color: black;
-      }
-    }
-    
-    @keyframes glow {
-      0% {
-        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-      }
-      100% {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-      }
     }
 
     .intro-text {
@@ -56,7 +45,6 @@
       margin-bottom: 2rem;
     }
 
-    /* 3D Photo Slider Styles */
     .photo-slider {
       position: relative;
       width: 100%;
@@ -64,7 +52,7 @@
       margin-bottom: 3rem;
       overflow: hidden;
       border-radius: 10px;
-      perspective: 1000px; /* Add depth to the slider */
+      perspective: 1000px; // 3D depth
     }
 
     .slide-image {
@@ -73,14 +61,14 @@
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      transform: rotateY(-90deg) scale(0.8); /* Start hidden with 3D rotation */
-      transition: transform 1.2s ease, opacity 1.2s ease; /* Smooth transition */
-      backface-visibility: hidden; /* Hide the back of images */
+      transform: rotateY(-90deg) scale(0.8);
+      transition: transform 1.2s ease, opacity 1.2s ease;
+      backface-visibility: hidden;
     }
 
     .slide-image.active {
       opacity: 1;
-      transform: rotateY(0deg) scale(1); /* Rotate into view with zoom */
+      transform: rotateY(0deg) scale(1);
     }
 
     .news-section {
@@ -90,7 +78,7 @@
         margin-bottom: 1rem;
         position: relative;
 
-        &:after {
+        &::after {
           content: "";
           width: 80px;
           height: 4px;
@@ -122,5 +110,36 @@
         }
       }
     }
+  }
+}
+
+/* Animations */
+@keyframes blink {
+  0% {
+    color: rgb(84, 188, 244);
+  }
+  100% {
+    color: black;
+  }
+}
+
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+}
+
+@keyframes rainbowBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
