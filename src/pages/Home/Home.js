@@ -18,10 +18,8 @@ const Home = () => {
       <div className="home-content">
         <h1>Welcome to the Department of Physics</h1>
         <p className="intro-text">
-          The Department of Physics at XYZ University is dedicated to advancing
-          the understanding of the fundamental principles that govern the
-          universe. We offer a range of undergraduate and graduate programs
-          tailored to the needs of our students.
+          
+The Department of Physics at Government Bangla College is committed to fostering a deep understanding of the fundamental laws that govern the universe. With a strong emphasis on both theoretical and experimental physics, we offer comprehensive undergraduate and graduate programs designed to equip students with the knowledge, skills, and curiosity necessary to excel in academia, research, and industry. Our dedicated faculty, state-of-the-art laboratories, and collaborative learning environment make the Department of Physics a vibrant hub of scientific discovery and innovation.
         </p>
 
         {/* Enhanced 3D Photo Slider */}
