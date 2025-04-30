@@ -12,7 +12,8 @@ const Notes = () => {
       { title: " NM Calculus-1", url:  "/1st Year Notes/NM Stat.pdf" },
       { title: "NM Analytical And Vector", url: "1st Year Notes/NM Analytical And Vector.pdf" },
       { title: " NM Statistics", url: "/1st Year Notes/NM Stat.pdf" },
-      { title:"Electricity And Magnetism", url: "/1st Year Notes/Electricity And Magnetism.pdf" },
+      { title: "Electricity And Magnetism", url: "/1st Year Notes/Electricity And Magnetism.pdf" },
+      { title:"Mechanics", url: "/1st Year Notes/Mechanics and Properties of Matter.pdf" },
     ],
     "Second Year": [
       { title: "Optics (PHA 201)(Emon 20-21)", url: "/2nd Year Notes/EMON { PHA 201 (OPTICS) }_compressed.pdf" },
