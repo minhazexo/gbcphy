@@ -9,8 +9,10 @@ const Notes = () => {
   // Notes Data (Updated Second Year Notes with PDF Links)
   const notes = {
     "First Year": [
-      { title: "Lecture 1: Introduction to Physics", url: "#" },
-      { title: "Lecture 2: Mechanics", url: "#" },
+      { title: " NM Calculus-1", url:  "/public/1st Year Notes/NM Stat.pdf" },
+      { title: "NM Analytical And Vector", url: "/public/1st Year Notes/NM Analytical And Vector.pdf" },
+      { title: " NM Statistics", url: "/public/1st Year Notes/NM Stat.pdf" },
+      { title:"Electricity And Magnetism", url: "/public/1st Year Notes/Electricity And Magnetism.pdf" },
     ],
     "Second Year": [
       { title: "Optics (PHA 201)(Emon 20-21)", url: "/2nd Year Notes/EMON { PHA 201 (OPTICS) }_compressed.pdf" },
