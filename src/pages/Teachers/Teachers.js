@@ -11,7 +11,7 @@ const teachersData = [
     batch: 'BCS 14'
   },
   {
-    name: 'Kamrunnahar',
+    name: 'Kamrun Nahar',
     photo: '/images/kamrun.jpg',
     email: 'kamrunnaher231977@gmail.com',
     phone: '01819464275',
