@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 const SnakeGame = ({ onValueChange }) => {
   const canvasRef = useRef(null);
@@ -157,7 +157,8 @@ const SnakeGame = ({ onValueChange }) => {
     }
   };
 
-  const playMusic = () => {
+  // Updated playMusic wrapped in useCallback for stable reference
+  const playMusic = useCallback(() => {
     if (!musicMuted) {
       music.current.loop = true;
       music.current.volume = 0.2;
@@ -165,13 +166,14 @@ const SnakeGame = ({ onValueChange }) => {
         music.current.play().catch(() => {});
       }
     }
-  };
+  }, [musicMuted]);
 
-  const pauseMusic = () => {
+  // Updated pauseMusic wrapped in useCallback for stable reference
+  const pauseMusic = useCallback(() => {
     if (!music.current.paused) {
       music.current.pause();
     }
-  };
+  }, []);
 
   useEffect(() => {
     resetGame();
@@ -215,13 +217,15 @@ const SnakeGame = ({ onValueChange }) => {
       window.removeEventListener('click', startMusicOnInteraction);
       pauseMusic();
     };
-  }, [gameOver, musicMuted]);
+  }, [gameOver, musicMuted, pauseMusic, playMusic]);
 
   useEffect(() => {
-    if (!gameOver) {
+    if (!gameOver && !musicMuted) {
       playMusic();
+    } else {
+      pauseMusic();
     }
-  }, [gameOver, musicMuted]);
+  }, [gameOver, musicMuted, playMusic, pauseMusic]);
 
   return (
     <>
