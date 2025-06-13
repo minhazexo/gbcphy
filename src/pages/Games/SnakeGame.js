@@ -4,14 +4,23 @@ const SnakeGame = ({ onValueChange }) => {
   const canvasRef = useRef(null);
   const animationFrameId = useRef(null);
   const lastTimeRef = useRef(0);
+  const feedbackRef = useRef(null);
 
   const [gameOver, setGameOver] = useState(false);
   const [musicMuted, setMusicMuted] = useState(false);
   const [score, setScore] = useState(0);
+  const [isStarted, setIsStarted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const grid = 20;
-  const canvasSize = 600;
-  const frameInterval = 100;
+  const maxCanvasSize = 600;
+
+  const [containerSize, setContainerSize] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return Math.min(window.innerWidth * 0.9, maxCanvasSize);
+    }
+    return maxCanvasSize;
+  });
 
   const snake = useRef({
     x: 160,
@@ -27,7 +36,6 @@ const SnakeGame = ({ onValueChange }) => {
     y: 60,
   });
 
-  // Audio elements
   const eatSound = useRef(new Audio('/sound/food.mp3'));
   const moveSound = useRef(new Audio('/sound/move.mp3'));
   const gameOverSound = useRef(new Audio('/sound/gameover.mp3'));
@@ -38,103 +46,121 @@ const SnakeGame = ({ onValueChange }) => {
 
   const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
-  // Wrap resetGame in useCallback to stabilize its reference
-  const resetGame = useCallback(() => {
-    snake.current = {
-      x: 160,
-      y: 160,
-      dx: grid,
-      dy: 0,
-      cells: [],
-      maxCells: 4,
-    };
-    apple.current = {
-      x: getRandomInt(0, canvasSize / grid) * grid,
-      y: getRandomInt(0, canvasSize / grid) * grid,
-    };
-    setScore(0);
-    if (onValueChange) onValueChange(0);
-    setGameOver(false);
-    lastTimeRef.current = 0;
-  }, [grid, canvasSize, onValueChange]);
+  const getNewApplePosition = useCallback(() => {
+  const maxAttempts = 100; // Prevent infinite loops
+  let attempts = 0;
+  
+  while (attempts < maxAttempts) {
+    const newX = getRandomInt(0, containerSize / grid) * grid;
+    const newY = getRandomInt(0, containerSize / grid) * grid;
+    
+    // Check if this position is not occupied by the snake
+    const isPositionValid = !snake.current.cells.some(
+      (c) => c.x === newX && c.y === newY
+    );
+    
+    if (isPositionValid) {
+      return { x: newX, y: newY };
+    }
+    
+    attempts++;
+  }
+  
+  // Fallback position if we can't find a valid one after maxAttempts
+  return { 
+    x: getRandomInt(0, containerSize / grid) * grid,
+    y: getRandomInt(0, containerSize / grid) * grid
+  };
+}, [containerSize, grid]);
 
-  // Wrap draw in useCallback to stabilize reference
-  const draw = useCallback((ctx, time) => {
-    if (!ctx) return;
+  const draw = useCallback(
+    (ctx, time) => {
+      if (!ctx) return;
 
-    const s = snake.current;
-    const a = apple.current;
+      const s = snake.current;
+      const a = apple.current;
 
-    const hue = (time / 50) % 360;
-    const gradient = ctx.createLinearGradient(0, 0, canvasSize, canvasSize);
-    gradient.addColorStop(0, `hsl(${hue}, 70%, 90%)`);
-    gradient.addColorStop(1, `hsl(${(hue + 60) % 360}, 80%, 70%)`);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvasSize, canvasSize);
+      const hue = (time / 50) % 360;
+      const gradient = ctx.createLinearGradient(0, 0, containerSize, containerSize);
+      gradient.addColorStop(0, `hsl(${hue}, 70%, 90%)`);
+      gradient.addColorStop(1, `hsl(${(hue + 60) % 360}, 80%, 70%)`);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, containerSize, containerSize);
 
-    s.x += s.dx;
-    s.y += s.dy;
+      s.x += s.dx;
+      s.y += s.dy;
 
-    if (s.x < 0) s.x = canvasSize - grid;
-    else if (s.x >= canvasSize) s.x = 0;
+      if (s.x < 0) s.x = containerSize - grid;
+      else if (s.x >= containerSize) s.x = 0;
 
-    if (s.y < 0) s.y = canvasSize - grid;
-    else if (s.y >= canvasSize) s.y = 0;
+      if (s.y < 0) s.y = containerSize - grid;
+      else if (s.y >= containerSize) s.y = 0;
 
-    s.cells.unshift({ x: s.x, y: s.y });
-    if (s.cells.length > s.maxCells) s.cells.pop();
+      s.cells.unshift({ x: s.x, y: s.y });
+      if (s.cells.length > s.maxCells) s.cells.pop();
 
-    ctx.drawImage(appleImg.current, a.x, a.y, grid, grid);
+      ctx.drawImage(appleImg.current, a.x, a.y, grid, grid);
 
-    for (let i = 0; i < s.cells.length; i++) {
-      const cell = s.cells[i];
-      const shade = Math.floor(255 - (i * 180) / s.cells.length);
-      ctx.fillStyle = `rgb(${shade}, ${150}, ${shade})`;
+      for (let i = 0; i < s.cells.length; i++) {
+        const cell = s.cells[i];
+        const shade = Math.floor(255 - (i * 180) / s.cells.length);
+        ctx.fillStyle = `rgb(${shade}, ${150}, ${shade})`;
 
-      ctx.beginPath();
-      ctx.arc(cell.x + grid / 2, cell.y + grid / 2, grid / 2.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      if (i === 0) {
-        ctx.fillStyle = 'black';
         ctx.beginPath();
-        ctx.arc(cell.x + 5, cell.y + 5, 2, 0, Math.PI * 2);
+        ctx.arc(cell.x + grid / 2, cell.y + grid / 2, grid / 2.2, 0, Math.PI * 2);
         ctx.fill();
-        ctx.beginPath();
-        ctx.arc(cell.x + grid - 5, cell.y + 5, 2, 0, Math.PI * 2);
-        ctx.fill();
-      }
 
-      if (cell.x === a.x && cell.y === a.y) {
-        s.maxCells++;
-        setScore(prevScore => {
-          const newScore = prevScore + 1;
-          if (onValueChange) onValueChange(newScore);
-          return newScore;
-        });
+        if (i === 0) {
+          ctx.fillStyle = 'black';
+          ctx.beginPath();
+          ctx.arc(cell.x + 5, cell.y + 5, 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(cell.x + grid - 5, cell.y + 5, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
 
-        eatSound.current.currentTime = 0;
-        eatSound.current.play().catch(() => {});
+        // Improved collision detection
+        if (
+          (cell.x === a.x && cell.y === a.y) || 
+          (isMobile && Math.abs(cell.x - a.x) < grid && Math.abs(cell.y - a.y) < grid)
+        ) {
+          s.maxCells++;
+          setScore((prevScore) => {
+            const newScore = prevScore + 1;
+            if (onValueChange) onValueChange(newScore);
+            return newScore;
+          });
 
-        a.x = getRandomInt(0, canvasSize / grid) * grid;
-        a.y = getRandomInt(0, canvasSize / grid) * grid;
-      }
+          eatSound.current.currentTime = 0;
+          eatSound.current.play().catch(() => {});
 
-      for (let j = i + 1; j < s.cells.length; j++) {
-        if (cell.x === s.cells[j].x && cell.y === s.cells[j].y) {
-          setGameOver(true);
-          gameOverSound.current.currentTime = 0;
-          gameOverSound.current.play().catch(() => {});
-          if (!musicMuted && !music.current.paused) {
-            music.current.pause();
+          const newPos = getNewApplePosition();
+          a.x = newPos.x;
+          a.y = newPos.y;
+        }
+
+        for (let j = i + 1; j < s.cells.length; j++) {
+          if (cell.x === s.cells[j].x && cell.y === s.cells[j].y) {
+            setGameOver(true);
+            gameOverSound.current.currentTime = 0;
+            gameOverSound.current.play().catch(() => {});
+            if (!musicMuted && !music.current.paused) {
+              music.current.pause();
+            }
+            cancelAnimationFrame(animationFrameId.current);
           }
-          cancelAnimationFrame(animationFrameId.current);
         }
       }
-    }
-  }, [canvasSize, grid, musicMuted, onValueChange]);
+    },
+    [containerSize, grid, musicMuted, getNewApplePosition, onValueChange, isMobile]
+  );
 
-  const handleKeyDown = (e) => {
+  const frameInterval = 100;
+
+  const handleKeyDown = useCallback((e) => {
+    if (!isStarted || gameOver) return;
+
     const s = snake.current;
     if (e.key === 'ArrowLeft' && s.dx === 0) {
       s.dx = -grid;
@@ -157,7 +183,77 @@ const SnakeGame = ({ onValueChange }) => {
       moveSound.current.currentTime = 0;
       moveSound.current.play().catch(() => {});
     }
-  };
+  }, [isStarted, gameOver, grid]);
+
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+
+  const handleTouchStart = useCallback((e) => {
+    if (!isStarted || gameOver) return;
+    const touch = e.touches[0];
+    touchStartX.current = touch.clientX;
+    touchStartY.current = touch.clientY;
+    
+    // Show visual feedback
+    if (feedbackRef.current) {
+      feedbackRef.current.style.opacity = '0.3';
+    }
+  }, [isStarted, gameOver]);
+
+  const handleTouchEnd = useCallback((e) => {
+    if (!isStarted || gameOver) return;
+    if (touchStartX.current === null || touchStartY.current === null) return;
+
+    // Hide visual feedback
+    if (feedbackRef.current) {
+      feedbackRef.current.style.opacity = '0';
+    }
+
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - touchStartX.current;
+    const dy = touch.clientY - touchStartY.current;
+
+    const minSwipeDistance = 50; // Increased for better reliability
+    if (Math.abs(dx) < minSwipeDistance && Math.abs(dy) < minSwipeDistance) {
+      return;
+    }
+
+    const s = snake.current;
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+    if (Math.abs(angle) <= 45) { // Right
+      if (s.dx === 0) {
+        s.dx = grid;
+        s.dy = 0;
+        moveSound.current.currentTime = 0;
+        moveSound.current.play().catch(() => {});
+      }
+    } else if (Math.abs(angle) >= 135) { // Left
+      if (s.dx === 0) {
+        s.dx = -grid;
+        s.dy = 0;
+        moveSound.current.currentTime = 0;
+        moveSound.current.play().catch(() => {});
+      }
+    } else if (angle > 45 && angle < 135) { // Down
+      if (s.dy === 0) {
+        s.dy = grid;
+        s.dx = 0;
+        moveSound.current.currentTime = 0;
+        moveSound.current.play().catch(() => {});
+      }
+    } else if (angle < -45 && angle > -135) { // Up
+      if (s.dy === 0) {
+        s.dy = -grid;
+        s.dx = 0;
+        moveSound.current.currentTime = 0;
+        moveSound.current.play().catch(() => {});
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+  }, [isStarted, gameOver, grid]);
 
   const playMusic = useCallback(() => {
     if (!musicMuted) {
@@ -175,8 +271,42 @@ const SnakeGame = ({ onValueChange }) => {
     }
   }, []);
 
+  const resetGame = useCallback(() => {
+    snake.current = {
+      x: 160,
+      y: 160,
+      dx: grid,
+      dy: 0,
+      cells: [],
+      maxCells: 4,
+    };
+    apple.current = {
+      x: getRandomInt(0, containerSize / grid) * grid,
+      y: getRandomInt(0, containerSize / grid) * grid,
+    };
+    setScore(0);
+    setGameOver(false);
+  }, [containerSize, grid]);
+
   useEffect(() => {
-    resetGame();
+    const updateSize = () => {
+      setContainerSize(Math.min(window.innerWidth * 0.9, maxCanvasSize));
+    };
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+    };
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!isStarted) return;
 
     const startMusicOnInteraction = () => {
       playMusic();
@@ -210,26 +340,42 @@ const SnakeGame = ({ onValueChange }) => {
 
     document.addEventListener('keydown', handleKeyDown);
 
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+      canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
+
     return () => {
       cancelAnimationFrame(animationFrameId.current);
       document.removeEventListener('keydown', handleKeyDown);
+
+      if (canvas) {
+        canvas.removeEventListener('touchstart', handleTouchStart);
+        canvas.removeEventListener('touchend', handleTouchEnd);
+      }
+
       window.removeEventListener('keydown', startMusicOnInteraction);
       window.removeEventListener('click', startMusicOnInteraction);
       pauseMusic();
     };
-  }, [gameOver, musicMuted, pauseMusic, playMusic, resetGame, draw]); // <-- added resetGame and draw here
+  }, [gameOver, musicMuted, pauseMusic, playMusic, resetGame, draw, isStarted, handleKeyDown, handleTouchStart, handleTouchEnd]);
 
   useEffect(() => {
-    if (!gameOver && !musicMuted) {
+    if (!gameOver && !musicMuted && isStarted) {
       playMusic();
     } else {
       pauseMusic();
     }
-  }, [gameOver, musicMuted, playMusic, pauseMusic]);
+  }, [gameOver, musicMuted, playMusic, pauseMusic, isStarted]);
+
+  const handleStartGame = () => {
+    resetGame();
+    setIsStarted(true);
+  };
 
   return (
     <>
-      {/* Gradient animation injected here */}
       <style>{`
         @keyframes gradientAnimation {
           0% { background-position: 0% 50%; }
@@ -271,6 +417,10 @@ const SnakeGame = ({ onValueChange }) => {
             alignItems: 'center',
             flexDirection: 'column',
             userSelect: 'none',
+            width: containerSize + 48,
+            height: containerSize + 48,
+            maxWidth: maxCanvasSize + 48,
+            maxHeight: maxCanvasSize + 48,
           }}
         >
           <div
@@ -285,17 +435,58 @@ const SnakeGame = ({ onValueChange }) => {
             Score: {score}
           </div>
 
-          <canvas
-            ref={canvasRef}
-            width={canvasSize}
-            height={canvasSize}
-            style={{
-              display: 'block',
-              backgroundColor: '#dbeafe',
-              border: '4px solid rgb(239, 12, 12)',
-              borderRadius: 8,
-            }}
-          />
+          <div style={{ position: 'relative' }}>
+            <canvas
+              ref={canvasRef}
+              width={containerSize}
+              height={containerSize}
+              style={{
+                display: 'block',
+                backgroundColor: '#dbeafe',
+                border: '4px solid rgb(239, 12, 12)',
+                borderRadius: 8,
+                touchAction: 'none',
+                boxSizing: 'content-box',
+              }}
+            />
+            <div 
+              ref={feedbackRef}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                opacity: 0,
+                transition: 'opacity 0.2s',
+                borderRadius: 8,
+              }}
+            />
+          </div>
+
+          {!isStarted && !gameOver && (
+            <button
+              onClick={handleStartGame}
+              style={{
+                marginTop: 16,
+                padding: '12px 24px',
+                fontSize: '1.25rem',
+                backgroundColor: '#2563eb',
+                color: 'white',
+                border: 'none',
+                borderRadius: 8,
+                cursor: 'pointer',
+                userSelect: 'none',
+              }}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = '#1e40af')}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = '#2563eb')}
+              aria-label="Start game"
+            >
+              Start Game 🐍
+            </button>
+          )}
 
           <button
             onClick={() => setMusicMuted(!musicMuted)}
@@ -354,6 +545,7 @@ const SnakeGame = ({ onValueChange }) => {
                 onClick={() => {
                   resetGame();
                   setGameOver(false);
+                  setIsStarted(true);
                 }}
                 style={{
                   backgroundColor: '#2563eb',
