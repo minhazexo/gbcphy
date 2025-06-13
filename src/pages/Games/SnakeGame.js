@@ -38,7 +38,8 @@ const SnakeGame = ({ onValueChange }) => {
 
   const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
-  const resetGame = () => {
+  // Wrap resetGame in useCallback to stabilize its reference
+  const resetGame = useCallback(() => {
     snake.current = {
       x: 160,
       y: 160,
@@ -55,9 +56,10 @@ const SnakeGame = ({ onValueChange }) => {
     if (onValueChange) onValueChange(0);
     setGameOver(false);
     lastTimeRef.current = 0;
-  };
+  }, [grid, canvasSize, onValueChange]);
 
-  const draw = (ctx, time) => {
+  // Wrap draw in useCallback to stabilize reference
+  const draw = useCallback((ctx, time) => {
     if (!ctx) return;
 
     const s = snake.current;
@@ -130,7 +132,7 @@ const SnakeGame = ({ onValueChange }) => {
         }
       }
     }
-  };
+  }, [canvasSize, grid, musicMuted, onValueChange]);
 
   const handleKeyDown = (e) => {
     const s = snake.current;
@@ -157,7 +159,6 @@ const SnakeGame = ({ onValueChange }) => {
     }
   };
 
-  // Updated playMusic wrapped in useCallback for stable reference
   const playMusic = useCallback(() => {
     if (!musicMuted) {
       music.current.loop = true;
@@ -168,7 +169,6 @@ const SnakeGame = ({ onValueChange }) => {
     }
   }, [musicMuted]);
 
-  // Updated pauseMusic wrapped in useCallback for stable reference
   const pauseMusic = useCallback(() => {
     if (!music.current.paused) {
       music.current.pause();
@@ -217,7 +217,7 @@ const SnakeGame = ({ onValueChange }) => {
       window.removeEventListener('click', startMusicOnInteraction);
       pauseMusic();
     };
-  }, [gameOver, musicMuted, pauseMusic, playMusic]);
+  }, [gameOver, musicMuted, pauseMusic, playMusic, resetGame, draw]); // <-- added resetGame and draw here
 
   useEffect(() => {
     if (!gameOver && !musicMuted) {
