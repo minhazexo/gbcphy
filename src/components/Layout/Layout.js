@@ -46,6 +46,14 @@ function App() {
             </Layout>
           }
         />
+        <Route
+          path="/teachers"
+          element={
+            <Layout>
+              <Teachers />
+            </Layout>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route
           path="/register"

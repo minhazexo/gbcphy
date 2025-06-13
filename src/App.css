@@ -1,0 +1,9 @@
+/* Your existing styles here */
+
+@media (max-width: 768px) {
+  /* tablet styles */
+}
+
+@media (max-width: 480px) {
+  /* mobile styles */
+}

@@ -53,10 +53,6 @@ header {
           transform: translateY(-3px);
         }
 
-        // src/components/Layout/header.scss
-
-        // Other styles...
-
         .logout-button {
           background-color: red; // Red background color
           color: white; // White text color
@@ -107,5 +103,82 @@ header {
   }
   to {
     width: 100%;
+  }
+}
+
+// Hamburger button (hidden on desktop)
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  width: 25px;
+  height: 20px;
+  justify-content: space-between;
+
+  span {
+    display: block;
+    height: 3px;
+    background-color: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+}
+
+// Animate hamburger to "X" when open
+.hamburger.open {
+  span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  span:nth-child(2) {
+    opacity: 0;
+  }
+  span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+}
+
+// Responsive styles for nav & hamburger
+@media (max-width: 768px) {
+  nav {
+    position: fixed;
+    top: 70px; // Adjust based on your header height
+    right: -100%;
+    width: 200px;
+    height: calc(100vh - 70px);
+    background-color: $secondary-color;
+    transition: right 0.3s ease;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
+    padding-top: 20px;
+    z-index: 20;
+
+    &.open {
+      right: 0;
+    }
+
+    ul {
+      flex-direction: column;
+      gap: 15px;
+      padding-left: 20px;
+
+      li {
+        margin: 0;
+      }
+    }
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  // Hide the default horizontal nav on mobile
+  nav ul {
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Optionally reduce gap for smaller screens
+  ul li a,
+  ul li button.logout-btn {
+    font-size: 1.1rem;
   }
 }

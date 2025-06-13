@@ -10,6 +10,8 @@ import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Academic from "./pages/Academic/Academic";
 import Login from "./pages/Login/Login";
+import Teachers from "./pages/Teachers/Teachers";
+import SnakeGame from "./pages/Games/SnakeGame";
 import Register from "./pages/Register/Register";
 import Profile from "./pages/Profile/Profile";
 import EditProfile from "./pages/EditProfile/EditProfile";
@@ -25,6 +27,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/teachers" element={<Teachers />} />
+          <Route path="/snakegame" element={<SnakeGame />}/>
+
           <Route path="/academic" element={<Academic />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
