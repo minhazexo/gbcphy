@@ -1,1 +1,102 @@
+@charset "UTF-8";
+/* ============ GOOGEL FONTS ================= */
+@import url("https://fonts.googleapis.com/css2?family=Concert+One&display=swap");
 
+/* ========= BASE ============== */
+html {
+  font-size: 62.5%;
+  touch-action: manipulation;
+  height: 100%;
+}
+
+*,
+::before,
+::after {
+  box-sizing:border-box;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  font-family: "Concert One", cursive;
+  font-size: 1.5rem;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  text-transform: capitalize;
+  color: rgb(248, 3, 3);
+  background: linear-gradient(270deg, #000, #468944);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+
+b {
+  background: #0f5809;
+}
+
+.gameDetail {
+  display: none;
+  text-align: center;
+  padding: 1rem 2rem;
+  line-height: 2.5rem;
+  background: linear-gradient(168deg, #000, #70c86e);
+  box-shadow: 0 0 8rem 2rem rgba(126, 255, 90, 0.5);
+  border-radius: 0 0 20rem 20rem;
+  color: #b2ffba;
+  z-index: 100;
+}
+
+
+/* Replace the #canvas style with this: */
+#canvas {
+  margin-top: 5rem;
+  
+  max-width: 360px;
+  
+  aspect-ratio: 250/450;
+  box-shadow: 0 0 8rem 2rem rgba(126, 255, 90, 0.5);
+  border: 2px double #1c291c;
+  display: block;
+  touch-action: none;
+   background-color: #47f0a9; /* Ensures consistent background */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  
+  /* Browser-compatible crisp rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor; /* For Edge */
+}
+
+
+#fullscreenBtn {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  z-index: 100;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #fullscreenBtn {
+    display: block;
+  }
+  
+  .gameDetail {
+    padding: 0.5rem 1rem;
+    line-height: 2rem;
+    font-size: 1.2rem;
+  }
+}
