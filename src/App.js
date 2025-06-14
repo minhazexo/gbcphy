@@ -1,12 +1,11 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/Layout/Header";
 import Footer from "./components/Layout/Footer";
 import Home from "./pages/Home/Home";
+import Games from "./pages/Games/Games";
+import FlappyBird from "./pages/Games/FlappyBird"; // you'll create this
+
 import About from "./pages/About/About";
 import Academic from "./pages/Academic/Academic";
 import Login from "./pages/Login/Login";
@@ -28,7 +27,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/teachers" element={<Teachers />} />
-          <Route path="/snakegame" element={<SnakeGame />}/>
+          <Route path="/games" element={<Games />} />
+          <Route path="/snakegame" element={<SnakeGame />} />
+          <Route path="/flappybird" element={<FlappyBird />} />
 
           <Route path="/academic" element={<Academic />} />
           <Route path="/login" element={<Login />} />

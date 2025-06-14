@@ -68,10 +68,11 @@ function Header() {
                 </Link>
               </li>
               <li>
-                <Link to="/Snakegame" onClick={() => setMenuOpen(false)}>
-                  Snakegame
+                <Link to="/games" onClick={() => setMenuOpen(false)}>
+                  Games
                 </Link>
               </li>
+
               <li>
                 <Link to="/login" onClick={() => setMenuOpen(false)}>
                   Login

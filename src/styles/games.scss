@@ -1,0 +1,26 @@
+.games-container {
+  padding: 2rem;
+  text-align: center;
+
+  .game-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+
+    .game-card {
+      padding: 1rem 2rem;
+      background: #222;
+      color: #fff;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: 0.3s ease;
+
+      &:hover {
+        background: #444;
+      }
+    }
+  }
+}
