@@ -1,62 +1,236 @@
-/* Teachers.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
 .teachers-page {
-  padding: 2rem;
-  background-color: #fbfafa;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 3rem 2rem;
+  // Background with image and gradient overlay
+  background:
+    url('../../public//images//TPGbg.jpg') center/cover no-repeat fixed;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  position: relative;
+  
+  // Optional: Add a pseudo-element for better overlay control
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.85); // Adjust opacity as needed
+    z-index: -1;
+  }
 }
 
 .page-title {
   text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 3rem;
   color: #181818;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  background: linear-gradient(90deg, #ffffff, #5b00ffd1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.5rem;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 5px;
+    background: linear-gradient(90deg, #4f46e5, #06b6d4);
+    border-radius: 3px;
+    animation: underlineGrow 1s ease-out forwards;
+  }
+}
+
+@keyframes underlineGrow {
+  from { width: 0; opacity: 0; }
+  to { width: 100px; opacity: 1; }
 }
 
 .teacher-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .teacher-card {
-  background-color: #51ffe5c4;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  background: #080b09e6;
+  padding: 1.8rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
   text-align: center;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #4f46e5, #06b6d4);
+    transition: height 0.3s ease;
+  }
+  
+  &:hover::before {
+    height: 10px;
+  }
 }
 
-.teacher-card:hover {
-  transform: translateY(-8px);
-}
-
-.teacher-card img {
-  width: 120px;
-  height: 120px;
+.teacher-image-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 1.5rem;
   border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 1rem;
-  border: 3px solid #4caf50;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  
+  .teacher-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .teacher-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(79, 70, 229, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      
+      a {
+        color: white;
+        font-size: 1.2rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: white;
+          color: #4f46e5;
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+  
+  &:hover {
+    .teacher-image {
+      transform: scale(1.1);
+    }
+    
+    .teacher-overlay {
+      opacity: 1;
+    }
+  }
 }
 
 .teacher-card h3 {
-  font-size: 1.25rem;
-  color: #000000;
+  font-size: 1.3rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.teacher-title {
+  font-size: 0.95rem;
+  color: #4f46e5;
+  font-weight: 500;
   margin-bottom: 0.5rem;
 }
 
-.teacher-card p {
-  font-size: 0.95rem;
-  margin: 0.25rem 0;
-  color: #1b1515;
+.teacher-batch {
+  font-size: 0.9rem;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  
+  span {
+    font-weight: 500;
+    color: #2d3748;
+  }
 }
 
-.teacher-card a {
-  color: #430bde;
-  text-decoration: none;
+.teacher-contact {
+  margin-top: 1rem;
+  text-align: left;
+  
+  p {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #ffffff;
+    margin: 0.5rem 0;
+    
+    i {
+      color: #4f46e5;
+      width: 20px;
+      text-align: center;
+    }
+    
+    a {
+      color: #fcfdff;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      
+      &:hover {
+        color: #4f46e5;
+        text-decoration: underline;
+      }
+    }
+  }
 }
 
-.teacher-card a:hover {
-  text-decoration: underline;
+// Responsive adjustments
+@media (max-width: 768px) {
+  .teacher-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  
+  .teacher-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .teachers-page {
+    padding: 2rem 1rem;
+  }
+  
+  .teacher-list {
+    grid-template-columns: 1fr;
+  }
 }

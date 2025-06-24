@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../styles/teachers.scss';
+import { motion } from 'framer-motion';
 
 const teachersData = [
   {
@@ -76,23 +77,104 @@ const teachersData = [
   }
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  },
+  hover: {
+    y: -10,
+    boxShadow: "0 15px 30px rgba(0, 0, 0, 0.15)"
+  }
+};
+
+const titleVariants = {
+  hidden: { y: -20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: "backOut"
+    }
+  }
+};
+
 const Teachers = () => {
   return (
-    <div className="teachers-page">
-      <h2 className="page-title">Meet Our Teachers</h2>
+    <motion.div 
+      className="teachers-page"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.h2 className="page-title" variants={titleVariants}>
+        Meet Our Teachers
+      </motion.h2>
+      
       <div className="teacher-list">
         {teachersData.map((teacher, index) => (
-          <div className="teacher-card" key={index}>
-            <img src={teacher.photo} alt={teacher.name} />
+          <motion.div 
+            className="teacher-card" 
+            key={index}
+            variants={cardVariants}
+            whileHover="hover"
+          >
+            <div className="teacher-image-container">
+              <img 
+                src={teacher.photo} 
+                alt={teacher.name} 
+                className="teacher-image"
+                loading="lazy"
+              />
+              <div className="teacher-overlay">
+                <div className="social-links">
+                  {teacher.email && (
+                    <a href={`mailto:${teacher.email}`} aria-label="Email">
+                      <i className="fas fa-envelope"></i>
+                    </a>
+                  )}
+                  <a href={`tel:${teacher.phone}`} aria-label="Phone">
+                    <i className="fas fa-phone"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
             <h3>{index + 1}. {teacher.name}</h3>
-            <p><strong>Title:</strong> {teacher.title}</p>
-            {teacher.batch && <p><strong>BCS Batch:</strong> {teacher.batch}</p>}
-            <p><strong>Email:</strong> <a href={`mailto:${teacher.email}`}>{teacher.email || 'N/A'}</a></p>
-            <p><strong>Phone:</strong> <a href={`tel:${teacher.phone}`}>{teacher.phone}</a></p>
-          </div>
+            <p className="teacher-title">{teacher.title}</p>
+            {teacher.batch && <p className="teacher-batch"><span>BCS Batch:</span> {teacher.batch}</p>}
+            <div className="teacher-contact">
+              {teacher.email && (
+                <p>
+                  <i className="fas fa-envelope"></i> 
+                  <a href={`mailto:${teacher.email}`}>{teacher.email}</a>
+                </p>
+              )}
+              <p>
+                <i className="fas fa-phone"></i> 
+                <a href={`tel:${teacher.phone}`}>{teacher.phone}</a>
+              </p>
+            </div>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
