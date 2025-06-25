@@ -43,8 +43,14 @@ app.use(express.urlencoded({ extended: true }));
 const MONGODB_URI = process.env.MONGODB_URI;
 
 // Establish a connection using mongoose.connect for better logging
+// Update MongoDB connection options
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, {
+    // These options are no longer needed in Mongoose 8
+    // They're automatically set to true
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
+  })
   .then(() => {
     console.log("Connected to MongoDB");
   })

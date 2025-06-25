@@ -24,8 +24,13 @@ const Notes = () => {
       { title: "Waves,Oscillations and Advance Mechanics (PHA 205)(Emon 20-21)", url: "/2nd Year Notes/EMON {PHA 205 (WOAM) }_compressed.pdf" },
     ],
     "Third Year": [
-      { title: "Lecture 1: Quantum Mechanics", url: "#" },
-      { title: "Lecture 2: Thermodynamics", url: "#" },
+      { title: "Classical Mechanics (PHA-301)", url: "/3rd Year Notes/Classical Mechanics.PHA-301.pdf" },
+      { title: "Quantum Mechanics (PHA-302)", url: "/3rd Year Notes/Quantum Machanics.PHA-302.pdf" },
+      { title: "Solid State Physics (PH-303)", url: "/3rd Year Notes/Solid State Physics.PH-303.pdf" },
+      { title: "Nuclear Physics (PHA-304)", url: "/3rd Year Notes/Nuclear Physics.PHA-304.pdf" },
+      { title: "Electrodynamics (PHA-305)", url: "/3rd Year Notes/Electrodynamics.PHA-305.pdf" },
+      { title: "Astrophysics (PHA-308)", url: "/3rd Year Notes/Astrophysics.PHA-308.pdf" },
+      { title: "Lasers and Photonics", url: "/3rd Year Notes/Lasers and Photonics..pdf" },
     ],
     "Fourth Year": [
       { title: "Lecture 1: Advanced Physics", url: "#" },
