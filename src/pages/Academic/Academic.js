@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import * as THREE from 'three';
 import "../../styles/academic.scss";
 
 const Notes = () => {
   const [selectedYear, setSelectedYear] = useState("First Year");
   const [selectedType, setSelectedType] = useState("Notes");
-  const [showRoutineImage, setShowRoutineImage] = useState(false); // State to toggle the image viewer
-
+  const [showRoutineImage, setShowRoutineImage] = useState(false);
+  const containerRef = useRef(null);
+  
   // Notes Data (Updated Second Year Notes with PDF Links)
   const notes = {
     "First Year": [
@@ -46,6 +48,182 @@ const Notes = () => {
     "Fourth Year": [{ title: "4th Year Syllabus", url: "/Syllabus/4th%20Year.pdf" }],
   };
 
+   
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Three.js initialization code
+    const stageWidth = container.clientWidth;
+    const stageHeight = container.clientHeight;
+    const xRows = 25;
+    const zRows = 25;
+    const cubeSize = 600;
+    const cubeGap = 200;
+    const cubeRow = cubeSize + cubeGap;
+
+    // Camera setup
+    const camera = new THREE.PerspectiveCamera(55, stageWidth / stageHeight, 1, 20000);
+    camera.position.y = 5000;
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x000000, 5000, 10000);
+
+    // Lighting
+    const pointLight = new THREE.PointLight(0xFF4040);
+    pointLight.position.set(0, 1800, -1800);
+    scene.add(pointLight);
+
+    // Cube group
+    const group = new THREE.Object3D();
+    scene.add(group);
+    let cubes = [];
+
+    // Generate cubes
+    const halfXRows = (cubeRow * -xRows / 2);
+    const halfZRows = (cubeRow * -zRows / 2);
+
+    for (let x = 0; x < xRows; x++) {
+      cubes[x] = [];
+      for (let z = 0; z < zRows; z++) {
+        const cubeHeight = 10 + (Math.sin(x / xRows * Math.PI) + 
+                          Math.sin(z / zRows * Math.PI) * 200 + 
+                          Math.random() * 150)
+        
+        const geometry = new THREE.BoxGeometry(cubeSize, cubeHeight, cubeSize);
+        // Fixed material properties
+        const material = new THREE.MeshPhongMaterial({
+          color: 0x4444ff,
+          specular: 0xffffff,
+          shininess: 10,
+          emissive: 0x030303 // Replaced ambient with emissive
+        });
+
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.x = halfXRows + x * cubeRow;
+        cube.position.y = cubeHeight / 2;
+        cube.position.z = (cubeRow * -zRows / 2) + z * cubeRow;
+        cube.height = cubeHeight;
+        
+        group.add(cube);
+        cubes[x][z] = cube;
+      }
+    }
+
+    // Renderer setup
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setSize(stageWidth, stageHeight);
+    container.appendChild(renderer.domElement);
+
+    // Animation variables
+    
+    const position = { x: 0, y: 0, z: 0 };
+    const camPos = new THREE.Vector3(0, 0, 0);
+    let t = 0;
+    let animationFrameId;
+
+    // Row check function
+    const checkRow = () => {
+      const xIndex = (position.x / cubeRow);
+      const xLoops = Math.floor(xIndex / xRows);
+      const zIndex = (position.z / cubeRow);
+      const zLoops = Math.floor(zIndex / zRows);
+
+      for (let x = 0; x < xRows; x++) {
+        for (let z = 0; z < zRows; z++) {
+          let dx = 0, dz = 0;
+          
+          if (x >= xIndex - xLoops * xRows) {
+            dx = xRows * (1 - xLoops);
+          } else {
+            dx = xRows * (0 - xLoops);
+          }
+          
+          if (z >= zIndex - zLoops * zRows) {
+            dz = zRows * (1 - zLoops);
+          } else {
+            dz = zRows * (0 - zLoops);
+          }
+          
+          cubes[x][z].position.x = (x - dx) * cubeRow - halfXRows;
+          cubes[x][z].position.z = (z - dz) * cubeRow - halfZRows;
+          
+          let scale = (cubes[x][z].position.z + group.position.z) / 1500;
+          scale = scale < 1 ? 1 : Math.pow(scale, 1.2);
+          
+          cubes[x][z].scale.y = scale;
+          cubes[x][z].position.y = (cubes[x][z].height * scale) / 2;
+        }
+      }
+    };
+
+    // Animation loop
+    const animate = () => {
+      t += 16;
+      
+      position.x += Math.sin(t * 0.001) * 20;
+      position.z += (Math.cos(t * 0.0008) + 5) * 20;
+      group.position.x = -position.x;
+      group.position.z = -position.z;
+      
+      checkRow();
+      
+      camera.position.x = Math.sin(t * 0.0003) * 1000;
+      camera.position.z = -4000;
+      camera.position.y = (Math.cos(t * 0.0004) + 1.3) * 3000;
+      camera.lookAt(camPos);
+      
+      renderer.render(scene, camera);
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    // Start animation
+    animate();
+
+    // Handle window resize
+    const handleResize = () => {
+      const newWidth = container.clientWidth;
+      const newHeight = container.clientHeight;
+      
+      camera.aspect = newWidth / newHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(newWidth, newHeight);
+    };
+    
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      
+      // Remove renderer and clean up resources
+      if (renderer) {
+        renderer.dispose();
+        if (container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
+        }
+      }
+      
+      // Dispose of geometries and materials
+      scene.traverse((object) => {
+        if (object.isMesh) {
+          if (object.geometry) object.geometry.dispose();
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach(material => material.dispose());
+            } else {
+              object.material.dispose();
+            }
+          }
+        }
+      });
+    };
+  }, []);
+
   const handleYearChange = (e) => {
     setSelectedYear(e.target.value);
   };
@@ -60,12 +238,14 @@ const Notes = () => {
 
   return (
     <div className="notes-container">
-      {/* Class Routine Button */}
+      {/* 3D Background Container */}
+      <div ref={containerRef} className="three-background"></div>
+      
+      {/* Existing content */}
       <button className="class-routine-button" onClick={toggleRoutineImage}>
         Class Routine
       </button>
 
-      {/* Show JPG Image */}
       {showRoutineImage && (
         <div className="routine-image-container">
           <img src="/Class Routine/Class Routine.jpg" alt="Class Routine" className="routine-image" />
@@ -75,13 +255,13 @@ const Notes = () => {
         </div>
       )}
 
-      {/* Add the ocean container here */}
       <div className="ocean">
         <div className="wave wave1"></div>
         <div className="wave wave2"></div>
       </div>
 
       <h1>Session-wise {selectedType}</h1>
+      
       <div className="dropdown-container">
         <select value={selectedYear} onChange={handleYearChange} className="year-select">
           <option value="First Year">First Year</option>
