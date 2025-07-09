@@ -10,11 +10,11 @@ function Footer() {
           reserved.
         </p>
         <p>
-          <a href="https://www.facebook.com/minhazexo" className="footer-link" target="_blank" rel="noopener noreferrer">
+          <a href="https://minhazexo.github.io/portfolio/" className="footer-link" target="_blank" rel="noopener noreferrer">
             About Us
           </a>{" "}
           |
-          <a href="https://www.facebook.com/minhazexo" className="footer-link" target="_blank" rel="noopener noreferrer">
+          <a href="https://minhazexo.github.io/portfolio/" className="footer-link" target="_blank" rel="noopener noreferrer">
             {" "}
             Contact Us
           </a>
