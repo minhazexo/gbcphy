@@ -3,15 +3,23 @@ import "../../styles/home.scss";
 import axios from "axios";
 
 const Home = () => {
-  const images = ["/images/5.jpg", "/images/6.jpg", "/images/7.jpg", "/images/8.jpg", "/images/9.jpg", "/images/10.jpg"];
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const images = [
+    "/images/5.jpg",
+    "/images/6.jpg",
+    "/images/7.jpg",
+    "/images/8.jpg",
+    "/images/9.jpg",
+    "/images/10.jpg"
+  ];
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [admin, setAdmin] = useState(() => localStorage.getItem("isAdmin") === "true");
   const [loginForm, setLoginForm] = useState({ username: "", password: "" });
-  const [posts, setPosts] = useState([]); // State to store posts
+  const [posts, setPosts] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editText, setEditText] = useState("");
 
+  // Auto slide every 4s
   useEffect(() => {
     const imageSlider = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -19,16 +27,12 @@ const Home = () => {
     return () => clearInterval(imageSlider);
   }, [images.length]);
 
+  // Fetch posts
   useEffect(() => {
-    axios.get('http://localhost:5000/api/posts')
-      .then(res => {
-        setPosts(res.data);
-      })
-      .catch(err => {
-        console.error('Error fetching posts', err);
-      });
+    axios.get("http://localhost:5000/api/posts")
+      .then(res => setPosts(res.data))
+      .catch(err => console.error("Error fetching posts", err));
   }, []);
-  
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -58,18 +62,26 @@ const Home = () => {
     setEditingIndex(null);
   };
 
+  // ✅ Carousel Controls
+  const goToNextImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
+
+  const goToPrevImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+  };
+
   return (
     <div className="home-container">
       <div className="home-content">
         <h1>Welcome to the Department of Physics</h1>
         <p className="intro-text">
-        The Department of Physics at Government Bangla College is committed to fostering a deep understanding of the fundamental laws that govern the universe. With a strong emphasis on both theoretical and experimental physics, we offer comprehensive undergraduate and graduate programs designed to equip students with the knowledge, skills, and curiosity necessary to excel in academia, research, and industry. Our dedicated faculty, state-of-the-art laboratories, and collaborative learning environment make the Department of Physics a vibrant hub of scientific discovery and innovation.
-
-
+          The Department of Physics at Government Bangla College is committed to fostering a deep understanding of the fundamental laws that govern the universe. With a strong emphasis on both theoretical and experimental physics, we offer comprehensive undergraduate and graduate programs designed to equip students with the knowledge, skills, and curiosity necessary to excel in academia, research, and industry. Our dedicated faculty, state-of-the-art laboratories, and collaborative learning environment make the Department of Physics a vibrant hub of scientific discovery and innovation.
         </p>
 
-        {/* 3D Photo Slider */}
+        {/* ✅ Photo Slider with Navigation */}
         <div className="photo-slider">
+          <button className="prev-btn" onClick={goToPrevImage}>&#10094;</button>
           {images.map((image, index) => (
             <img
               key={index}
@@ -78,6 +90,7 @@ const Home = () => {
               className={`slide-image ${index === currentImageIndex ? "active" : ""}`}
             />
           ))}
+          <button className="next-btn" onClick={goToNextImage}>&#10095;</button>
         </div>
 
         {/* Admin Login */}
