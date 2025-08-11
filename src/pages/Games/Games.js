@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "../../styles/games.scss"; // Optional: for styling
+import "../../styles/games.scss"; // Optional: your custom styles
 
 function Games() {
   return (
@@ -13,7 +13,9 @@ function Games() {
         <Link to="/flappybird" className="game-card">
           🐦 Flappy Bird
         </Link>
-        {/* Add more games here */}
+        <Link to="/chessgame" className="game-card">
+          ♟️ Chess Game
+        </Link>
       </div>
     </div>
   );

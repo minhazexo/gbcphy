@@ -30,6 +30,7 @@ function App() {
           <Route path="/games" element={<Games />} />
           <Route path="/snakegame" element={<SnakeGame />} />
           <Route path="/flappybird" element={<FlappyBird />} />
+          
 
           <Route path="/academic" element={<Academic />} />
           <Route path="/login" element={<Login />} />
