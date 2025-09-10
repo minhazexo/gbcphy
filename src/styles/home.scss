@@ -4,21 +4,23 @@
   align-items: center;
   min-height: 100vh;
   background: linear-gradient(135deg, #1a2980, #26d0ce);
+  background-size: 400% 400%;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 2rem;
   padding-top: 120px;
   overflow-y: auto;
-  animation: fadeIn 1s ease-in-out;
+  animation: fadeIn 1s ease-in-out, gradientShift 12s ease infinite;
 
   .home-content {
     background: rgb(0, 0, 0);
     padding: 3rem;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     max-width: 1200px;
     width: 100%;
     position: relative;
     overflow: hidden;
+    animation: slideUp 1s ease;
 
     &::before {
       content: '';
@@ -27,24 +29,34 @@
       left: 0;
       width: 100%;
       height: 5px;
-      background: linear-gradient(90deg, #1a2980, #26d0ce);
+      background: linear-gradient(90deg, #1a2980, #26d0ce, #1a2980);
+      background-size: 200% auto;
+      animation: shimmer 5s linear infinite;
     }
   }
 
   .header-section {
     text-align: center;
     margin-bottom: 3rem;
-    
+    animation: fadeIn 1.2s ease;
+
     h1 {
       font-size: 3.2rem;
       font-weight: 700;
       text-transform: uppercase;
       margin-bottom: 0.5rem;
-      color: #1a2980;
+      color: #ffffff;
       display: flex;
       flex-direction: column;
       line-height: 1.2;
-      
+      letter-spacing: 2px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, #06d7f3, #3597f2, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: fadeSlideIn 1s ease forwards, glowPulse 3s infinite alternate;
+
       span:first-child {
         font-size: 2rem;
         font-weight: 400;
@@ -55,6 +67,22 @@
         font-weight: 800;
         letter-spacing: 1px;
       }
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -75%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(255, 255, 255, 0.6),
+          transparent
+        );
+        animation: shine 3s infinite;
+      }
     }
     
     .accent-bar {
@@ -63,6 +91,24 @@
       background: linear-gradient(90deg, #1a2980, #26d0ce);
       margin: 1rem auto;
       border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.8),
+          transparent
+        );
+        animation: shimmer 3s linear infinite;
+      }
     }
     
     .subheading {
@@ -70,6 +116,7 @@
       color: #ffffff;
       font-weight: 500;
       letter-spacing: 1px;
+      animation: fadeIn 2s ease;
     }
   }
 
@@ -78,7 +125,8 @@
     grid-template-columns: 1fr 1fr;
     gap: 2.5rem;
     margin-bottom: 3rem;
-    
+    animation: fadeInUp 1.5s ease;
+
     @media (max-width: 900px) {
       grid-template-columns: 1fr;
     }
@@ -124,10 +172,11 @@
       text-align: center;
       border: 1px solid #e2e8f0;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      
+      animation: fadeInUp 1.3s ease;
+
       &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transform: translateY(-5px) scale(1.03);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
       }
       
       .stat-value {
@@ -156,7 +205,8 @@
     height: 400px;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 2s ease;
     
     .slide-image {
       position: absolute;
@@ -255,7 +305,7 @@
       box-shadow: 0 4px 15px rgba(26, 41, 128, 0.2);
       
       &:hover {
-        transform: translateY(-3px);
+        transform: translateY(-3px) scale(1.05);
         box-shadow: 0 6px 20px rgba(26, 41, 128, 0.3);
       }
     }
@@ -319,7 +369,8 @@
     
     .section-header {
       margin-bottom: 2rem;
-      
+      animation: fadeIn 1.5s ease;
+
       h2 {
         font-size: 1.8rem;
         color: #2d3748;
@@ -347,10 +398,11 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         border: 1px solid #edf2f7;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        
+        animation: fadeInUp 1.4s ease;
+
         &:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+          transform: translateY(-5px) scale(1.02);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
         .card-header {
@@ -443,14 +495,44 @@
 
 /* Animations */
 @keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(60px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-30px); letter-spacing: 10px; }
+  to { opacity: 1; transform: translateY(0); letter-spacing: 2px; }
+}
+
+@keyframes glowPulse {
+  from { text-shadow: 0 0 8px rgba(6, 215, 243, 0.6), 0 0 16px rgba(0, 0, 0, 0.6); }
+  to { text-shadow: 0 0 16px rgba(6, 215, 243, 1), 0 0 32px rgba(53, 151, 242, 1); }
+}
+
+@keyframes shine {
+  from { left: -75%; }
+  to { left: 125%; }
 }
 
 @media (max-width: 768px) {
@@ -472,6 +554,10 @@
     
     .stats-container {
       grid-template-columns: 1fr;
+    }
+
+    .photo-slider {
+      height: 250px;
     }
   }
 }
