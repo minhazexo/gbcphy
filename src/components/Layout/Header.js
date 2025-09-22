@@ -110,15 +110,11 @@ function Header() {
                 </Link>
               </li>
               <li>
-                <Link to="/login" onClick={() => setMenuOpen(false)}>
-                  Login
+                <Link to="/scientific" onClick={() => setMenuOpen(false)}>
+                  Scientific
                 </Link>
               </li>
-              <li>
-                <Link to="/register" onClick={() => setMenuOpen(false)}>
-                  Register
-                </Link>
-              </li>
+             
             </>
           )}
         </ul>

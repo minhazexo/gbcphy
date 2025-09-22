@@ -5,7 +5,7 @@ import Footer from "./components/Layout/Footer";
 import Home from "./pages/Home/Home";
 import Games from "./pages/Games/Games";
 import FlappyBird from "./pages/Games/FlappyBird"; // you'll create this
-
+import Scientific from "./pages/Scientific/Scientific"; // you'll create this
 import About from "./pages/About/About";
 import Academic from "./pages/Academic/Academic";
 import Login from "./pages/Login/Login";
@@ -30,6 +30,8 @@ function App() {
           <Route path="/games" element={<Games />} />
           <Route path="/snakegame" element={<SnakeGame />} />
           <Route path="/flappybird" element={<FlappyBird />} />
+           <Route path="/scientific" element={<Scientific />} />
+          
           
 
           <Route path="/academic" element={<Academic />} />

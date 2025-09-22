@@ -1,0 +1,30 @@
+
+Project: Fractal Explorer (Mandelbrot + Julia, Themes, Orbit Traps, 4K Export)
+
+Folders & Files:
+- index.html            : Main HTML page & UI
+- css/
+  - styles.css          : Multiple themes via CSS variables + grid overlay
+- js/
+  - main.js             : App entry, UI wiring, theme & palette animation, 4K export
+  - renderer.js         : WebGL2 renderer + CPU fallback via workers
+  - shaders.js          : Shader with modes (Mandelbrot/Julia) and color modes (smooth/escape/orbit traps)
+  - controls.js         : Mouse/touch navigation, box zoom
+  - minimap.js          : Low-res minimap & viewport overlay
+  - presets.js          : Presets (Mandelbrot, Julia seeds), palettes, themes, defaults
+  - utils.js            : Helpers, FPS meter, palette builder
+  - worker.js           : WorkerManager (pool, tiling, small renders)
+- workers/
+  - mandlebrotWorker.js : CPU worker computing tiles (Mandelbrot/Julia + color modes)
+
+New features:
+- Theme switcher (Aurora, Midnight Neon, Solar Dawn, Retro CRT, Minimal Light, AMOLED)
+- Color modes: Smooth, Escape Time, Orbit Trap (Circle/Cross)
+- Palette animation with speed control (can reverse with negative)
+- Iterations scale with zoom (toggle)
+- Grid overlay (toggle)
+- 4K export (one-click)
+
+Run locally:
+1) python -m http.server 8080  OR  npx serve .
+2) Open http://localhost:8080
