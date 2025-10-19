@@ -199,7 +199,7 @@ const Notes = () => {
 
       {showRoutineImage && (
         <div className="routine-image-container">
-          <img src="/Class Routine/Class Routine.jpg" alt="Class Routine" className="routine-image" />
+          <img src="/Class Routine/routine.jpg" alt="Class Routine" className="routine-image" />
           <button className="close-button" onClick={() => setShowRoutineImage(false)}>
             Close
           </button>
