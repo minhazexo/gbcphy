@@ -24,24 +24,38 @@ console.log("MONGODB_URI:", process.env.MONGODB_URI); // debug env
 
 // ---------- CORS setup ----------
 const envClient = process.env.CLIENT_ORIGIN;
-const defaultAllowedOrigins = ["https://gbc-dop.netlify.app", "http://localhost:3000"];
-const allowedOrigins = envClient ? [envClient, ...defaultAllowedOrigins] : defaultAllowedOrigins;
+const defaultAllowedOrigins = [
+  "https://gbc-dop.netlify.app",
+  "http://localhost:3000"
+];
+const allowedOrigins = envClient
+  ? [envClient, ...defaultAllowedOrigins]
+  : defaultAllowedOrigins;
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+// Apply CORS globally
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn("Blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+  })
+);
+
+// Handle preflight requests explicitly
+app.options("*", cors({
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
+  credentials: true
 }));
-
-// Handle preflight requests globally
-app.options("*", cors());
 
 // ---------- Middleware ----------
 app.use(express.json());
@@ -50,7 +64,8 @@ app.use(express.urlencoded({ extended: true }));
 // ---------- MongoDB connection ----------
 const MONGODB_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGODB_URI)
+mongoose
+  .connect(MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -66,41 +81,45 @@ const storage = new GridFsStorage({
   url: MONGODB_URI,
   file: (req, file) => ({
     filename: file.originalname,
-    bucketName: "uploads",
-  }),
+    bucketName: "uploads"
+  })
 });
 const upload = multer({ storage });
 
 // ---------- Profile image routes ----------
-app.post("/api/user/:userId/uploadProfileImage", upload.single("image"), async (req, res) => {
-  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
+app.post(
+  "/api/user/:userId/uploadProfileImage",
+  upload.single("image"),
+  async (req, res) => {
+    if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-  const userId = req.params.userId;
-  try {
-    await User.findByIdAndUpdate(userId, { profileImageId: req.file.id });
-    res.status(201).json({ message: "Profile image uploaded successfully" });
-  } catch (err) {
-    console.error("Upload error:", err);
-    res.status(500).json({ message: "Failed to upload profile image" });
+    const userId = req.params.userId;
+    try {
+      await User.findByIdAndUpdate(userId, { profileImageId: req.file.id });
+      res.status(201).json({ message: "Profile image uploaded successfully" });
+    } catch (err) {
+      console.error("Upload error:", err);
+      res.status(500).json({ message: "Failed to upload profile image" });
+    }
   }
-});
+);
 
 app.get("/api/user/:userId/profileImage", async (req, res) => {
   const userId = req.params.userId;
   try {
     const user = await User.findById(userId);
-    if (!user || !user.profileImageId) return res.status(404).json({ message: "Image not found" });
+    if (!user || !user.profileImageId)
+      return res.status(404).json({ message: "Image not found" });
 
     const cursor = gfsBucket.find({ _id: user.profileImageId });
     const file = await cursor.next();
     if (!file) return res.status(404).json({ message: "Image not found" });
 
     res.set("Content-Type", file.contentType || "application/octet-stream");
-    gfsBucket.openDownloadStream(file._id).pipe(res)
-      .on("error", (err) => {
-        console.error("Stream error:", err);
-        res.status(500).json({ message: "Failed to stream profile image" });
-      });
+    gfsBucket.openDownloadStream(file._id).pipe(res).on("error", (err) => {
+      console.error("Stream error:", err);
+      res.status(500).json({ message: "Failed to stream profile image" });
+    });
   } catch (err) {
     console.error("Fetch image error:", err);
     res.status(500).json({ message: "Failed to fetch profile image" });
@@ -138,7 +157,7 @@ app.use((err, req, res, next) => {
   res.status(err.statusCode || 500).json({
     success: false,
     status: err.statusCode || 500,
-    message: err.message || "Internal Server Error",
+    message: err.message || "Internal Server Error"
   });
 });
 
@@ -150,8 +169,8 @@ const io = new IOServer(httpServer, {
   cors: {
     origin: allowedOrigins,
     methods: ["GET", "POST"],
-    credentials: true,
-  },
+    credentials: true
+  }
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
@@ -170,7 +189,7 @@ io.use((socket, next) => {
     socket.user = {
       user_id: decoded.id || decoded.userId || decoded.user_id,
       email: decoded.email || null,
-      role: decoded.role || "student",
+      role: decoded.role || "student"
     };
     next();
   } catch (err) {
@@ -181,7 +200,12 @@ io.use((socket, next) => {
 
 // Socket connection
 io.on("connection", (socket) => {
-  console.log("Socket connected:", socket.id, "user:", socket.user || "anonymous");
+  console.log(
+    "Socket connected:",
+    socket.id,
+    "user:",
+    socket.user || "anonymous"
+  );
 });
 
 // Optional chessSocket handler
@@ -191,7 +215,9 @@ try {
     chessSocket(io);
     console.log("Loaded Server/sockets/chessSocket.js");
   } else {
-    console.log("Server/sockets/chessSocket.js found but does not export a function");
+    console.log(
+      "Server/sockets/chessSocket.js found but does not export a function"
+    );
   }
 } catch {
   console.log("No Server/sockets/chessSocket.js found (optional)");
