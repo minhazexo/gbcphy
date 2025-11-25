@@ -10,70 +10,98 @@ import axios from "axios";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // User authentication state
-  const [userProfile, setUserProfile] = useState(null); // User profile state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
 
-  // Base URL for API requests
-  const baseURL = process.env.REACT_APP_API_URL || "https://gbc-dop.netlify.app/";
+  // -------------------------
+  // Base URL for API
+  // -------------------------
+  const baseURL =
+    process.env.REACT_APP_API_URL ||
+    "https://gbc-dop-backend.onrender.com";
 
-  // Fetch user profile with token
-  const fetchUserProfile = useCallback(async (token) => {
-    try {
-      const response = await axios.get(`${baseURL}/api/user/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  // Unified token getter
+  const getToken = () => localStorage.getItem("authToken");
 
-      setUserProfile(response.data); // Store profile data
-      console.log("User profile fetched:", response.data);
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      if (error.response && error.response.status === 401) {
-        console.warn("Unauthorized - token may be expired or invalid.");
-        logout(); // Logout if token is invalid
+  // Create an Axios instance with credentials enabled
+  const api = axios.create({
+    baseURL,
+    withCredentials: true, // Important for CORS cookies (if used)
+  });
+
+  // -------------------------
+  // Fetch Profile
+  // -------------------------
+  const fetchUserProfile = useCallback(
+    async (token) => {
+      if (!token) return;
+
+      try {
+        const response = await api.get("/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setUserProfile(response.data);
+        console.log("User profile fetched:", response.data);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+
+        if (error.response && error.response.status === 401) {
+          console.warn("Unauthorized - token may be expired.");
+          logout();
+        }
       }
-    }
-  }, [baseURL]);
+    },
+    [api]
+  );
 
-  // Check authentication state on component mount
+  // -------------------------
+  // Check authentication
+  // -------------------------
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = getToken();
     if (token) {
       setIsAuthenticated(true);
       fetchUserProfile(token);
     }
   }, [fetchUserProfile]);
 
-  // Login function
+  // -------------------------
+  // LOGIN
+  // -------------------------
   const login = async (email, password) => {
     try {
-      const response = await axios.post(
-        `${baseURL}/api/auth/login`,
+      const response = await api.post(
+        "/api/auth/login",
         { email, password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      localStorage.setItem("authToken", response.data.token); // Store token
+      const token = response.data.token;
+      localStorage.setItem("authToken", token);
+
       setIsAuthenticated(true);
-      fetchUserProfile(response.data.token); // Fetch profile after login
+      await fetchUserProfile(token);
+
+      return true; // success
     } catch (error) {
       console.error("Login error:", error);
       setIsAuthenticated(false);
+
       if (error.response) {
         throw new Error(
           error.response.data.message ||
-          "Login failed. Please check your credentials."
+            "Login failed. Please check your credentials."
         );
+      } else {
+        throw new Error("Network error. Check server and CORS settings.");
       }
     }
   };
 
-  // Logout function
+  // -------------------------
+  // LOGOUT
+  // -------------------------
   const logout = () => {
     console.log("Logging out...");
     localStorage.removeItem("authToken");
@@ -81,70 +109,46 @@ export const AuthProvider = ({ children }) => {
     setUserProfile(null);
   };
 
+  // -------------------------
   // Upload profile picture
+  // -------------------------
   const uploadProfilePicture = async (file) => {
     try {
-      const token = localStorage.getItem("authToken");
+      const token = getToken();
       const formData = new FormData();
       formData.append("image", file);
 
-      if (!userProfile || !userProfile._id) {
-        throw new Error("User profile not found or not authenticated.");
-      }
+      if (!userProfile || !userProfile._id) throw new Error("User profile not found.");
 
-      await axios.post(
-        `${baseURL}/api/user/${userProfile._id}/uploadProfileImage`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.post(`/api/user/${userProfile._id}/uploadProfileImage`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      fetchUserProfile(token); // Refresh profile after upload
-      console.log("Profile picture uploaded successfully.");
+      await fetchUserProfile(token);
+      console.log("Profile picture uploaded.");
     } catch (error) {
       console.error("Error uploading profile picture:", error);
     }
   };
 
+  // -------------------------
   // Update user profile
+  // -------------------------
   const updateUserProfile = async (userData, profileImage) => {
     try {
-      const token = localStorage.getItem("authToken");
-
-      // Delete old profile image if necessary
-      if (userData.profileImageId) {
-        await axios.delete(
-          `${baseURL}/api/user/deleteFile/${userData.profileImageId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log("Old profile image deleted.");
-      }
-
-      // Update user profile
+      const token = getToken();
       const formData = new FormData();
-      if (profileImage) {
-        formData.append("profileImage", profileImage);
-      }
 
-      const response = await axios.put(
-        `${baseURL}/api/user/${userData._id}/profile`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      if (profileImage) formData.append("profileImage", profileImage);
 
-      setUserProfile(response.data.user); // Update state
+      const response = await api.put(`/api/user/${userData._id}/profile`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setUserProfile(response.data.user);
       console.log("Profile updated:", response.data.user);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -167,8 +171,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
 
 export default AuthContext;
