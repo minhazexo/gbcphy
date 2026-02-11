@@ -19,7 +19,7 @@
     h1 {
       font-size: 1.8rem;
       margin-bottom: 1.5rem;
-      color: #333;
+      color: #fff;
     }
 
     .form-group {
@@ -29,7 +29,7 @@
         display: block;
         margin-bottom: 0.5rem;
         font-weight: bold;
-        color: #555;
+        color: #fff;
       }
 
       .input-field {
@@ -48,7 +48,7 @@
     }
 
     .register-button {
-      background-color: #000000;
+      background-color: #000;
       color: #fff;
       border: none;
       padding: 0.75rem 2rem;
@@ -64,8 +64,6 @@
         transform: scale(1.05);
       }
     }
-    
-
 
     .register-footer {
       margin-top: 1rem;

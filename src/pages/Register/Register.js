@@ -1,37 +1,30 @@
-import axios from "axios";
-import React, { useState } from "react";
+// src/pages/Register/Register.js
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../api";
 import "../../styles/register.scss";
 
-const Register = () => {
+export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", {
-        username,
-        email,
-        password,
-      });
-
-      // Assuming response contains a message on successful registration
-      setSuccess(response.data.message);
-      setError(null);
-      setUsername("");
-      setEmail("");
-      setPassword("");
-    } catch (error) {
-      console.error("Error registering user:", error);
-      const message = error.response?.data?.message || "Registration failed. Please try again.";
-      setError(message);
-      setSuccess(null);
+      const res = await registerUser({ username, email, password });
+      setMessage(res.message); // backend success message
+      // Redirect to profile dashboard after 1.5s
+      setTimeout(() => navigate("/profile"), 1500);
+    } catch (err) {
+      setMessage(err.message); // show actual backend error
     } finally {
       setLoading(false);
     }
@@ -39,59 +32,51 @@ const Register = () => {
 
   return (
     <div className="register-container">
-      <div className="register-form">
-        <h1>Create an Account</h1>
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="input-field"
-              placeholder="Enter your username"
-              disabled={loading}
-            />
-          </div>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input-field"
-              placeholder="Enter your email"
-              disabled={loading}
-            />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="input-field"
-              placeholder="Enter your password"
-              disabled={loading}
-            />
-          </div>
-          <button type="submit" className="register-button" disabled={loading}>
-            {loading ? "Registering..." : "Register"}
-          </button>
-        </form>
-        <div className="register-footer">
-          <p>
-            Already have an account? <a href="/login">Login here</a>
-          </p>
+      <form className="register-form" onSubmit={handleSubmit}>
+        <h1>Register</h1>
+
+        <div className="form-group">
+          <label>Username</label>
+          <input
+            className="input-field"
+            type="text"
+            placeholder="Enter username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
         </div>
-      </div>
+
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            className="input-field"
+            type="email"
+            placeholder="Enter email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            className="input-field"
+            type="password"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button className="register-button" type="submit" disabled={loading}>
+          {loading ? "Registering..." : "Register"}
+        </button>
+
+        {message && <p className="register-footer">{message}</p>}
+      </form>
     </div>
   );
-};
-
-export default Register;
+}

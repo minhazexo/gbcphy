@@ -1,26 +1,30 @@
-// EditProfile.js
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import axios from "axios"; // Make sure to use ES6 import here
+import axios from "axios";
 import "../../styles/editProfile.scss";
 
 const EditProfile = () => {
-  const { userProfile, logout, uploadProfilePicture } = useAuth();
+  const { userProfile, logout } = useAuth();
   const [profileImage, setProfileImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [username, setUsername] = useState("");
+  const [roll, setRoll] = useState("");
+  const [session, setSession] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     if (userProfile) {
       setUsername(userProfile.username);
-      if (userProfile._id) {
-        setPreviewImage(
-          `http://localhost:5000/api/user/${userProfile._id}/profileImage`
-        );
+      setRoll(userProfile.roll || "");
+      setSession(userProfile.session || "");
+      if (userProfile.profile_image) {
+        setPreviewImage(userProfile.profile_image.startsWith("/uploads")
+          ? userProfile.profile_image
+          : `/uploads/${userProfile.profile_image}`);
       }
     }
   }, [userProfile]);
@@ -31,9 +35,7 @@ const EditProfile = () => {
 
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
+      reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
     }
   };
@@ -42,44 +44,40 @@ const EditProfile = () => {
     e.preventDefault();
     setError(null);
 
-    if (!profileImage && username === userProfile.username) {
+    if (!profileImage && username === userProfile.username && roll === userProfile.roll && session === userProfile.session) {
       setError("No changes detected.");
       return;
     }
 
-    const formData = new FormData();
-    if (profileImage) formData.append("image", profileImage);
-    formData.append("username", username);
-
     try {
-      const token = localStorage.getItem("authToken");
-      if (!userProfile || !userProfile._id) {
-        throw new Error(
-          "User profile not defined or does not have an ID (_id)."
-        );
-      }
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("roll", roll);
+      formData.append("session", session);
+      if (profileImage) formData.append("image", profileImage);
 
-      await uploadProfilePicture(profileImage);
-
-      const response = await axios.get(
-        `http://localhost:5000/api/user/${userProfile._id}/profileImage`,
-        { username },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const response = await axios.post(
+        `http://localhost:5010/api/user/${userProfile.id}/editProfile`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
       if (response.status === 200) {
+        alert("Profile updated successfully!");
         navigate("/profile");
-      } else {
-        setError(
-          response.data.message || "Failed to update profile. Please try again."
-        );
       }
-    } catch (error) {
-      console.error("Error updating profile:", error);
+    } catch (err) {
+      console.error("Error updating profile:", err);
       setError(
-        "An error occurred while updating your profile. Please try again."
+        err.response?.data?.message || "Failed to update profile. Please try again."
       );
-      logout();
+
+      if (err.response?.status === 401) logout();
     }
   };
 
@@ -89,35 +87,40 @@ const EditProfile = () => {
       <form onSubmit={handleSubmit} className="edit-profile-form">
         <div className="image-preview">
           {previewImage ? (
-            <img
-              src={previewImage}
-              alt="Profile Preview"
-              className="profile-preview"
-            />
+            <img src={previewImage} alt="Profile Preview" className="profile-preview" />
           ) : (
             <p>No image selected</p>
           )}
         </div>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="file-input"
-          id="file-input"
-        />
-        <label htmlFor="file-input" className="file-input-label">
-          Choose Image
-        </label>
+
+        <input type="file" accept="image/*" onChange={handleImageChange} className="file-input" id="file-input" />
+        <label htmlFor="file-input" className="file-input-label">Choose Image</label>
+
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          placeholder="Enter your username"
+          placeholder="Enter username"
           className="username-input"
         />
-        <button type="submit" className="btn-save">
-          Save Changes
-        </button>
+
+        <input
+          type="text"
+          value={roll}
+          onChange={(e) => setRoll(e.target.value)}
+          placeholder="Enter roll"
+          className="roll-input"
+        />
+
+        <input
+          type="text"
+          value={session}
+          onChange={(e) => setSession(e.target.value)}
+          placeholder="Enter session"
+          className="session-input"
+        />
+
+        <button type="submit" className="btn-save">Save Changes</button>
       </form>
     </div>
   );

@@ -1,105 +1,117 @@
-const express = require('express');
-const User = require('../models/User'); // Adjust the path according to your structure
-const { verifyToken } = require('../middleware/authMiddleware');
-const multer = require('multer');
-const path = require('path');
-const { body, validationResult } = require('express-validator');
-
+const express = require("express");
 const router = express.Router();
+const db = require("../db"); // promise-based pool
+const multer = require("multer");
+const jwt = require("jsonwebtoken");
+const path = require("path");
 
-// Multer setup for image uploads
+// ---------- Multer storage ----------
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../../uploads")); // Ensure correct path for uploads folder
+    cb(null, path.join(__dirname, "../uploads")); // ensure folder exists
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename with timestamp
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = file.originalname.split(".").pop();
+    cb(null, `${file.fieldname}-${uniqueSuffix}.${ext}`);
   },
 });
 
-// File filter for image types
-const fileFilter = (req, file, cb) => {
-  if (!req) 
-  { new Error ("Request not found") }
-  const allowedTypes = /jpeg|jpg|png/;
-  const isValidFile = allowedTypes.test(path.extname(file.originalname).toLowerCase()) && allowedTypes.test(file.mimetype);
+const upload = multer({ storage });
 
-  if (isValidFile) {
-    return cb(null, true);
-  } else {
-    return cb(new Error("Only images are allowed (jpeg, jpg, png)"), false);
+// ---------- JWT Middleware ----------
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ message: "No token provided" });
+
+  const token = authHeader.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Invalid token format" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "dev_secret");
+    req.userId = decoded.id;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: process.env.MAX_FILE_SIZE || 5 * 1024 * 1024 }, // 5MB limit or from env variable
-});
-
-// Validation rules for updating profile
-const validateProfileUpdate = [
-  body('username').optional().isString().withMessage('Username must be a string'),
-];
-
-// Get user profile
-router.get("/profile", verifyToken, async (req, res) => {
+// ---------- GET User Profile ----------
+router.get("/:id/profile", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select("-password"); // Exclude the password field
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    const { id } = req.params;
+
+    // Ensure user can only fetch their own profile
+    if (parseInt(id) !== req.userId) {
+      return res.status(403).json({ message: "Access denied" });
     }
-    res.status(200).json(user);
-  } catch (error) {
-    console.error("Error fetching user profile:", error);
-    res.status(500).json({ message: "Server error" });
+
+    const [rows] = await db.query(
+      "SELECT id, username, email, roll, session, profile_image FROM users WHERE id = ?",
+      [id]
+    );
+
+    if (!rows || rows.length === 0) return res.status(404).json({ message: "User not found" });
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error("GET /user/:id/profile error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
 
-// Update user profile with profile image
-router.put(
-  "/profile",
-  verifyToken,
-  upload.single("profileImage"), // Middleware to handle file upload
-  validateProfileUpdate,
-  async (req, res) => {
-    // Validate incoming request data
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+// ---------- POST Edit Profile ----------
+router.post("/:id/editProfile", authMiddleware, upload.single("image"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, roll, session } = req.body;
+    const image = req.file ? req.file.filename : null;
+
+    if (parseInt(id) !== req.userId) {
+      return res.status(403).json({ message: "Access denied" });
     }
 
-    try {
-      const userId = req.user.userId; // Get user ID from the token
-      const { username } = req.body;
+    // Build dynamic query
+    const fields = [];
+    const params = [];
 
-      // Prepare update data object
-      const updateData = {};
-      if (username) {
-        updateData.username = username; // Update username if provided
-      }
-      if (req.file) {
-        updateData.profileImage = req.file.path.replace(/\\/g, "/"); // Use forward slashes
-      }
-
-      const user = await User.findByIdAndUpdate(userId, updateData, {
-        new: true,
-      }).select("-password"); // Get the updated user without the password
-
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      // Send a success response with updated user info
-      res.status(200).json({
-        message: "Profile updated successfully",
-        user,
-      });
-    } catch (error) {
-      console.error("Error updating user profile:", error);
-      res.status(500).json({ message: "Server error" });
+    if (username) {
+      fields.push("username = ?");
+      params.push(username);
     }
+    if (roll) {
+      fields.push("roll = ?");
+      params.push(roll);
+    }
+    if (session) {
+      fields.push("session = ?");
+      params.push(session);
+    }
+    if (image) {
+      fields.push("profile_image = ?");
+      params.push(image);
+    }
+
+    if (fields.length === 0) {
+      return res.status(400).json({ message: "No fields to update" });
+    }
+
+    const sql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
+    params.push(id);
+
+    const [result] = await db.query(sql, params);
+
+    // Return updated user data
+    const [updatedRows] = await db.query(
+      "SELECT id, username, email, roll, session, profile_image FROM users WHERE id = ?",
+      [id]
+    );
+
+    res.json({ message: "Profile updated successfully", user: updatedRows[0] });
+  } catch (err) {
+    console.error("POST /user/:id/editProfile error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
-);
+});
 
-module.exports = router; // Use CommonJS export
+module.exports = router;

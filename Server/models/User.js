@@ -1,32 +1,31 @@
-const mongoose = require("mongoose");
+// Server/models/User.js
+const db = require("../db");
 
-const UserSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    trim: true,
+const User = {
+  create: async ({ username, email, password, profileImage }) => {
+    const [result] = await db.execute(
+      "INSERT INTO users (username, email, password, profileImage) VALUES (?, ?, ?, ?)",
+      [username, email, password, profileImage || null]
+    );
+    return result.insertId;
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 6,
-  },
-  profileImageId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "uploads.files",
-    default: null,
-  },
-}, {
-  timestamps: true,
-});
 
-const User = mongoose.model("User", UserSchema);
+  findByEmail: async (email) => {
+    const [rows] = await db.execute("SELECT * FROM users WHERE email = ?", [email]);
+    return rows[0];
+  },
+
+  findById: async (id) => {
+    const [rows] = await db.execute("SELECT * FROM users WHERE id = ?", [id]);
+    return rows[0];
+  },
+
+  updateProfile: async (id, { username, profileImage }) => {
+    await db.execute(
+      "UPDATE users SET username = ?, profileImage = ? WHERE id = ?",
+      [username, profileImage || null, id]
+    );
+  },
+};
 
 module.exports = User;

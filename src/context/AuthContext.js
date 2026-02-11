@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
@@ -13,51 +7,69 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
 
-  // -------------------------
-  // Base URL for API
-  // -------------------------
-  const baseURL =
-    process.env.REACT_APP_API_URL ||
-    "https://gbc-dop-backend.onrender.com";
+  const baseURL = process.env.REACT_APP_API_URL || "http://localhost:5010/api";
 
-  // Unified token getter
   const getToken = () => localStorage.getItem("authToken");
+  const getUserId = () => localStorage.getItem("userId");
 
-  // Create an Axios instance with credentials enabled
   const api = axios.create({
     baseURL,
-    withCredentials: true, // Important for CORS cookies (if used)
+    withCredentials: true,
   });
 
   // -------------------------
-  // Fetch Profile
+  // Fetch user profile
   // -------------------------
-  const fetchUserProfile = useCallback(
-    async (token) => {
-      if (!token) return;
+  // -------------------------
+// Fetch user profile
+// -------------------------
+const fetchUserProfile = useCallback(
+  async () => {
+    const token = getToken();
+    if (!token) {
+      console.error("No token found in localStorage!");
+      return;
+    }
 
-      try {
-        const response = await api.get("/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        setUserProfile(response.data);
-        console.log("User profile fetched:", response.data);
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-
-        if (error.response && error.response.status === 401) {
-          console.warn("Unauthorized - token may be expired.");
-          logout();
-        }
+    try {
+      // Decode user ID from token or store it separately when logging in
+      const userId = parseJwt(token)?.id;
+      if (!userId) {
+        console.error("User ID not found in token!");
+        return;
       }
-    },
-    [api]
-  );
 
-  // -------------------------
-  // Check authentication
-  // -------------------------
+      const response = await api.get(`/user/${userId}/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setUserProfile(response.data);
+      console.log("User profile fetched:", response.data);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      if (error.response && error.response.status === 401) {
+        logout();
+      }
+    }
+  },
+  [api]
+);
+
+// -------------------------
+// Helper: decode JWT (simple base64 decode)
+// -------------------------
+function parseJwt(token) {
+  try {
+    const base64Payload = token.split(".")[1];
+    const payload = atob(base64Payload);
+    return JSON.parse(payload);
+  } catch (err) {
+    console.error("Invalid JWT token:", err);
+    return null;
+  }
+}
+
+
   useEffect(() => {
     const token = getToken();
     if (token) {
@@ -72,27 +84,26 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await api.post(
-        "/api/auth/login",
+        "/auth/login",
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );
 
       const token = response.data.token;
-      localStorage.setItem("authToken", token);
+      const user = response.data.user;
+      if (!token || !user) throw new Error("Invalid login response");
 
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("userId", user.id); // store userId for profile calls
       setIsAuthenticated(true);
       await fetchUserProfile(token);
 
-      return true; // success
+      return true;
     } catch (error) {
       console.error("Login error:", error);
       setIsAuthenticated(false);
-
       if (error.response) {
-        throw new Error(
-          error.response.data.message ||
-            "Login failed. Please check your credentials."
-        );
+        throw new Error(error.response.data.message || "Login failed. Check credentials.");
       } else {
         throw new Error("Network error. Check server and CORS settings.");
       }
@@ -103,8 +114,8 @@ export const AuthProvider = ({ children }) => {
   // LOGOUT
   // -------------------------
   const logout = () => {
-    console.log("Logging out...");
     localStorage.removeItem("authToken");
+    localStorage.removeItem("userId");
     setIsAuthenticated(false);
     setUserProfile(null);
   };
@@ -115,12 +126,13 @@ export const AuthProvider = ({ children }) => {
   const uploadProfilePicture = async (file) => {
     try {
       const token = getToken();
+      const userId = getUserId();
+      if (!userProfile || !userId) throw new Error("User profile not found.");
+
       const formData = new FormData();
       formData.append("image", file);
 
-      if (!userProfile || !userProfile._id) throw new Error("User profile not found.");
-
-      await api.post(`/api/user/${userProfile._id}/uploadProfileImage`, formData, {
+      await api.post(`/user/${userId}/uploadProfileImage`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -137,18 +149,18 @@ export const AuthProvider = ({ children }) => {
   const updateUserProfile = async (userData, profileImage) => {
     try {
       const token = getToken();
+      const userId = getUserId();
       const formData = new FormData();
-
       if (profileImage) formData.append("profileImage", profileImage);
 
-      const response = await api.put(`/api/user/${userData._id}/profile`, formData, {
+      const response = await api.post(`/user/${userId}/editProfile`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
-      setUserProfile(response.data.user);
+      setUserProfile(response.data.user || userProfile);
       console.log("Profile updated:", response.data.user);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -172,5 +184,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-
 export default AuthContext;

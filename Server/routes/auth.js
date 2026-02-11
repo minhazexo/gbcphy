@@ -1,97 +1,70 @@
+// server/routes/auth.js
 const express = require("express");
-const User = require("../models/User");
-const jwt = require("jsonwebtoken"); // Corrected import for jwt
 const router = express.Router();
+const db = require("../db"); // mysql2/promise pool
+const bcrypt = require("bcryptjs");
+const { body, validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
 
-// Middleware to verify the JWT token
-const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 
-  if (!authHeader) {
-    return res.status(401).json({ message: "Authorization header missing" });
-  }
+// ---------- REGISTER ----------
+router.post(
+  "/register",
+  [
+    body("username").notEmpty().trim().withMessage("Username required"),
+    body("email").isEmail().withMessage("Invalid email"),
+    body("password").isLength({ min: 6 }).withMessage("Password too short"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const token = authHeader.split(" ")[1];
+    const { username, email, password } = req.body;
 
-  if (!token) {
-    return res.status(401).json({ message: "Token missing" });
-  }
+    try {
+      const [existing] = await db.query("SELECT id FROM users WHERE email = ?", [email]);
+      if (existing.length > 0) return res.status(400).json({ error: "Email already registered" });
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Attach decoded user data to the request object
-    next();
-  } catch (error) {
-    console.error("Invalid token:", error);
-    return res.status(401).json({ message: "Invalid token" });
-  }
-};
+      const hashed = await bcrypt.hash(password, 10);
 
-// Register a new user
-router.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
+      const [result] = await db.query(
+        "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+        [username, email, hashed]
+      );
 
-  try {
-    // Check if the user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
+      res.json({ message: "User registered successfully", userId: result.insertId });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Server error" });
     }
-
-    // Create a new user instance
-    const user = new User({ username, email, password });
-
-    // Save the user to the database
-    await user.save();
-    res.status(201).json({ message: "User created successfully" });
-  } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ message: "Server error" });
   }
-});
+);
 
-// Login an existing user
+// ---------- LOGIN ----------
 router.post("/login", async (req, res) => {
-  console.log("Login request received:", req.body); // Log the incoming request body
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    if (rows.length === 0) return res.status(400).json({ error: "User not found" });
 
-    // Check the password
-    if (user.password !== password) {
-      return res.status(400).json({ message: "Incorrect password" });
-    }
+    const user = rows[0];
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return res.status(400).json({ error: "Invalid password" });
 
-    // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
 
-    res.status(200).json({ token, redirect: "/profile" });
-  } catch (error) {
-    console.error("Login error:", error); // Log errors in the login process
-    res.status(500).json({ message: "Server error" });
-  }
-});
+    const safeUser = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    };
 
-// Get user profile
-router.get("/profile", verifyToken, async (req, res) => {
-  try {
-    const userId = req.user.userId; // Extract userId from the verified token
-    const user = await User.findById(userId).select("-password"); // Exclude the password from the response
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json(user);
-  } catch (error) {
-    console.error("Error fetching profile:", error);
-    res.status(500).json({ message: "Server error" });
+    res.json({ message: "Login successful", token, user: safeUser });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 

@@ -1,79 +1,71 @@
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";  // ✅ import AuthContext
 import "../../styles/login.scss";
 
-const Login = () => {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login } = useAuth();  // ✅ use login from AuthContext
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
+  e.preventDefault();
+  setMessage("");
+  setLoading(true);
 
-    try {
-      // Use the login function from AuthContext
-      await login(email, password);
-      setSuccess("Login successful!");
-
-      // Redirect to the profile page
-      navigate("/profile");
-    } catch (error) {
-      console.error("Error logging in:", error);
-      const message = error.response?.data?.message || "An error occurred. Please try again.";
-      setError(message);
+  try {
+    const success = await login(email, password); // calls AuthContext
+    if (success) {
+      navigate("/profile"); // redirect after login
     }
-  };
+  } catch (error) {
+    console.error("Login error:", error);
+    setMessage(error.message || "Login failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="login-container">
-      <div className="login-form">
-        <h1>Login to Your Account</h1>
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input-field"
-              placeholder="Enter your email"
-              autoComplete="email"
-            />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="input-field"
-              placeholder="Enter your password"
-              autoComplete="current-password"
-            />
-          </div>
-          <button type="submit" className="login-button">
-            Login
-          </button>
-        </form>
-        <div className="login-footer">
-          <p>
-            Don't have an account? <a href="/register">Register here</a>
-          </p>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h1>Login</h1>
+
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            className="input-field"
+            type="email"
+            placeholder="Enter email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
-      </div>
+
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            className="input-field"
+            type="password"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button className="login-button" type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+
+        {message && <p className="login-footer">{message}</p>}
+      </form>
     </div>
   );
-};
-
-export default Login;
+}
