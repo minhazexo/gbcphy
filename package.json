@@ -36,11 +36,11 @@
   },
   "scripts": {
     "start": "concurrently \"npm run server\" \"react-scripts start\"",
-    "server": "cd ./server && nodemon server.js",
+    "server": "cd ./Server && nodemon server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "postinstall": "cd client && npm install"
+    "postinstall": "if [ -d client ]; then cd client && npm install; fi"
   },
   "proxy": "http://localhost:5010",
   "eslintConfig": {
@@ -87,5 +87,4 @@
   "bugs": {
     "url": "https://github.com/minhazexo/dop-repo/issues"
   }
-  
 }
