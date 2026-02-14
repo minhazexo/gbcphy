@@ -99,10 +99,10 @@ const Home = () => {
   const [editText, setEditText] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [activeSection, setActiveSection] = useState("hero");
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const heroRef = useRef(null);
-  const statsRef = useRef([]);
+  const [, setActiveSection] = useState("hero");
+const [, setHoveredCard] = useState(null);
+const heroRef = useRef(null);
+
 
   // Auto slide every 4s
   useEffect(() => {
