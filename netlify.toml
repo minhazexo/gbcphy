@@ -1,0 +1,59 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Environment variables context
+[context.production.environment]
+  REACT_APP_API_URL = "https://dop-backend.onrender.com/api"
+
+[context.deploy-preview.environment]
+  REACT_APP_API_URL = "https://dop-backend-staging.onrender.com/api"
+
+[context.branch-deploy.environment]
+  REACT_APP_API_URL = "https://dop-backend-dev.onrender.com/api"
+
+# Redirects for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Custom 404 page
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache static assets
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# API proxy (if using Netlify Functions)
+# [[redirects]]
+#   from = "/api/*"
+#   to = "/.netlify/functions/api/:splat"
+#   status = 200
+
+# Build plugins (optional)
+# [[plugins]]
+#   package = "@netlify/plugin-lighthouse"

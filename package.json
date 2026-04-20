@@ -40,7 +40,15 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "postinstall": "if [ -d client ]; then cd client && npm install; fi"
+    "postinstall": "if [ -d client ]; then cd client && npm install; fi",
+    "deploy": "npm run build && netlify deploy --prod --dir=build",
+    "deploy:staging": "npm run build && netlify deploy --dir=build",
+    "deploy:preview": "npm run build && netlify deploy --dir=build --alias=preview",
+    "deploy:log": "netlify logs",
+    "deploy:status": "netlify status",
+    "build:analyze": "react-scripts build --stats",
+    "lint": "eslint src/",
+    "predeploy": "npm run build"
   },
   "proxy": "http://localhost:5010",
   "eslintConfig": {
