@@ -3,15 +3,18 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #6e45e2, #07f2e2);
+  background: var(--page-bg);
+  color: var(--text-color);
   font-family: "Arial", sans-serif;
   animation: fadeIn 1s ease-in-out;
 
   .login-form {
-    background: hotpink;
+    background: var(--page-surface);
+    color: var(--text-color);
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 8px 16px var(--shadow-color);
+    border: 1px solid var(--border-color);
     text-align: center;
     width: 400px;
     animation: slideIn 0.8s ease-in-out;
@@ -19,7 +22,7 @@
     h1 {
       font-size: 1.8rem;
       margin-bottom: 1.5rem;
-      color: #fff;
+      color: var(--text-color);
     }
 
     .form-group {
@@ -29,27 +32,29 @@
         display: block;
         margin-bottom: 0.5rem;
         font-weight: bold;
-        color: #fff;
+        color: var(--text-color);
       }
 
       .input-field {
         width: 100%;
         padding: 0.75rem;
         border-radius: 5px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--border-color);
         transition: border-color 0.3s ease;
         outline: none;
         font-size: 1rem;
+        background: var(--input-bg);
+        color: var(--text-color);
 
         &:focus {
-          border-color: #6e45e2;
+          border-color: var(--accent-color);
         }
       }
     }
 
     .login-button {
-      background-color: #6e45e2;
-      color: #fff;
+      background-color: var(--button-bg);
+      color: var(--button-text);
       border: none;
       padding: 0.75rem 2rem;
       border-radius: 5px;
@@ -60,7 +65,7 @@
       transition: background-color 0.3s ease, transform 0.2s ease;
 
       &:hover {
-        background-color: #5a37b9;
+        background-color: var(--accent-strong);
         transform: scale(1.05);
       }
     }
@@ -68,18 +73,37 @@
     .login-footer {
       margin-top: 1rem;
       font-size: 0.9rem;
-      color: #fff;
+      color: var(--text-color);
 
       a {
-        color: #f9f9f9;
+        color: var(--surface-text);
         text-decoration: none;
         font-weight: bold;
         transition: color 0.3s ease;
 
         &:hover {
-          color: #5a37b9;
+          color: var(--accent-strong);
         }
       }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .login-form {
+    width: 90%;
+    padding: 1.5rem 1rem;
+    
+    h1 {
+      font-size: 1.5rem;
+    }
+    
+    .form-group .input-field {
+      width: 100%;
+    }
+    
+    .login-button {
+      padding: 0.6rem 1rem;
     }
   }
 }

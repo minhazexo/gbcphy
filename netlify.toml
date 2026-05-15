@@ -6,16 +6,6 @@
   NODE_VERSION = "18"
   NPM_FLAGS = "--legacy-peer-deps"
 
-# Environment variables context
-[context.production.environment]
-  REACT_APP_API_URL = "https://dop-backend.onrender.com/api"
-
-[context.deploy-preview.environment]
-  REACT_APP_API_URL = "https://dop-backend-staging.onrender.com/api"
-
-[context.branch-deploy.environment]
-  REACT_APP_API_URL = "https://dop-backend-dev.onrender.com/api"
-
 # Redirects for client-side routing
 [[redirects]]
   from = "/*"

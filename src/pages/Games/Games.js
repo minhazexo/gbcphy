@@ -13,9 +13,6 @@ function Games() {
         <Link to="/flappybird" className="game-card">
           🐦 Flappy Bird
         </Link>
-        <Link to="/chess" className="game-card">
-          ♟️ Chess Game
-        </Link>
       </div>
     </div>
   );

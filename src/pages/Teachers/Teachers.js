@@ -4,84 +4,74 @@ import { motion } from 'framer-motion';
 
 const teachersData = [
   {
-    name: 'Professor Taslima Ferdous',
-    photo: '/images/teacher1.jpg',
-    email: 'taslima.phy@gmail.com',
-    phone: '01552349161',
-    title: 'Professor & Head, Physics',
-    batch: 'BCS 14',
-    subjects: ['Quantum Mechanics', 'Advanced Physics'],
-    experience: '15+ years'
-  },
-  {
     name: 'Kamrun Nahar',
-    photo: '/images/kamrun.jpg',
+    photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1732018929.jpg',
     email: 'kamrunnaher231977@gmail.com',
-    phone: '01819464275',
-    title: 'Associate Professor, Physics',
+    phone: '01819464294',
+    title: 'Professor, Physics',
     batch: 'BCS 22',
-    subjects: ['Everything about Physics'],
-    experience: '12+ years'
+    subjects: ['Advanced Physics', 'Quantum Mechanics'],
+    experience: '18+ years'
   },
   {
     name: 'Mohammad Shariful Arefin',
-    photo: '/images/arefin.jpg',
+    photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1732018807.jpg',
     email: 'arefinroman@gmail.com',
     phone: '01712653188',
     title: 'Associate Professor, Physics',
     batch: 'BCS 24',
     subjects: ['Classical Mechanics', 'Mathematical Physics'],
-    experience: '10+ years'
+    experience: '15+ years'
   },
   {
     name: 'Farhana Fakrun Nesha',
-    photo: '/images/farhana.jpg',
+    photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1732018755.jpg',
     email: 'nessanfarhana@gmail.com',
     phone: '01912732402',
-    title: 'Assistant Professor, Physics',
+    title: 'Associate Professor, Physics',
     batch: 'BCS 28',
     subjects: ['Thermal Physics', 'Statistical Mechanics'],
-    experience: '8+ years'
+    experience: '12+ years'
   },
   {
     name: 'Labani Saha',
-    photo: '/images/teacher5.jpg',
+    photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1737389677.jpg',
     email: 'labanisaha29@gmail.com',
     phone: '01788007775',
     title: 'Assistant Professor, Physics',
     batch: 'BCS 29',
     subjects: ['Solid State Physics', 'Material Science'],
-    experience: '6+ years'
+    experience: '10+ years'
   },
   {
     name: 'Tahrin Haque',
-    photo: '/images/tahrin.jpg',
+    photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1732018977.jpg',
     email: 'tahrin.loka@yahoo.com',
     phone: '01916920750',
     title: 'Assistant Professor, Physics',
     batch: 'BCS 33',
     subjects: ['Nuclear Physics', 'Particle Physics'],
-    experience: '4+ years'
+    experience: '8+ years'
   },
   {
     name: 'Awlad Hossen',
     photo: '/images/teacher7.jpg',
-    email: 'awlad.physics@university.edu',
+    email: '',
     phone: '01724199348',
-    title: 'Lecturer, Physics',
+    title: 'Assistant Professor, Physics',
     batch: 'BCS 34',
     subjects: ['Computational Physics', 'Programming'],
-    experience: '3+ years'
+    experience: '6+ years'
   },
   {
     name: 'Naznin Ara Parvin',
-    photo: '/images/najnin.jpg',
+    photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1731490937.jpg',
     email: 'naju.aeceiu@gmail.com',
     phone: '01747288393',
-    title: 'Lecturer, Physics',
+    title: 'Assistant Professor, Physics',
     batch: 'BCS 34',
     subjects: ['Electromagnetism', 'Wave Theory'],
-    experience: '3+ years'
+    experience: '6+ years'
   },
   {
     name: 'Shamima Sharmin',
@@ -89,9 +79,9 @@ const teachersData = [
     email: 'shamimasharmin732@gmail.com',
     phone: '01516063732',
     title: 'Demonstrator, Physics',
-    batch: 'Recent Graduate',
+    batch: '',
     subjects: ['Lab Experiments', 'Practical Physics'],
-    experience: '2+ years'
+    experience: '4+ years'
   }
 ];
 

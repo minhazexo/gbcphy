@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import "../../styles/academic.scss";
-import Notes from "../Academic/Notes/Notes";
+import Notes from "../Academic/Notes/Notes.js";
 
 // Three.js Background Component - defined first
 const ThreeBackground = ({ containerRef, selectedYear }) => {
@@ -11,8 +12,10 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
     const container = containerRef.current;
     if (!container) return;
 
-    const stageWidth = container.clientWidth;
-    const stageHeight = container.clientHeight;
+    // Use window dimensions if container hasn't sized yet
+    const stageWidth = container.clientWidth || window.innerWidth;
+    const stageHeight = container.clientHeight || window.innerHeight;
+    
     const xRows = 25;
     const zRows = 25;
     const cubeSize = 600;
@@ -24,11 +27,13 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x000000, 5000, 10000);
+    // Match the --bg-color of light-theme (#f8fafc)
+    const bgColor = new THREE.Color(0xf8fafc);
+    scene.background = bgColor;
+    scene.fog = new THREE.Fog(bgColor, 5000, 10000);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
     scene.add(ambientLight);
-    ambientLight.intensity = 2;
 
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(1, 1, 1);
@@ -41,7 +46,6 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
     const halfXRows = (cubeRow * -xRows) / 2;
     const halfZRows = (cubeRow * -zRows) / 2;
 
-    // Color schemes for different years
     const colorSchemes = {
       "First Year": { hueStart: 180, hueEnd: 240 }, // Blues
       "Second Year": { hueStart: 240, hueEnd: 300 }, // Purples
@@ -50,12 +54,6 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
     };
 
     const createCubes = () => {
-      // Remove existing cubes
-      while(group.children.length > 0) { 
-        group.remove(group.children[0]); 
-      }
-
-      cubes = [];
       const scheme = colorSchemes[selectedYear] || colorSchemes["First Year"];
 
       for (let x = 0; x < xRows; x++) {
@@ -64,7 +62,6 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
           const cubeHeight = 10 + (Math.sin((x / xRows) * Math.PI) + Math.sin((z / zRows) * Math.PI) * 200 + Math.random() * 150);
           const geometry = new THREE.BoxGeometry(cubeSize, cubeHeight, cubeSize);
           
-          // Dynamic color based on selected year
           const hueProgress = ((x + z) / (xRows + zRows));
           const hue = scheme.hueStart + (scheme.hueEnd - scheme.hueStart) * hueProgress;
           
@@ -106,11 +103,12 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
     let mouseX = 0;
     let mouseY = 0;
 
-    // Mouse move interaction
     const handleMouseMove = (event) => {
       const rect = container.getBoundingClientRect();
-      mouseX = ((event.clientX - rect.left) / stageWidth) * 2 - 1;
-      mouseY = -((event.clientY - rect.top) / stageHeight) * 2 + 1;
+      const currentWidth = container.clientWidth || window.innerWidth;
+      const currentHeight = container.clientHeight || window.innerHeight;
+      mouseX = ((event.clientX - rect.left) / currentWidth) * 2 - 1;
+      mouseY = -((event.clientY - rect.top) / currentHeight) * 2 + 1;
     };
 
     container.addEventListener('mousemove', handleMouseMove);
@@ -123,12 +121,13 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
 
       for (let x = 0; x < xRows; x++) {
         for (let z = 0; z < zRows; z++) {
+          if (!cubes[x] || !cubes[x][z]) continue;
+          
           let dx = x >= xIndex - xLoops * xRows ? xRows * (1 - xLoops) : xRows * (0 - xLoops);
           let dz = z >= zIndex - zLoops * zRows ? zRows * (1 - zLoops) : zRows * (0 - zLoops);
           cubes[x][z].position.x = (x - dx) * cubeRow - halfXRows;
           cubes[x][z].position.z = (z - dz) * cubeRow - halfZRows;
           
-          // Mouse interaction - cubes rise when mouse is near
           const distanceToMouse = Math.sqrt(
             Math.pow(cubes[x][z].position.x + position.x + mouseX * 2000, 2) +
             Math.pow(cubes[x][z].position.z + position.z + mouseY * 2000, 2)
@@ -142,7 +141,6 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
           cubes[x][z].scale.y = scale;
           cubes[x][z].position.y = (cubes[x][z].height * scale) / 2;
           
-          // Pulsing effect based on mouse influence
           if (cubes[x][z].material.emissive) {
             cubes[x][z].material.emissiveIntensity = 0.1 + mouseInfluence * 0.4;
           }
@@ -170,8 +168,8 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
     animate();
 
     const handleResize = () => {
-      const newWidth = container.clientWidth;
-      const newHeight = container.clientHeight;
+      const newWidth = container.clientWidth || window.innerWidth;
+      const newHeight = container.clientHeight || window.innerHeight;
       camera.aspect = newWidth / newHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(newWidth, newHeight);
@@ -183,12 +181,15 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
       window.removeEventListener("resize", handleResize);
       container.removeEventListener('mousemove', handleMouseMove);
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      
       if (renderer) {
         renderer.dispose();
         if (container.contains(renderer.domElement)) {
           container.removeChild(renderer.domElement);
         }
       }
+      
+      // Thorough cleanup of Three.js objects
       scene.traverse((object) => {
         if (object.isMesh) {
           if (object.geometry) object.geometry.dispose();
@@ -201,6 +202,10 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
           }
         }
       });
+      
+      while(scene.children.length > 0) {
+        scene.remove(scene.children[0]);
+      }
     };
   }, [selectedYear, containerRef]);
 
@@ -209,12 +214,12 @@ const ThreeBackground = ({ containerRef, selectedYear }) => {
 
 // Main Academic Component
 const Academic = () => {
+  const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState("First Year");
   const [selectedType, setSelectedType] = useState("Notes");
   const [searchTerm, setSearchTerm] = useState("");
   const [downloadCounts, setDownloadCounts] = useState({});
   const [favorites, setFavorites] = useState([]);
-  const [showRoutineImage, setShowRoutineImage] = useState(false);
   const containerRef = useRef(null);
 
   // Load data from localStorage on component mount
@@ -240,34 +245,25 @@ const Academic = () => {
   }, [favorites]);
 
   return (
-    <div className="notes-container">
+    <>
       {/* Three.js Background Component */}
       <ThreeBackground 
         containerRef={containerRef} 
         selectedYear={selectedYear} 
       />
 
-      <button 
-        className="class-routine-button" 
-        onClick={() => setShowRoutineImage(!showRoutineImage)}
-      >
-        📅 Class Routine
-      </button>
-
-      {showRoutineImage && (
-        <div className="routine-image-container">
-          <img src="/Class Routine/routine.jpg" alt="Class Routine" className="routine-image" />
-          <button className="close-button" onClick={() => setShowRoutineImage(false)}>
-            Close
-          </button>
-        </div>
-      )}
-
       <div className="ocean">
         <div className="wave wave1"></div>
         <div className="wave wave2"></div>
-        
       </div>
+
+      <div className="notes-container light-theme">
+        <button 
+          className="class-routine-button" 
+          onClick={() => navigate("/class-routine")}
+        >
+          📅 Class Routine
+        </button>
 
       <h1>
         <span className="academic-title">
@@ -320,7 +316,8 @@ const Academic = () => {
         favorites={favorites}
         setFavorites={setFavorites}
       />
-    </div>
+      </div>
+    </>
   );
 };
 

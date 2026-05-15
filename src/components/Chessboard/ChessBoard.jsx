@@ -7,32 +7,16 @@ export default function ChessBoard({ socket, roomCode, gameId, gameStarted = fal
   const [board, setBoard] = useState(chess.board());
   const [turn, setTurn] = useState("w");
   const [selectedSquare, setSelectedSquare] = useState(null);
-  const [status, setStatus] = useState("Waiting for opponent...");
+  const [status, setStatus] = useState("Local Game");
 
   // Update status when gameStarted changes
   useEffect(() => {
     if (gameStarted) {
       setStatus(turn === "w" ? "White's turn" : "Black's turn");
     } else {
-      setStatus("Waiting for opponent...");
+      setStatus("Waiting to start...");
     }
   }, [gameStarted, turn]);
-
-  // Handle incoming moves from Socket.io
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleMove = ({ from, to, fen, turn }) => {
-      chess.load(fen);
-      setBoard(chess.board());
-      setTurn(turn);
-      setStatus(turn === "w" ? "White's turn" : "Black's turn");
-    };
-
-    socket.on("game:move", handleMove);
-
-    return () => socket.off("game:move", handleMove);
-  }, [socket, chess]);
 
   // Handle square click
   const handleSquareClick = (rowIdx, colIdx) => {
@@ -43,29 +27,26 @@ export default function ChessBoard({ socket, roomCode, gameId, gameStarted = fal
 
     if (selectedSquare) {
       // Attempt move
-      const move = chess.move({
-        from: selectedSquare,
-        to: squareName,
-        promotion: "q", // default promotion
-      });
-
-      if (move) {
-        setBoard(chess.board());
-        setSelectedSquare(null);
-        setTurn(chess.turn());
-        setStatus(chess.turn() === "w" ? "White's turn" : "Black's turn");
-
-        // Emit move to server
-        socket.emit("game:move", {
-          room_code: roomCode,
-          game_id: gameId,
-          from: move.from,
-          to: move.to,
-          fen: chess.fen(),
-          turn: chess.turn(),
+      try {
+        const move = chess.move({
+          from: selectedSquare,
+          to: squareName,
+          promotion: "q", // default promotion
         });
-      } else {
-        // Invalid move
+
+        if (move) {
+          setBoard(chess.board());
+          setSelectedSquare(null);
+          setTurn(chess.turn());
+          setStatus(chess.turn() === "w" ? "White's turn" : "Black's turn");
+          
+          // No socket emit in local mode
+        } else {
+          // Invalid move
+          setSelectedSquare(null);
+        }
+      } catch (e) {
+        // Handle move error (e.g. from chess.js)
         setSelectedSquare(null);
       }
     } else if (square?.type && square.color === turn) {

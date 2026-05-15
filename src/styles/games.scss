@@ -2,6 +2,8 @@
   padding: 2rem;
   padding-top: 100px;
   text-align: center;
+  background: transparent;
+  color: var(--text-color);
 
   .game-links {
     display: flex;
@@ -12,15 +14,16 @@
 
     .game-card {
       padding: 1rem 2rem;
-      background: #222;
-      color: #fff;
+      background: var(--page-surface);
+      color: var(--text-color);
       border-radius: 10px;
       text-decoration: none;
       font-size: 1.2rem;
       transition: 0.3s ease;
+      border: 1px solid var(--border-color);
 
       &:hover {
-        background: #444;
+        background: rgba(255, 255, 255, 0.08);
       }
     }
   }

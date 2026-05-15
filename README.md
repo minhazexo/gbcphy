@@ -1,70 +1,128 @@
-# Getting Started with Create React App
+# Department of Physics - Government Bangla College
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based educational website for the Department of Physics at Government Bangla College. The portal serves as a comprehensive resource for students, faculty, and visitors to explore the department's programs, facilities, and activities.
+
+## Features
+
+### Core Pages
+
+- **Home** - Department overview, programs, research areas, facilities, and testimonials
+- **About** - Detailed information about the department's history and mission
+- **Teachers** - Faculty profiles and contact information
+- **Academic** - Academic programs, curriculum details, and study resources
+- **Class Routine** - Weekly class schedules
+
+### Interactive Features
+
+- **Games** - Embedded browser games for entertainment
+  - Snake Game
+  - Flappy Bird
+- **Scientific** - Interactive fractal explorer with customizable themes and visualizations
+- **Chess** - Chess board component for gameplay (multiplayer capability)
+
+### Technical Stack
+
+- **Frontend**: React 18, React Router v6
+- **Styling**: SCSS, CSS Modules
+- **Build Tool**: Create React App
+- **Deployment**: Netlify
+
+## Project Structure
+
+```
+dop-repo/
+├── public/                  # Static assets
+│   ├── Scientific/         # Fractal explorer files
+│   └── index.html
+├── src/
+│   ├── components/         # Reusable React components
+│   │   ├── Chessboard/     # Chess game component
+│   │   ├── Home/           # Home page sections
+│   │   └── Layout/         # Header, Footer, Layout
+│   ├── context/            # React Context (Theme, Auth)
+│   ├── pages/              # Page components
+│   │   ├── Academic/       # Academic section
+│   │   ├── Games/          # Game pages
+│   │   ├── Home/           # Home page
+│   │   ├── Scientific/     # Scientific tools
+│   │   └── Teachers/       # Faculty pages
+│   ├── styles/             # SCSS/CSS files
+│   ├── api.js              # API configuration
+│   └── App.js              # Main application component
+├── package.json
+└── netlify.toml            # Netlify deployment config
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
+```bash
+# Start development server
+npm start
 
-### `npm start`
+# Run tests
+npm test
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# Build for production
+npm run build
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Key Details
 
-### `npm test`
+### Theme System
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Dark/Light mode toggle available via ThemeContext
+- Custom SCSS theming with CSS variables
 
-### `npm run build`
+### Routing
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Client-side routing with React Router v6
+- Supports nested routes for academic sections
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### API Integration
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Axios-based API client for backend communication
+- JWT authentication support via AuthContext
 
 ### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- Configured for Netlify automatic deployment
+- Build command: `npm run build`
+- Publish directory: `build`
 
-### `npm run build` fails to minify
+## Programs Offered
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Undergraduate
+
+- B.Sc. (Honors) in Physics - 4 Year program
+
+### Postgraduate
+
+- M.Sc. in Physics - 1 Year program
+
+## Research Areas
+
+- Condensed Matter Physics
+- Nuclear Physics
+- Electronics
+- Theoretical Physics
+- Experimental Physics
+
+## Facilities
+
+- Advanced Physics Laboratory
+- Electronics Lab
+- Computer Lab
+- Research Equipment
+
+## Environment Variables
+
+Create a `.env` file in the root directory:
+
+```
+REACT_APP_API_URL=your_api_url
+REACT_APP_JWT_SECRET=your_secret
+```
+
+## License
+
+This project is for educational purposes.

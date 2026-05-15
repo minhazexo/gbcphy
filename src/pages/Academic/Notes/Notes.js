@@ -51,8 +51,11 @@ const Notes = ({
     ],
 
     "Fourth Year": [
-      { title: "Advanced Physics I", url: "#", type: "pdf", size: "Coming Soon" },
-      { title: "Nuclear Physics II", url: "#", type: "pdf", size: "Coming Soon" },
+      { title: "Experimental Physics (ROY)", url: "/4th Year Notes/Experimental 4 th yr (ROY).pdf", type: "pdf", size: "33 MB" },
+      { title: "Nuclear Physics II (ROY)", url: "/4th Year Notes/Nuclear 4 th yr (ROY).pdf", type: "pdf", size: "32 MB" },
+      { title: "Quantum Mechanics II (ROY)", url: "/4th Year Notes/Quantum -2 4th yr (ROY).pdf", type: "pdf", size: "40 MB" },
+      { title: "Solid State Physics II (ROY)", url: "/4th Year Notes/SSP-2 4th yr (ROY).pdf", type: "pdf", size: "41 MB" },
+      { title: "Statistical Physics (ROY)", url: "/4th Year Notes/Statistical 4th yr (ROY).pdf", type: "pdf", size: "41 MB" },
     ],
   };
 

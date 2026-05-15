@@ -5,13 +5,13 @@ $hover-color: #007bff; // Lighter Blue
 $font-family: "Arial", sans-serif;
 
 .footer {
-  background-color: $secondary-color;
-  color: #ffffff;
+  background-color: var(--page-surface);
+  color: var(--text-color);
   padding: 20px;
   text-align: center;
   position: relative;
   z-index: 10;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 -2px 10px var(--shadow-color);
 
   .footer-content {
     p {
@@ -24,16 +24,27 @@ $font-family: "Arial", sans-serif;
       }
 
       .footer-link {
-        color: $hover-color;
+        color: var(--accent-strong);
         text-decoration: none;
         transition: color 0.3s ease;
 
         &:hover {
-          color: #fff; // Change color on hover
-          text-shadow: 0 0 5px rgba(255, 255, 255, 0.7); // Light effect on hover
-          animation: glow 0.5s ease forwards; // Glow animation
+          color: var(--surface-text);
+          text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+          animation: glow 0.5s ease forwards;
         }
       }
+    }
+  }
+}
+
+// Mobile responsive
+@media (max-width: 480px) {
+  .footer {
+    padding: 15px 10px;
+    
+    .footer-content p {
+      font-size: 0.9rem;
     }
   }
 }

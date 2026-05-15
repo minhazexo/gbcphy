@@ -1,4 +1,4 @@
-import React from "react";
+import { Link } from "react-router-dom";
 import "./footer.scss";
 
 function Footer() {
@@ -10,14 +10,14 @@ function Footer() {
           reserved.
         </p>
         <p>
-          <a href="https://minhazexo.github.io/portfolio/" className="footer-link" target="_blank" rel="noopener noreferrer">
+          <Link to="/about" className="footer-link">
             About Us
-          </a>{" "}
+          </Link>{" "}
           |
-          <a href="https://minhazexo.github.io/portfolio/" className="footer-link" target="_blank" rel="noopener noreferrer">
+          <Link to="/#contact" className="footer-link">
             {" "}
             Contact Us
-          </a>
+          </Link>
         </p>
       </div>
     </footer>

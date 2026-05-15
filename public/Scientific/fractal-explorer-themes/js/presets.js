@@ -45,6 +45,6 @@ export const THEMES = [
 export function makePalette(name, size=256){ const stops = PALETTES[name] || PALETTES['Aurora']; return buildPalette(stops, size); }
 
 export const DEFAULTS = {
-  view: VIEW_PRESETS[0], paletteName: 'Neon Nights', iter: 600, colorScale: 5.0, smooth: true, quality: 2.0,
+  view: VIEW_PRESETS[0], paletteName: 'Neon Nights', iter: 500, colorScale: 5.0, smooth: true, quality: 2.0,
   mode: 'mandelbrot', juliaC: [-0.8, 0.156], colorMode: 0, paletteOffset: 0, trapParam: [0.25, 6.0], theme: 'theme-aurora',
 };

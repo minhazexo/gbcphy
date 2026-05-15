@@ -1,4 +1,3 @@
-
 // js/shaders.js
 export const VERT = `#version 300 es
 precision highp float;
@@ -15,7 +14,7 @@ in vec2 v_uv; out vec4 outColor;
 uniform vec2 u_center; uniform float u_scale; uniform vec2 u_resolution;
 uniform int u_maxIter; uniform bool u_smooth; uniform float u_colorScale; uniform sampler2D u_palette;
 uniform int u_mode; uniform vec2 u_juliaC;
-uniform int u_colorMode; uniform float u_paletteOffset; uniform vec2 u_trapParam; // x: radius, y: sharpness
+uniform int u_colorMode; uniform float u_paletteOffset; uniform vec2 u_trapParam;
 
 vec2 cSquare(vec2 z){ return vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y); }
 vec2 uvToComplex(vec2 uv){ float aspect = u_resolution.x/u_resolution.y; vec2 d = (uv-0.5)*vec2(aspect,1.0); return vec2(u_center.x + d.x*u_scale, u_center.y + d.y*u_scale); }
@@ -26,16 +25,15 @@ void main(){
   vec2 z = (u_mode==0)? vec2(0.0) : point;
 
   float nu = 0.0; bool escaped=false; int i=0; float r2=0.0; 
-  float trapMin = 1e9; // orbit trap accumulator
+  float trapMin = 1e9;
 
   for(i=0;i<10000;i++){
     if(i>=u_maxIter) break;
     z = cSquare(z) + c; r2 = dot(z,z);
-    // Orbit traps
-    if(u_colorMode==2){ // circle radius u_trapParam.x around origin
+    if(u_colorMode==2){
       float d = abs(length(z) - u_trapParam.x);
       if(d<trapMin) trapMin=d;
-    } else if(u_colorMode==3){ // cross: lines x=0 and y=0
+    } else if(u_colorMode==3){
       float d = min(abs(z.x), abs(z.y));
       if(d<trapMin) trapMin=d;
     }
@@ -48,16 +46,15 @@ void main(){
 
   float t=0.0;
   if(u_colorMode==2 || u_colorMode==3){
-    // Map trap distance -> color index (smaller distance -> brighter)
     float k = max(u_trapParam.y, 0.0001);
-    float v = 1.0 - exp(-k * trapMin); // [0,1)
+    float v = 1.0 - exp(-k * trapMin);
     t = fract(v * u_colorScale + u_paletteOffset);
   } else if(!escaped){
     outColor = vec4(0.0,0.0,0.0,1.0); return;
   } else {
-    if(u_colorMode==1){ // Escape time
+    if(u_colorMode==1){
       t = fract((float(i)/float(u_maxIter))*u_colorScale + u_paletteOffset);
-    } else { // Smooth
+    } else {
       t = fract((nu/float(u_maxIter))*u_colorScale + u_paletteOffset);
     }
   }

@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Fractal Explorer — Mandelbrot + Julia</title>
+  <title>Fractal Explorer — WebGL Mandelbrot + Julia</title>
   <link rel="stylesheet" href="css/styles.css" />
   <meta name="theme-color" content="#0b1220" />
 </head>
@@ -12,18 +11,17 @@
   <div id="app">
     <canvas id="glcanvas" aria-label="Fractal canvas"></canvas>
     <div id="gridOverlay" hidden></div>
+    <div id="rendererType">WebGL2</div>
 
-    <!-- Minimap -->
-    <div id="minimap-wrap" title="Minimap — drag to reposition view">
+    <div id="minimap-wrap">
       <canvas id="minimap" width="200" height="200"></canvas>
       <div id="minimap-viewport"></div>
     </div>
 
-    <!-- UI Panel -->
     <div id="panel">
       <div class="panel-header">
         <div class="title">Fractal Explorer</div>
-        <div class="sub">Mandelbrot & Julia — zoom, pan, color</div>
+        <div class="sub">WebGL • Mandelbrot & Julia</div>
       </div>
 
       <div class="row grid-2">
@@ -48,25 +46,25 @@
       <div id="juliaSection" class="row" style="display:none;">
         <div class="row grid-2" style="margin-top: 0;">
           <div>
-            <label>Julia Seed Re(c)</label>
+            <label>Julia Re(c)</label>
             <input id="juliaRe" type="number" step="0.0001" value="-0.8" />
           </div>
           <div>
-            <label>Julia Seed Im(c)</label>
+            <label>Julia Im(c)</label>
             <input id="juliaIm" type="number" step="0.0001" value="0.156" />
           </div>
         </div>
         <div class="row grid-2">
           <div>
-            <label>Julia Presets</label>
+            <label>Presets</label>
             <select id="juliaPreset"></select>
           </div>
           <div>
             <label>&nbsp;</label>
-            <button id="btnJuliaFromCenter">Seed = View Center</button>
+            <button id="btnJuliaFromCenter">Use Center</button>
           </div>
         </div>
-        <div class="hint">💡 Right‑click the canvas to set the Julia seed from that point.</div>
+        <div class="hint">Right-click canvas to set seed</div>
       </div>
 
       <div class="row grid-2">
@@ -86,13 +84,13 @@
           <select id="colorModeSelect">
             <option value="0" selected>Smooth</option>
             <option value="1">Escape Time</option>
-            <option value="2">Orbit Trap: Circle</option>
-            <option value="3">Orbit Trap: Cross</option>
+            <option value="2">Orbit: Circle</option>
+            <option value="3">Orbit: Cross</option>
           </select>
         </div>
         <div>
           <label>Iterations <span id="iterVal">500</span></label>
-          <input type="range" id="iter" min="50" max="4000" step="10" value="500" />
+          <input type="range" id="iter" min="50" max="5000" step="10" value="500" />
         </div>
       </div>
 
@@ -102,23 +100,23 @@
           <input type="range" id="colorScale" min="0.2" max="20" step="0.05" value="5" />
         </div>
         <div>
-          <label>Animate Colors</label>
+          <label>Animate</label>
           <div class="row-inline">
-            <label class="switch"><input type="checkbox" id="animColors"/><span>On</span></label>
+            <label class="switch"><input type="checkbox" id="animColors" checked /><span>On</span></label>
             <input type="range" id="animSpeed" min="-2" max="2" step="0.01" value="0.3" />
           </div>
         </div>
       </div>
 
       <div class="row toggles">
-        <label><input type="checkbox" id="smoothColor" checked /> Smooth shading</label>
+        <label><input type="checkbox" id="smoothColor" checked /> Smooth</label>
         <label><input type="checkbox" id="iterByZoom" /> Iterations by zoom</label>
         <label><input type="checkbox" id="contZoom" /> Auto zoom</label>
-        <label><input type="checkbox" id="gridToggle" /> Grid overlay</label>
+        <label><input type="checkbox" id="gridToggle" /> Grid</label>
       </div>
 
       <div class="row">
-        <label>Mandelbrot Presets</label>
+        <label>Presets</label>
         <div class="row grid-2">
           <select id="presetSelect"></select>
           <button id="btnGoPreset" class="primary">Go</button>
@@ -127,10 +125,11 @@
 
       <div class="row grid-3">
         <button id="btnReset">Reset</button>
-        <button id="btnShare">Share View</button>
+        <button id="btnShare">Share</button>
         <button id="btnScreenshot">Screenshot</button>
       </div>
-      <div class="row">
+
+      <div class="row grid-1">
         <button id="btnExport4K">Export 4K</button>
       </div>
 
@@ -138,11 +137,8 @@
         <div><strong>Center:</strong> <span id="coord"></span></div>
         <div><strong>Zoom:</strong> <span id="zoomLevel"></span>x</div>
         <div><strong>FPS:</strong> <span id="fps">—</span></div>
-        <div><strong>Renderer:</strong> <span id="rendererType">—</span></div>
       </div>
-      <div class="hint">
-        🖱️ <b>Scroll</b> to zoom • <b>Drag</b> to pan • <b>Shift + Drag</b> to box-zoom • 📱 <b>Pinch</b> to zoom
-      </div>
+      <div class="hint">Scroll zoom • Drag pan • Pinch zoom • Shift+drag box zoom</div>
     </div>
   </div>
 

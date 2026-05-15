@@ -25,7 +25,7 @@ const About = () => {
             <strong>Email:</strong> minhazojy@gmail.com
             <br />
             <a
-              href="https://www.facebook.com/minhazexo"
+              href="https://www.facebook.com/minhazexo1"
               target="_blank"
               rel="noopener noreferrer"
               className="facebook-link"

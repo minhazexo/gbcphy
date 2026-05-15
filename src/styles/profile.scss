@@ -8,11 +8,12 @@
   flex-direction: column;
   align-items: center;
   font-family: 'Arial', sans-serif;
+  color: var(--text-color);
 
   .error-message {
     width: 100%;
-    background-color: #ffe6e6;
-    color: #cc0000;
+    background-color: rgba(220, 38, 38, 0.12);
+    color: #dc2626;
     padding: 10px 15px;
     border-radius: 6px;
     margin-bottom: 20px;
@@ -21,14 +22,15 @@
 
   .profile-card {
     width: 100%;
-    background-color: #fff;
+    background-color: var(--page-surface);
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px var(--shadow-color);
     padding: 30px 25px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 25px;
+    border: 1px solid var(--border-color);
 
     .profile-image {
       width: 120px;
@@ -38,7 +40,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #f0f0f0;
+      background-color: rgba(255, 255, 255, 0.08);
 
       .profile-img {
         width: 100%;
@@ -47,7 +49,7 @@
       }
 
       svg {
-        color: #ccc;
+        color: var(--muted-color);
       }
     }
 
@@ -62,7 +64,7 @@
       p {
         margin: 3px 0;
         font-size: 1rem;
-        color: #555;
+        color: var(--muted-color);
       }
     }
 
@@ -79,13 +81,15 @@
         max-width: 400px;
         padding: 10px 12px;
         border-radius: 6px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--border-color);
         font-size: 1rem;
         outline: none;
         transition: border 0.2s;
+        background: var(--input-bg);
+        color: var(--text-color);
 
         &:focus {
-          border-color: #007bff;
+          border-color: var(--accent-color);
         }
       }
 
@@ -100,15 +104,15 @@
         transition: background 0.2s;
 
         &.btn-edit {
-          background-color: #007bff;
-          color: #fff;
+          background-color: var(--button-bg);
+          color: var(--button-text);
 
           &:hover {
-            background-color: #0056b3;
+            background-color: var(--accent-strong);
           }
 
           &:disabled {
-            background-color: #a0c4ff;
+            background-color: rgba(56, 189, 248, 0.5);
             cursor: not-allowed;
           }
         }
@@ -127,7 +131,7 @@
 
   p {
     font-size: 1rem;
-    color: #555;
+    color: var(--muted-color);
   }
 }
 

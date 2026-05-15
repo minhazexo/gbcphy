@@ -1,0 +1,124 @@
+// Theme Variables
+:root, .light-theme, body.light-theme {
+  --primary-color: #2563eb;
+  --secondary-color: #7c3aed;
+  --accent-color: #06b6d4;
+  --bg-color: #f8fafc;
+  --page-bg: #f8fafc; // Synchronize with App.css
+  --text-color: #1e293b;
+  --text-muted: #64748b;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --surface-color: #ffffff;
+  --page-surface: #ffffff;
+  --divider-color: rgba(0, 0, 0, 0.1);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --button-bg: #2563eb;
+  --button-text: #ffffff;
+}
+
+.dark-theme, body.dark-theme {
+  --primary-color: #3b82f6;
+  --secondary-color: #a78bfa;
+  --accent-color: #22d3ee;
+  --bg-color: #0f172a;
+  --page-bg: #0f172a;
+  --text-color: #f1f5f9;
+  --text-muted: #94a3b8;
+  --card-bg: rgba(30, 41, 59, 0.7);
+  --glass-bg: rgba(15, 23, 42, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  --surface-color: #1e293b;
+  --page-surface: #1e293b;
+  --divider-color: rgba(255, 255, 255, 0.1);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --button-bg: #3b82f6;
+  --button-text: #ffffff;
+}
+
+// Fixed Theme for Header (Always Dark/Sci-fi)
+.fixed-dark-theme {
+  --primary-color: #00ff88;
+  --secondary-color: #00ffff;
+  --accent-color: #00ff88;
+  --bg-color: #000000;
+  --page-bg: #000000;
+  --text-color: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --glass-bg: rgba(0, 0, 0, 0.6);
+  --glass-border: rgba(0, 255, 255, 0.2);
+  --page-surface: #111111;
+  --button-bg: #00ff88;
+  --button-text: #000000;
+}
+
+$primary-color: var(--primary-color);
+$secondary-color: var(--secondary-color);
+$accent-color: var(--accent-color);
+$bg-color: var(--bg-color);
+$text-color: var(--text-color);
+$text-muted: var(--text-muted);
+$card-bg: var(--card-bg);
+$glass-bg: var(--glass-bg);
+$glass-border: var(--glass-border);
+$surface-color: var(--surface-color);
+
+$gradient-primary: linear-gradient(135deg, $primary-color, $secondary-color);
+$shadow-sm: 0 2px 4px var(--shadow-color);
+$shadow-md: 0 4px 6px var(--shadow-color);
+$shadow-lg: 0 10px 25px var(--shadow-color);
+$shadow-xl: 0 20px 40px var(--shadow-color);
+
+$transition-fast: 0.3s ease;
+$transition-normal: 0.5s ease;
+$transition-slow: 0.8s ease;
+
+// Mixins
+@mixin glass-effect {
+  background: $glass-bg;
+  backdrop-filter: blur(10px);
+  border: 1px solid $glass-border;
+  box-shadow: $shadow-lg;
+}
+
+@mixin gradient-text {
+  background: $gradient-primary;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin card-hover {
+  transform: translateY(-10px);
+  box-shadow: $shadow-xl;
+}
+
+// Animations
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes wave {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes fadeInUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes particle-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-30px) rotate(120deg); }
+  66% { transform: translateY(15px) rotate(240deg); }
+}

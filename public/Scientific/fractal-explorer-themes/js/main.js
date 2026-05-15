@@ -92,7 +92,27 @@ presetSelect.value = VIEW_PRESETS[0].name; themeSelect.value = state.theme; grid
 animColorsEl.checked = Boolean(saved?.animColors ?? true); animSpeedEl.value = saved?.animSpeed ?? 0.3;
 iterByZoomEl.checked = state.iterByZoom;
 
-function pushHash(){ const obj={ center:state.center, scale:state.scale, iter:state.iter, colorScale:state.colorScale, smooth:state.smooth, quality:Number(qualitySelect.value), mode:state.mode, juliaC:state.juliaC, colorMode:state.colorMode, paletteOffset:state.paletteOffset, trapParam:state.trapParam, theme:state.theme, iterByZoom:state.iterByZoom, grid:state.grid, animColors:animColorsEl.checked, animSpeed:Number(animSpeedEl.value) }; history.replaceState(null,'','#'+encodeURIComponent(JSON.stringify(obj))); }
+let hashUpdatePending = false;
+let lastHashTime = 0;
+const HASH_THROTTLE = 250;
+
+function pushHash(){
+  const now = performance.now();
+  if (hashUpdatePending) return;
+  if (now - lastHashTime < HASH_THROTTLE) {
+    hashUpdatePending = true;
+    setTimeout(() => { hashUpdatePending = false; lastHashTime = performance.now(); doPushHash(); }, HASH_THROTTLE - (now - lastHashTime));
+    return;
+  }
+  lastHashTime = now;
+  doPushHash();
+}
+
+function doPushHash(){
+  const obj={ center:state.center, scale:state.scale, iter:state.iter, colorScale:state.colorScale, smooth:state.smooth, quality:Number(qualitySelect.value), mode:state.mode, juliaC:state.juliaC, colorMode:state.colorMode, paletteOffset:state.paletteOffset, trapParam:state.trapParam, theme:state.theme, iterByZoom:state.iterByZoom, grid:state.grid, animColors:animColorsEl.checked, animSpeed:Number(animSpeedEl.value) };
+  const hash = '#'+encodeURIComponent(JSON.stringify(obj));
+  if (location.hash !== hash) history.replaceState(null,'',hash);
+}
 
 // Event bindings
 paletteSelect.addEventListener('change',()=>{ palette = makePalette(paletteSelect.value,256); renderer.setPalette(palette); minimap.setPalette(palette); minimap.rendered=false; });
@@ -145,7 +165,7 @@ function renderFrame(once=false){
   const zoom = 3.5 / state.scale;
   if (state.iterByZoom) { const factor = Math.max(1, Math.log10(zoom+1) * 1.6); iter = Math.min(12000, Math.floor(iter * factor)); }
   renderer.render({ center:state.center, scale:state.scale, iter, smooth:state.smooth, colorScale:state.colorScale, mode:state.mode, juliaC:state.juliaC, colorMode:state.colorMode, paletteOffset:state.paletteOffset, trapParam:state.trapParam });
-  if(!once){ fps.frame(); syncInfo(); pushHash(); minimap.ensureRendered(); minimap.updateViewport({ center:state.center, scale:state.scale, canvasW:canvas.clientWidth, canvasH:canvas.clientHeight }); }
+  if(!once){ fps.frame(); syncInfo(); minimap.ensureRendered(); minimap.updateViewport({ center:state.center, scale:state.scale, canvasW:canvas.clientWidth, canvasH:canvas.clientHeight }); }
 }
 
 let t0 = performance.now();
