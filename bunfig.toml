@@ -1,0 +1,14 @@
+[install]
+# Bun-first: use exact registry + auto fallback for missing platform bins
+auto = "fallback"
+# Allow postinstall scripts needed by react-scripts/webpack toolchain
+# (bun prompts for untrusted scripts on fresh clones otherwise)
+exact = false
+
+[install.scopes]
+# default npm registry (kept explicit so forks/mirrors are easy)
+
+[run]
+# `bun run dev` / `bun run start` shells out to react-scripts (node-based).
+# silent = false keeps CRA's dev/build output visible.
+silent = false

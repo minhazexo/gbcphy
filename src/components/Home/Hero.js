@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   motion, 
   AnimatePresence, 
@@ -13,7 +14,10 @@ import "./Hero.scss";
 
 const Hero = ({ departmentInfo, scrolled }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const heroRef = useRef(null);
+  const navigate = useNavigate();
 
   // High-performance mouse tracking using MotionValues
   const mouseX = useMotionValue(0);
@@ -36,23 +40,33 @@ const Hero = ({ departmentInfo, scrolled }) => {
     "/images/10.jpg"
   ];
 
-  // Auto slide every 4s
+  // Auto slide every 5s (pauses on hover/focus, reduced-motion, or manual pause)
   useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const onChange = (e) => setReducedMotion(e.matches);
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (paused || reducedMotion) return;
     const imageSlider = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 4000);
+    }, 5000);
     return () => clearInterval(imageSlider);
-  }, [images.length]);
+  }, [images.length, paused, reducedMotion]);
 
-  // Mouse move effect
+  // Mouse move effect (disabled for reduced-motion / touch)
   useEffect(() => {
+    if (reducedMotion) return;
     const handleMouseMove = (e) => {
       mouseX.set((e.clientX / window.innerWidth - 0.5) * 20);
       mouseY.set((e.clientY / window.innerHeight - 0.5) * 20);
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, reducedMotion]);
 
   const goToNextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -60,6 +74,14 @@ const Hero = ({ departmentInfo, scrolled }) => {
 
   const goToPrevImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+  };
+
+  const handleQuickLink = (link) => {
+    if (link.kind === "route") {
+      navigate(link.target);
+    } else {
+      document.getElementById(link.target)?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   // Variants for staggered text animation
@@ -82,11 +104,23 @@ const Hero = ({ departmentInfo, scrolled }) => {
         id="hero"
         className={`hero-section ${scrolled ? 'scrolled' : ''}`}
         ref={heroRef}
-        initial={{ opacity: 0 }}
+        initial={reducedMotion ? { opacity: 1 } : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: reducedMotion ? 0 : 1 }}
+        aria-roledescription="carousel"
+        aria-label="Department highlights"
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight") goToNextImage();
+          if (e.key === "ArrowLeft") goToPrevImage();
+        }}
       >
-        <div className="hero-slider">
+        <div
+          className="hero-slider"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={() => setPaused(false)}
+        >
           <button className="nav-btn prev-btn" aria-label="Previous slide" onClick={goToPrevImage}>
             <FaChevronLeft />
           </button>
@@ -95,32 +129,49 @@ const Hero = ({ departmentInfo, scrolled }) => {
             <motion.div
               key={currentImageIndex}
               className="hero-slide"
-              initial={{ opacity: 0, scale: 1.1 }}
+              initial={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 1.05 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.7 }}
-              style={{ x: parallaxX, y: parallaxY }}
+              exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
+              transition={{ duration: reducedMotion ? 0 : 0.6 }}
+              style={reducedMotion ? undefined : { x: parallaxX, y: parallaxY }}
             >
               <img 
                 src={images[currentImageIndex]} 
-                alt={`Department hero image ${currentImageIndex + 1}`} 
-                loading="eager" 
+                alt={`Government Bangla College campus and Physics department life — view ${currentImageIndex + 1} of ${images.length}`} 
+                loading={currentImageIndex === 0 ? "eager" : "lazy"}
+                decoding="async"
+                fetchPriority={currentImageIndex === 0 ? "high" : "auto"}
                 className="slide-image"
               />
-              <div className="slide-overlay"></div>
+              <div className="slide-overlay" aria-hidden="true"></div>
             </motion.div>
           </AnimatePresence>
           
-          <div className="slide-indicators">
-            {images.map((_, index) => (
-              <motion.div 
-                key={index} 
-                className={`indicator ${index === currentImageIndex ? "active" : ""}`}
-                onClick={() => setCurrentImageIndex(index)}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-              />
-            ))}
+          <div className="slide-controls">
+            <div className="slide-indicators" role="tablist" aria-label="Hero slides">
+              {images.map((_, index) => (
+                <motion.button
+                  type="button"
+                  key={index} 
+                  role="tab"
+                  aria-selected={index === currentImageIndex}
+                  aria-label={`Go to slide ${index + 1}`}
+                  className={`indicator ${index === currentImageIndex ? "active" : ""}`}
+                  onClick={() => setCurrentImageIndex(index)}
+                  whileHover={reducedMotion ? undefined : { scale: 1.2 }}
+                  whileTap={reducedMotion ? undefined : { scale: 0.9 }}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              className="autoplay-toggle"
+              aria-label={paused || reducedMotion ? "Play slideshow" : "Pause slideshow"}
+              aria-pressed={paused}
+              onClick={() => setPaused((p) => !p)}
+            >
+              {paused || reducedMotion ? "▶" : "❚❚"}
+            </button>
           </div>
           
           <button className="nav-btn next-btn" aria-label="Next slide" onClick={goToNextImage}>
@@ -129,80 +180,104 @@ const Hero = ({ departmentInfo, scrolled }) => {
 
           <motion.div 
             className="hero-content"
-            initial={{ y: 50, opacity: 0 }}
+            initial={reducedMotion ? { opacity: 1 } : { y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
+            transition={{ delay: 0.2, duration: reducedMotion ? 0 : 0.7 }}
           >
             <motion.div 
               className="hero-badge"
-              initial={{ scale: 0, opacity: 0 }}
+              initial={reducedMotion ? { opacity: 1 } : { scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
+              transition={{ delay: 0.3, type: "spring", stiffness: 260, damping: 20 }}
             >
-              Excellence in Education
+              {departmentInfo.affiliation || "Excellence in Education"}
             </motion.div>
             
             <motion.h1 variants={titleContainer} initial="hidden" animate="visible">
               <span className="department-name">
                 {departmentInfo.name.split(" ").map((word, i) => (
-                  <motion.span key={i} variants={titleWord} style={{ display: "inline-block", marginRight: "0.25em" }}>
+                  <motion.span key={i} variants={reducedMotion ? { hidden: { opacity: 0 }, visible: { opacity: 1 } } : titleWord} style={{ display: "inline-block", marginRight: "0.25em" }}>
                     {word}
                   </motion.span>
                 ))}
               </span>
-              <motion.span 
-                className="college-name"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-              >
+              <span className="college-name">
                 {departmentInfo.college}
-              </motion.span>
+              </span>
             </motion.h1>
             
             <motion.p 
               className="hero-tagline"
-              initial={{ y: 20, opacity: 0 }}
+              initial={reducedMotion ? { opacity: 1 } : { y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 1, duration: 0.8 }}
+              transition={{ delay: 0.5, duration: reducedMotion ? 0 : 0.6 }}
             >
-              Excellence in Physics Education Since {departmentInfo.established}
+              {departmentInfo.visionShort || `Excellence in Physics Education Since ${departmentInfo.established}`}
             </motion.p>
+
+            <ul className="hero-trust" aria-label="Department facts">
+              <li>Since {departmentInfo.established}</li>
+              <li>{departmentInfo.facultyCount}+ faculty</li>
+              <li>B.Sc. Honours + M.Sc.</li>
+            </ul>
 
             <motion.div 
               className="hero-cta"
-              initial={{ y: 20, opacity: 0 }}
+              initial={reducedMotion ? { opacity: 1 } : { y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 1.2, duration: 0.8 }}
+              transition={{ delay: 0.6, duration: reducedMotion ? 0 : 0.6 }}
             >
               <motion.button 
                 className="cta-button"
-                whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => document.getElementById('programs').scrollIntoView({ behavior: 'smooth' })}
+                whileHover={reducedMotion ? undefined : { scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => document.getElementById('programs').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' })}
               >
                 Explore Programs <FaArrowRight />
               </motion.button>
               <motion.button 
                 className="cta-button secondary"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}
+                whileHover={reducedMotion ? undefined : { scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => navigate('/class-routine')}
               >
-                Contact Us
+                View Class Routine
               </motion.button>
             </motion.div>
+
+            <motion.nav
+              className="hero-quicklinks"
+              aria-label="Quick links"
+              initial={reducedMotion ? { opacity: 1 } : { y: 16, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.7, duration: reducedMotion ? 0 : 0.6 }}
+            >
+              {departmentInfo.quickLinks.map((link, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className="quicklink"
+                  onClick={() => handleQuickLink(link)}
+                >
+                  <span className="quicklink-icon" aria-hidden="true">{link.icon}</span>
+                  {link.label}
+                </button>
+              ))}
+            </motion.nav>
           </motion.div>
 
-          <motion.div 
-            className="scroll-indicator"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            <div className="mouse">
-              <div className="wheel"></div>
-            </div>
-          </motion.div>
+          {!reducedMotion && (
+            <motion.div 
+              className="scroll-indicator"
+              animate={{ y: [0, 10, 0] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              aria-hidden="true"
+            >
+              <div className="mouse">
+                <div className="wheel"></div>
+              </div>
+            </motion.div>
+          )}
         </div>
       </motion.section>
     </div>

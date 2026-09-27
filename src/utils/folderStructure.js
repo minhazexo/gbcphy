@@ -25,42 +25,6 @@ const folderStructure = `
     📄 Solid State Physics.PH-303.pdf
   📁 Class Routine
     📄 Class Routine.jpg
-  📁 Games
-    📁 FlappyBird
-      📁 assets
-        📁 audio
-          📁 bg_songs
-            📄 bg.mp3
-          📁 Main_sounds
-            📄 die.wav
-            📄 flap.wav
-            📄 hit.wav
-            📄 score.wav
-            📄 start.wav
-        📁 css
-          📄 style.css
-        📁 images
-          📁 brid_img
-            📄 1_brid.png
-            📄 2_brid.png
-            📄 3_brid.png
-          📁 ground
-            📄 1_ground.png
-            📄 2_ground.png
-            📄 background.png
-            📄 ground.png
-          📁 pipe_img
-            📄 botpipe.png
-            📄 toppipe.png
-          📁 start&over_game_img
-            📄 1_tap.png
-            📄 2_tap.png
-            📄 gameOver.png
-            📄 getready.png
-          📄 preview.gif
-        📁 javascript
-          📄 index.js
-      📄 index.html
   📁 images
     📄 1.jpg
     📄 10.jpg
@@ -79,14 +43,8 @@ const folderStructure = `
     📄 kamrun.jpg
     📄 najnin.jpg
     📄 Ocean.webp
-    📄 snakebg.jpg
     📄 tahrin.jpg
     📄 TPGbg.jpg
-  📁 Sound
-    📄 food.mp3
-    📄 gameover.mp3
-    📄 move.mp3
-    📄 music.mp3
   📁 Syllabus
     📄 1st and 2nd Year.pdf
   📄 favicon.ico

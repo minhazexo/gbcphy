@@ -2,86 +2,102 @@ import React, { useState,  } from 'react';
 import '../../styles/teachers.scss';
 import { motion } from 'framer-motion';
 
-const teachersData = [
+// Source: Govt. Bangla College official roster — Physics (Dept 110)
+// https://sarkaribanglacollege.gov.bd/teachersinfo/110 (accessed Sep 2026)
+// Fields below mirror the official listing verbatim (names transliterated,
+// Bengali titles/designations, photos, emails, mobiles, BCS batches).
+// NOTE: the official site lists no subjects or years of experience, so those
+// invented fields were removed. Two teachers have no photo on the official
+// site (photo: null) — the card renders an initials avatar for them.
+export const teachersData = [
   {
     name: 'Kamrun Nahar',
+    nameBn: 'কামরুন নাহার',
     photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1732018929.jpg',
     email: 'kamrunnaher231977@gmail.com',
     phone: '01819464294',
-    title: 'Professor, Physics',
-    batch: 'BCS 22',
-    subjects: ['Advanced Physics', 'Quantum Mechanics'],
-    experience: '18+ years'
+    title: 'Professor, Department of Physics',
+    designationBn: 'অধ্যাপক',
+    department: 'Physics',
+    batch: 'BCS 22'
   },
   {
     name: 'Mohammad Shariful Arefin',
+    nameBn: 'মোহাম্মদ শরীফুল আরেফীন',
     photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1732018807.jpg',
     email: 'arefinroman@gmail.com',
     phone: '01712653188',
-    title: 'Associate Professor, Physics',
-    batch: 'BCS 24',
-    subjects: ['Classical Mechanics', 'Mathematical Physics'],
-    experience: '15+ years'
+    title: 'Associate Professor, Department of Physics',
+    designationBn: 'সহযোগী অধ্যাপক',
+    department: 'Physics',
+    batch: 'BCS 24'
   },
   {
     name: 'Farhana Fakrun Nesha',
+    nameBn: 'ফারহানা ফকরুন নেছা',
     photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1732018755.jpg',
     email: 'nessanfarhana@gmail.com',
     phone: '01912732402',
-    title: 'Associate Professor, Physics',
-    batch: 'BCS 28',
-    subjects: ['Thermal Physics', 'Statistical Mechanics'],
-    experience: '12+ years'
+    title: 'Associate Professor, Department of Physics',
+    designationBn: 'সহযোগী অধ্যাপক',
+    department: 'Physics',
+    batch: 'BCS 28'
   },
   {
-    name: 'Labani Saha',
+    name: 'Laboni Saha',
+    nameBn: 'লাবণী সাহা',
     photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1737389677.jpg',
     email: 'labanisaha29@gmail.com',
-    phone: '01788007775',
-    title: 'Assistant Professor, Physics',
-    batch: 'BCS 29',
-    subjects: ['Solid State Physics', 'Material Science'],
-    experience: '10+ years'
+    // Official listing shows 0178800775 (10 digits — appears truncated on the site)
+    phone: '0178800775',
+    title: 'Assistant Professor, Department of Physics',
+    designationBn: 'সহকারী অধ্যাপক',
+    department: 'Physics',
+    batch: 'BCS 29'
   },
   {
     name: 'Tahrin Haque',
+    nameBn: 'তাহরীন হক',
     photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1732018977.jpg',
     email: 'tahrin.loka@yahoo.com',
     phone: '01916920750',
-    title: 'Assistant Professor, Physics',
-    batch: 'BCS 33',
-    subjects: ['Nuclear Physics', 'Particle Physics'],
-    experience: '8+ years'
+    title: 'Assistant Professor, Department of Physics',
+    designationBn: 'সহকারী অধ্যাপক',
+    department: 'Physics',
+    batch: 'BCS 33'
   },
   {
-    name: 'Awlad Hossen',
-    photo: '/images/teacher7.jpg',
+    name: 'Awlad Hossain',
+    nameBn: 'আওলাদ হোসেন',
+    photo: null,
     email: '',
     phone: '01724199348',
-    title: 'Assistant Professor, Physics',
-    batch: 'BCS 34',
-    subjects: ['Computational Physics', 'Programming'],
-    experience: '6+ years'
+    title: 'Assistant Professor, Department of Physics',
+    designationBn: 'সহকারী অধ্যাপক',
+    department: 'Physics',
+    batch: 'BCS 34'
   },
   {
     name: 'Naznin Ara Parvin',
+    nameBn: 'নাজনীন আরা পারভীন',
     photo: 'https://sarkaribanglacollege.gov.bd/images/teacher/1731490937.jpg',
     email: 'naju.aeceiu@gmail.com',
     phone: '01747288393',
-    title: 'Assistant Professor, Physics',
-    batch: 'BCS 34',
-    subjects: ['Electromagnetism', 'Wave Theory'],
-    experience: '6+ years'
+    title: 'Assistant Professor, Department of Physics',
+    designationBn: 'সহকারী অধ্যাপক',
+    department: 'Physics',
+    batch: 'BCS 34'
   },
   {
     name: 'Shamima Sharmin',
-    photo: '/images/teacher9.jpg',
+    nameBn: 'শামিমা শারমিন',
+    photo: null,
     email: 'shamimasharmin732@gmail.com',
     phone: '01516063732',
-    title: 'Demonstrator, Physics',
-    batch: '',
-    subjects: ['Lab Experiments', 'Practical Physics'],
-    experience: '4+ years'
+    title: 'Demonstrator, Department of Physics',
+    designationBn: 'প্রদর্শক',
+    department: 'Physics',
+    batch: ''
   }
 ];
 
@@ -188,18 +204,22 @@ const Teachers = () => {
             <div className="card-content">
               <div className="teacher-image-container">
                 <div className="image-wrapper">
-                  <img 
-                    src={teacher.photo} 
-                    alt={teacher.name} 
-                    className="teacher-image"
-                    loading="lazy"
-                  />
+                  {teacher.photo ? (
+                    <img
+                      src={teacher.photo}
+                      alt={teacher.name}
+                      className="teacher-image"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.add('show');
+                      }}
+                    />
+                  ) : null}
+                  <div className={`image-fallback ${(teacher.photo ? '' : 'show')}`} aria-hidden="true">
+                    {teacher.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
+                  </div>
                   <div className="image-shine"></div>
-                </div>
-                
-                {/* Experience Badge */}
-                <div className="experience-badge">
-                  <span>{teacher.experience}</span>
                 </div>
 
                 {/* Social Links */}
@@ -233,6 +253,9 @@ const Teachers = () => {
                     <span className="serial">{String(index + 1).padStart(2, '0')}</span>
                     {teacher.name}
                   </h3>
+                  {teacher.nameBn && (
+                    <p className="teacher-name-bn">{teacher.nameBn}</p>
+                  )}
                   <motion.div 
                     className="title-badge"
                     whileHover={{ scale: 1.05 }}
@@ -249,20 +272,28 @@ const Teachers = () => {
                 )}
 
                 <div className="subjects-taught">
-                  <h4>Specialized In:</h4>
+                  <h4>Department</h4>
                   <div className="subject-tags">
-                    {teacher.subjects.map((subject, idx) => (
-                      <motion.span 
-                        key={idx}
+                    <motion.span
+                      className="subject-tag"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.8 }}
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      {teacher.department || 'Physics'}
+                    </motion.span>
+                    {teacher.designationBn && (
+                      <motion.span
                         className="subject-tag"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.8 + (idx * 0.1) }}
+                        transition={{ delay: 0.9 }}
                         whileHover={{ scale: 1.1 }}
                       >
-                        {subject}
+                        {teacher.designationBn}
                       </motion.span>
-                    ))}
+                    )}
                   </div>
                 </div>
 
@@ -302,12 +333,12 @@ const Teachers = () => {
           <span className="stat-label">Faculty Members</span>
         </div>
         <div className="stat-item">
-          <span className="stat-number">50+</span>
-          <span className="stat-label">Years Combined Experience</span>
+          <span className="stat-number">1 + 2 + 4</span>
+          <span className="stat-label">Professor / Associate / Assistant</span>
         </div>
         <div className="stat-item">
-          <span className="stat-number">15+</span>
-          <span className="stat-label">Specializations</span>
+          <span className="stat-number">1</span>
+          <span className="stat-label">Demonstrator</span>
         </div>
       </motion.div>
     </motion.div>

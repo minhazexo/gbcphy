@@ -1,0 +1,22 @@
+# Vercel deploy ignore — keep serverless bundle lean
+node_modules
+.git
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+coverage
+build
+.netlify
+.vercel
+android
+graphify-out/
+raw/
+.cline/
+.clinerules/
+.roo/
+.idea/
+.vscode/
+*.log
+npm-debug.log*

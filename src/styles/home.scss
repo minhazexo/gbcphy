@@ -1,6 +1,33 @@
 @import "variables";
 
 // Base Styles
+// Anchored sections must not slide under the fixed 80px navbar
+.home-container section[id] {
+  scroll-margin-top: 80px;
+}
+
+// Content container system — fixes edge-to-edge content.
+// One centered max-width (1140px) + one consistent responsive gutter
+// shared by every homepage section (principle: uniform gutter site-wide).
+.home-container .container {
+  width: 100%;
+  max-width: 1140px;
+  margin-inline: auto;
+  padding-inline: 24px;
+  box-sizing: border-box;
+  // Neutralize the global App.css .container card chrome so section
+  // backgrounds from Body.scss stay in charge of the visuals
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .home-container .container {
+    padding-inline: 16px;
+  }
+}
+
 .skip-link {
   position: absolute;
   top: -40px;
@@ -13,6 +40,19 @@
   &:focus {
     top: 0;
   }
+}
+
+// Screen-reader-only text (professional a11y pattern)
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 button:focus, .nav-btn:focus, .indicator:focus, .cta-button:focus, a:focus {

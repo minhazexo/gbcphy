@@ -104,6 +104,14 @@
     margin-bottom: 20px;
     @include gradient-text;
   }
+
+  .section-subhead {
+    font-size: 1.15rem;
+    color: $text-muted;
+    max-width: 640px;
+    margin: 0 auto 24px;
+    line-height: 1.7;
+  }
   
   .divider {
     height: 4px;
@@ -133,6 +141,29 @@
         line-height: 1.8;
         color: $text-color;
         margin-bottom: 40px;
+      }
+
+      .mission-statement {
+        margin: 0 0 10px;
+        padding: 28px 32px 28px 28px;
+        border-left: 4px solid $primary-color;
+        background: $card-bg;
+        border-radius: 0 20px 20px 0;
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: $text-color;
+        font-style: italic;
+
+        .mission-label {
+          display: block;
+          font-style: normal;
+          font-size: 0.8rem;
+          font-weight: 700;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: $primary-color;
+          margin-bottom: 10px;
+        }
       }
       
       .features-grid {
@@ -194,6 +225,154 @@
             transition: width $transition-normal;
           }
         }
+      }
+    }
+  }
+}
+
+// College & University Section
+.college-university-section {
+  padding: 120px 0;
+  background: $surface-color;
+  transition: background-color $transition-normal;
+
+  .college-university-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: clamp(16px, 1rem + 1.5vw, 32px);
+  }
+
+  .cu-card {
+    background: $bg-color;
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    padding: clamp(24px, 1.5rem + 2vw, 40px) clamp(20px, 1.25rem + 1.5vw, 32px);
+    box-shadow: $shadow-md;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: all $transition-normal;
+
+    &:hover {
+      @include card-hover;
+    }
+
+    .cu-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      color: white;
+      background: $gradient-primary;
+      box-shadow: $shadow-md;
+    }
+
+    .cu-eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: $primary-color;
+      margin: 0;
+    }
+
+    h3 {
+      font-size: clamp(1.35rem, 1.15rem + 1vw, 1.7rem);
+      color: $text-color;
+      margin: 0;
+      line-height: 1.3;
+      text-wrap: balance;
+    }
+
+    .cu-bengali {
+      font-size: 1.05rem;
+      color: $text-muted;
+      margin: 0;
+    }
+
+    .cu-text {
+      color: $text-muted;
+      line-height: 1.75;
+      margin: 0;
+      font-size: clamp(0.98rem, 0.95rem + 0.3vw, 1.05rem);
+    }
+
+    .cu-facts {
+      list-style: none;
+      margin: 4px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      li {
+        position: relative;
+        padding-left: 1.6rem;
+        color: $text-color;
+        line-height: 1.6;
+        font-size: 0.95rem;
+
+        &::before {
+          content: "✓";
+          position: absolute;
+          left: 0;
+          color: $primary-color;
+          font-weight: 800;
+        }
+      }
+    }
+
+    .cu-chips {
+      list-style: none;
+      margin: 4px 0 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      li {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: $text-color;
+        background: $surface-color;
+        border: 1px solid var(--border-color);
+        padding: 6px 14px;
+        border-radius: 100px;
+        line-height: 1.4;
+      }
+    }
+
+    .cu-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .cu-meta {
+        font-size: 0.88rem;
+        color: $text-muted;
+        font-weight: 600;
+      }
+
+      .contact-button {
+        background: transparent;
+        border: none;
+        color: $primary-color;
+        font-weight: 700;
+        font-size: 1rem;
+        font-family: inherit;
+        text-decoration: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0;
+        align-self: flex-start;
       }
     }
   }
@@ -492,13 +671,19 @@
       .card-header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: center;
+        gap: 12px;
         margin-bottom: 20px;
         
-        h3 {
-          font-size: 1.3rem;
-          color: $text-color;
-          flex: 1;
+        .notice-tag {
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          color: white;
+          background: $gradient-primary;
+          padding: 5px 14px;
+          border-radius: 50px;
         }
         
         .post-date {
@@ -508,14 +693,22 @@
           background: rgba(37, 99, 235, 0.1);
           padding: 5px 12px;
           border-radius: 50px;
+          white-space: nowrap;
         }
       }
       
       .card-content {
+        h3 {
+          font-size: 1.3rem;
+          color: $text-color;
+          margin-bottom: 12px;
+          line-height: 1.4;
+        }
+
         p {
           color: $text-muted;
           line-height: 1.6;
-          margin-bottom: 20px;
+          margin-bottom: 0;
         }
         
         .edit-btn {
@@ -572,6 +765,31 @@
       }
     }
   }
+
+  .news-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+
+    .program-button {
+      padding: 12px 30px;
+      background: transparent;
+      border: 2px solid $primary-color;
+      color: $primary-color;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all $transition-fast;
+
+      &:hover {
+        background: $primary-color;
+        color: white;
+      }
+    }
+  }
 }
 
 // Contact Section
@@ -619,10 +837,14 @@
           border: none;
           color: $primary-color;
           font-weight: 700;
+          font-size: 1rem;
+          font-family: inherit;
+          text-decoration: none;
           cursor: pointer;
-          display: flex;
+          display: inline-flex;
           align-items: center;
           gap: 10px;
+          padding: 0;
         }
       }
     }
@@ -644,4 +866,500 @@
   cursor: pointer;
   z-index: 100;
   box-shadow: $shadow-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Shared section CTA row
+.section-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+
+  .program-button {
+    padding: 12px 30px;
+    background: transparent;
+    border: 2px solid $primary-color;
+    color: $primary-color;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: $primary-color;
+      color: white;
+    }
+  }
+}
+
+// Faculty Preview Section
+.faculty-section {
+  padding: 120px 0;
+  background: $surface-color;
+  transition: background-color $transition-normal;
+
+  .faculty-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+
+    .faculty-card {
+      background: $bg-color;
+      border-radius: 25px;
+      padding: 40px 30px;
+      box-shadow: $shadow-md;
+      text-align: center;
+      transition: all $transition-normal;
+
+      &:hover {
+        @include card-hover;
+      }
+
+      .faculty-photo {
+        width: 140px;
+        height: 140px;
+        margin: 0 auto 25px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid $primary-color;
+        box-shadow: $shadow-md;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .faculty-initials {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          font-size: 2.5rem;
+          font-weight: 800;
+          color: #ffffff;
+          background: linear-gradient(135deg, $primary-color, $secondary-color);
+        }
+      }
+
+      h4 {
+        font-size: 1.4rem;
+        color: $text-color;
+        margin-bottom: 8px;
+      }
+
+      .faculty-title {
+        display: block;
+        color: $primary-color;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+      }
+
+      .faculty-subject {
+        color: $text-muted;
+        font-size: 0.95rem;
+      }
+    }
+  }
+}
+
+// Audiences + FAQ — professional homepage patterns
+.audiences-section {
+  padding: 90px 0 10px;
+  background: $bg-color;
+  transition: background-color $transition-normal;
+
+  .audiences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+
+    .audience-card {
+      background: $surface-color;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 32px 28px;
+      box-shadow: $shadow-md;
+
+      h3 {
+        font-size: 1.35rem;
+        margin-bottom: 10px;
+        color: $text-color;
+      }
+
+      p {
+        color: $text-muted;
+        line-height: 1.7;
+        margin-bottom: 18px;
+      }
+    }
+  }
+}
+
+.faq-section {
+  padding: 90px 0;
+  background: $bg-color;
+
+  .faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    .faq-item {
+      background: $surface-color;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+
+      &.open {
+        border-color: $primary-color;
+      }
+
+      .faq-question {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 22px;
+        min-height: 56px;
+        background: transparent;
+        border: none;
+        color: $text-color;
+        font-size: 1.05rem;
+        font-weight: 700;
+        text-align: left;
+        cursor: pointer;
+
+        .faq-chevron {
+          flex-shrink: 0;
+          transition: transform $transition-fast;
+        }
+      }
+
+      &.open .faq-chevron {
+        transform: rotate(180deg);
+      }
+
+      .faq-answer {
+        padding: 0 22px 22px;
+        color: $text-muted;
+        line-height: 1.7;
+      }
+    }
+  }
+}
+
+.program-outcomes {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  li {
+    position: relative;
+    padding-left: 1.6rem;
+    color: $text-color;
+    line-height: 1.6;
+
+    &::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: $primary-color;
+      font-weight: 800;
+    }
+  }
+}
+
+.news-link {
+  margin-top: 16px;
+}
+
+// ============================================================
+// Layout rhythm & sizing polish (UI/UX review pass)
+// - One fluid section rhythm on the 8px grid (no more 90/100/120px mix)
+// - Fluid type with clamp() so headings scale smoothly (skill #1, #3)
+// - Grids use minmax(min(100%, …)) so cards never overflow small screens
+// - Card padding scales down gracefully on mobile (skill #4)
+// ============================================================
+
+// Unified section rhythm
+.stats-section,
+.about-section,
+.college-university-section,
+.programs-section,
+.research-section,
+.facilities-section,
+.faculty-section,
+.testimonials-section,
+.news-section,
+.contact-section,
+.faq-section,
+.audiences-section {
+  padding: clamp(56px, 4rem + 4vw, 96px) 0;
+}
+
+.cta-band {
+  padding: clamp(48px, 3rem + 4vw, 88px) 0;
+}
+
+// Section headers: tighter, fluid, optically tightened
+.section-header {
+  margin-bottom: clamp(32px, 2rem + 2vw, 48px);
+
+  h2 {
+    font-size: clamp(1.9rem, 1.25rem + 3vw, 2.6rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .section-subhead {
+    font-size: clamp(1rem, 0.95rem + 0.4vw, 1.15rem);
+    padding-inline: 8px;
+  }
+}
+
+// Grids: consistent gap + no overflow on narrow screens
+.stats-section .stats-grid,
+.about-section .features-grid,
+.programs-section .programs-grid,
+.research-section .research-grid,
+.facilities-section .facilities-grid,
+.faculty-section .faculty-grid,
+.testimonials-section .testimonials-grid,
+.news-section .news-grid,
+.contact-section .contact-grid,
+.audiences-section .audiences-grid {
+  gap: clamp(16px, 1rem + 1.5vw, 32px);
+}
+
+.stats-section .stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+
+.about-section .features-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.programs-section .programs-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+
+.research-section .research-grid,
+.facilities-section .facilities-grid,
+.faculty-section .faculty-grid,
+.audiences-section .audiences-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+}
+
+.testimonials-section .testimonials-grid,
+.news-section .news-grid,
+.contact-section .contact-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}
+
+// Fluid card padding (desktop comfort → mobile compact)
+.stats-section .stats-grid .stat-card {
+  padding: clamp(24px, 1.5rem + 2vw, 40px) clamp(20px, 1.25rem + 1.5vw, 30px);
+
+  .stat-icon {
+    font-size: clamp(2rem, 1.6rem + 1.5vw, 3rem);
+  }
+
+  .stat-content .stat-value {
+    font-size: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
+  }
+
+  .stat-content .stat-label {
+    font-size: clamp(0.95rem, 0.9rem + 0.4vw, 1.2rem);
+  }
+}
+
+.about-section .about-content .about-text {
+  padding: clamp(24px, 1.25rem + 3vw, 50px);
+  border-radius: clamp(20px, 1.25rem + 1.5vw, 30px);
+
+  p {
+    font-size: clamp(1.02rem, 0.98rem + 0.4vw, 1.2rem);
+  }
+
+  .mission-statement {
+    font-size: clamp(1rem, 0.96rem + 0.4vw, 1.15rem);
+    padding: clamp(18px, 1rem + 1.5vw, 28px) clamp(16px, 1rem + 1.5vw, 32px);
+  }
+
+  .feature-item {
+    padding: clamp(20px, 1.25rem + 1.5vw, 30px);
+  }
+}
+
+.programs-section .programs-grid .program-card {
+  padding: clamp(28px, 1.5rem + 2.5vw, 50px) clamp(20px, 1.25rem + 2vw, 40px);
+  border-radius: clamp(18px, 1.1rem + 1.2vw, 25px);
+
+  h3 {
+    font-size: clamp(1.35rem, 1.15rem + 1vw, 1.8rem);
+    text-wrap: balance;
+  }
+
+  .program-icon {
+    font-size: clamp(2.4rem, 2rem + 1.5vw, 3.5rem);
+  }
+}
+
+.research-section .research-grid .research-card,
+.facilities-section .facilities-grid .facility-card,
+.faculty-section .faculty-grid .faculty-card {
+  padding: clamp(24px, 1.5rem + 2vw, 40px) clamp(20px, 1.25rem + 1.5vw, 30px);
+}
+
+.facilities-section .facilities-grid .facility-card .facility-number {
+  font-size: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+}
+
+.faculty-section .faculty-grid .faculty-card .faculty-photo {
+  width: clamp(104px, 5.5rem + 5vw, 140px);
+  height: clamp(104px, 5.5rem + 5vw, 140px);
+}
+
+.testimonials-section .testimonials-grid .testimonial-card {
+  padding: clamp(24px, 1.5rem + 2.5vw, 50px);
+  border-radius: clamp(20px, 1.25rem + 1.5vw, 30px);
+}
+
+.news-section .news-grid .news-card {
+  padding: clamp(20px, 1.25rem + 1.5vw, 30px);
+}
+
+.contact-section .contact-grid .contact-card {
+  padding: clamp(20px, 1.25rem + 2vw, 40px);
+  gap: clamp(16px, 1rem + 1.5vw, 25px);
+}
+
+.audiences-section .audiences-grid .audience-card {
+  padding: clamp(24px, 1.5rem + 1.5vw, 32px) clamp(20px, 1.25rem + 1.5vw, 28px);
+}
+
+.faq-section .faq-list {
+  padding-inline: 8px;
+}
+
+// CTA band: fluid inner padding + type
+.cta-band .cta-inner {
+  padding: clamp(36px, 2rem + 4vw, 70px) clamp(20px, 1.25rem + 3vw, 50px);
+  border-radius: clamp(20px, 1.25rem + 1.5vw, 30px);
+
+  h2 {
+    font-size: clamp(1.6rem, 1.2rem + 2.4vw, 2.4rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    font-size: clamp(1rem, 0.95rem + 0.4vw, 1.15rem);
+  }
+}
+
+// Small phones: stack contact rows, full-width CTAs stay tappable
+@media (max-width: 480px) {
+  .contact-section .contact-grid .contact-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cta-band .cta-inner .cta-actions .cta-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// Prevent decorative overflow from causing horizontal scroll
+.home-container {
+  overflow-x: clip;
+}
+
+// CTA Band
+.cta-band {
+  padding: 100px 0;
+  background: $bg-color;
+  transition: background-color $transition-normal;
+
+  .cta-inner {
+    background: $gradient-primary;
+    border-radius: 30px;
+    padding: 70px 50px;
+    text-align: center;
+    box-shadow: $shadow-lg;
+    position: relative;
+    overflow: hidden;
+
+    h2 {
+      color: white;
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+
+    p {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 1.15rem;
+      max-width: 600px;
+      margin: 0 auto 35px;
+      line-height: 1.7;
+    }
+
+    .cta-actions {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+
+      .cta-button {
+        padding: 14px 36px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all $transition-fast;
+
+        &.primary {
+          background: white;
+          color: $primary-color;
+          border: none;
+
+          &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+          }
+        }
+
+        &.ghost {
+          background: transparent;
+          color: white;
+          border: 2px solid rgba(255, 255, 255, 0.7);
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.15);
+          }
+        }
+      }
+    }
+  }
 }

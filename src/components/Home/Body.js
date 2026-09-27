@@ -1,45 +1,49 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, useInView, animate } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { 
-  FaSave, FaGraduationCap, FaFlask, FaChalkboardTeacher,
-  FaMapMarkerAlt, FaClock, FaUsers,
-  FaArrowRight, FaExternalLinkAlt, FaQuoteLeft
+import {
+  FaGraduationCap, FaFlask, FaChalkboardTeacher,
+  FaMapMarkerAlt, FaClock, FaUsers, FaArrowUp,
+  FaArrowRight, FaExternalLinkAlt, FaQuoteLeft, FaChevronDown,
+  FaUniversity, FaLandmark
 } from "react-icons/fa";
 import { useTheme } from "../../context/ThemeContext.js";
+import { teachersData } from "../../pages/Teachers/Teachers.js";
 import "./Body.scss";
+
+// Animated count-up value (professional stats-band pattern)
+const CountUp = ({ value, suffix = "" }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    const controls = animate(0, value, {
+      duration: 1.6,
+      ease: "easeOut",
+      onUpdate: (v) => setDisplay(Math.round(v))
+    });
+    return () => controls.stop();
+  }, [inView, value]);
+
+  return (
+    <span ref={ref}>
+      {display}
+      {suffix}
+    </span>
+  );
+};
 
 const Body = ({ departmentInfo, scrolled }) => {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState([]);
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [editText, setEditText] = useState("");
   const [, setHoveredCard] = useState(null);
+  const [openFaq, setOpenFaq] = useState(0);
   const { theme } = useTheme();
 
-  // Fetch posts safely
-  useEffect(() => {
-    axios.get("http://localhost:5010/api/posts")
-      .then(res => {
-        setPosts(Array.isArray(res.data) ? res.data : []);
-      })
-      .catch(err => {
-        console.error("Error fetching posts", err);
-        setPosts([]);
-      });
-  }, []);
-
-  const handleSaveClick = (index) => {
-    const updatedPosts = [...posts];
-    updatedPosts[index].content = editText;
-    setPosts(updatedPosts);
-    setEditingIndex(null);
-  };
-
-  const handleEditClick = (index) => {
-    setEditingIndex(index);
-    setEditText(posts[index]?.content || "");
+  const handleAudienceAction = (aud) => {
+    if (aud.kind === "route") navigate(aud.target);
+    else document.getElementById(aud.target)?.scrollIntoView({ behavior: "smooth" });
   };
 
   const containerVariants = {
@@ -68,7 +72,7 @@ const Body = ({ departmentInfo, scrolled }) => {
       {/* Stats Counter Section */}
       <section id="stats" className="stats-section" aria-labelledby="stats-heading">
         <div className="container">
-          <h2 id="stats-heading" className="visually-hidden" style={{display: 'none'}}>Statistics</h2>
+          <h2 id="stats-heading" className="visually-hidden">Department at a glance</h2>
           <motion.div 
             className="stats-grid"
             variants={containerVariants}
@@ -87,14 +91,9 @@ const Body = ({ departmentInfo, scrolled }) => {
                 <FaUsers />
               </div>
               <div className="stat-content">
-                <motion.div 
-                  className="stat-value"
-                  initial={{ number: 0 }}
-                  whileInView={{ number: departmentInfo.facultyCount }}
-                  viewport={{ once: true }}
-                >
-                  {departmentInfo.facultyCount}+
-                </motion.div>
+                <div className="stat-value">
+                  <CountUp value={departmentInfo.facultyCount} suffix="+" />
+                </div>
                 <div className="stat-label">Expert Faculty</div>
               </div>
               <div className="stat-wave"></div>
@@ -109,14 +108,9 @@ const Body = ({ departmentInfo, scrolled }) => {
                 <FaGraduationCap />
               </div>
               <div className="stat-content">
-                <motion.div 
-                  className="stat-value"
-                  initial={{ number: 0 }}
-                  whileInView={{ number: departmentInfo.programs.length }}
-                  viewport={{ once: true }}
-                >
-                  {departmentInfo.programs.length}
-                </motion.div>
+                <div className="stat-value">
+                  <CountUp value={departmentInfo.programs.length} />
+                </div>
                 <div className="stat-label">Programs</div>
               </div>
               <div className="stat-wave"></div>
@@ -131,14 +125,9 @@ const Body = ({ departmentInfo, scrolled }) => {
                 <FaFlask />
               </div>
               <div className="stat-content">
-                <motion.div 
-                  className="stat-value"
-                  initial={{ number: 0 }}
-                  whileInView={{ number: departmentInfo.researchAreas.length }}
-                  viewport={{ once: true }}
-                >
-                  {departmentInfo.researchAreas.length}
-                </motion.div>
+                <div className="stat-value">
+                  <CountUp value={departmentInfo.researchAreas.length} />
+                </div>
                 <div className="stat-label">Research Areas</div>
               </div>
               <div className="stat-wave"></div>
@@ -153,18 +142,42 @@ const Body = ({ departmentInfo, scrolled }) => {
                 <FaClock />
               </div>
               <div className="stat-content">
-                <motion.div 
-                  className="stat-value"
-                  initial={{ number: 0 }}
-                  whileInView={{ number: new Date().getFullYear() - departmentInfo.established }}
-                  viewport={{ once: true }}
-                >
-                  {new Date().getFullYear() - departmentInfo.established}+
-                </motion.div>
+                <div className="stat-value">
+                  <CountUp value={new Date().getFullYear() - departmentInfo.established} suffix="+" />
+                </div>
                 <div className="stat-label">Years of Excellence</div>
               </div>
               <div className="stat-wave"></div>
             </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Audience pathways — professional dept-homepage pattern */}
+      <section id="audiences" className="audiences-section" aria-labelledby="audiences-heading">
+        <div className="container">
+          <div className="section-header">
+            <motion.div className="section-badge" initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}>
+              Start Here
+            </motion.div>
+            <motion.h2 id="audiences-heading" initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true }}>
+              Find Your Path
+            </motion.h2>
+            <motion.p className="section-subhead" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+              Choose your journey — we’ll guide you to programs, routines, or faculty expertise.
+            </motion.p>
+            <motion.div className="divider" initial={{ width: 0 }} whileInView={{ width: "100px" }} viewport={{ once: true }} />
+          </div>
+          <motion.div className="audiences-grid" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            {(departmentInfo.audiences || []).map((aud, index) => (
+              <motion.div key={index} className="audience-card" variants={itemVariants} whileHover={{ y: -8 }}>
+                <h3>{aud.title}</h3>
+                <p>{aud.description}</p>
+                <button type="button" className="contact-button" onClick={() => handleAudienceAction(aud)}>
+                  {aud.cta} <FaArrowRight aria-hidden="true" />
+                </button>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </section>
@@ -219,6 +232,11 @@ const Body = ({ departmentInfo, scrolled }) => {
                 mission is to nurture scientific thinking and prepare students for 
                 successful careers in academia, research, and industry.
               </p>
+
+              <blockquote className="mission-statement">
+                <span className="mission-label">Our Mission</span>
+                {departmentInfo.mission}
+              </blockquote>
               
               <motion.div 
                 className="features-grid"
@@ -251,6 +269,83 @@ const Body = ({ departmentInfo, scrolled }) => {
           </div>
         </div>
       </motion.section>
+
+      {/* College & University — institutional context */}
+      <section id="college-university" className="college-university-section" aria-labelledby="college-university-heading">
+        <div className="container">
+          <div className="section-header">
+            <motion.div className="section-badge" initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}>
+              Our Roots
+            </motion.div>
+            <motion.h2 id="college-university-heading" initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true }}>
+              Government Bangla College & Dhaka Central University
+            </motion.h2>
+            <motion.p className="section-subhead" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+              Our department stands on a historic college and a new public university — Bangla-medium heritage since 1962, now united with six sister colleges under DCU (2026).
+            </motion.p>
+            <motion.div className="divider" initial={{ width: 0 }} whileInView={{ width: "100px" }} viewport={{ once: true }} />
+          </div>
+
+          <motion.div
+            className="college-university-grid"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <motion.article className="cu-card" variants={itemVariants} whileHover={{ y: -8 }}>
+              <div className="cu-icon" aria-hidden="true">
+                <FaLandmark />
+              </div>
+              <p className="cu-eyebrow">Since {departmentInfo.collegeInfo?.established || "1 October 1962"} · {departmentInfo.collegeInfo?.location || "Mirpur, Dhaka"}</p>
+              <h3>{departmentInfo.collegeInfo?.name || "Government Bangla College"}</h3>
+              {departmentInfo.collegeInfo?.bengaliName && (
+                <p className="cu-bengali">{departmentInfo.collegeInfo.bengaliName}</p>
+              )}
+              <p className="cu-text">{departmentInfo.collegeInfo?.origin}</p>
+              {(departmentInfo.collegeInfo?.milestones || []).length > 0 && (
+                <ul className="cu-facts">
+                  {departmentInfo.collegeInfo.milestones.map((m, i) => (
+                    <li key={i}>{m}</li>
+                  ))}
+                </ul>
+              )}
+              <div className="cu-footer">
+                <span className="cu-meta">Founder: {departmentInfo.collegeInfo?.founder || "Principal Abul Kashem"}</span>
+                {departmentInfo.collegeInfo?.website && (
+                  <a className="contact-button" href={departmentInfo.collegeInfo.website} target="_blank" rel="noreferrer">
+                    College website <FaExternalLinkAlt aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+            </motion.article>
+
+            <motion.article className="cu-card" variants={itemVariants} whileHover={{ y: -8 }}>
+              <div className="cu-icon" aria-hidden="true">
+                <FaUniversity />
+              </div>
+              <p className="cu-eyebrow">Public university · {departmentInfo.universityInfo?.established || "2026"}</p>
+              <h3>{departmentInfo.universityInfo?.name || "Dhaka Central University"} {departmentInfo.universityInfo?.shortName ? `(${departmentInfo.universityInfo.shortName})` : ""}</h3>
+              <p className="cu-text">{departmentInfo.universityInfo?.origin}</p>
+              {(departmentInfo.universityInfo?.colleges || []).length > 0 && (
+                <ul className="cu-chips" aria-label="Seven attached colleges">
+                  {departmentInfo.universityInfo.colleges.map((c, i) => (
+                    <li key={i}>{c}</li>
+                  ))}
+                </ul>
+              )}
+              <div className="cu-footer">
+                <span className="cu-meta">{departmentInfo.universityInfo?.scale}</span>
+                {departmentInfo.universityInfo?.website && (
+                  <a className="contact-button" href={departmentInfo.universityInfo.website} target="_blank" rel="noreferrer">
+                    dcu.ac.bd <FaExternalLinkAlt aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+            </motion.article>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Programs Section */}
       <section id="programs" className="programs-section">
@@ -288,21 +383,29 @@ const Body = ({ departmentInfo, scrolled }) => {
                 onMouseLeave={() => setHoveredCard(null)}
               >
                 <div className="card-glow"></div>
-                <div className="program-icon">
+                <div className="program-icon" aria-hidden="true">
                   {program.icon}
                 </div>
                 <h3>{program.title}</h3>
                 <div className="program-duration">
-                  <FaClock /> {program.duration}
+                  <FaClock aria-hidden="true" /> {program.duration} · Dhaka Central University curriculum
                 </div>
                 <p>{program.description}</p>
+                {program.outcomes && (
+                  <ul className="program-outcomes">
+                    {program.outcomes.map((o, i) => (
+                      <li key={i}>{o}</li>
+                    ))}
+                  </ul>
+                )}
                 <motion.button 
                   className="program-button"
                   whileHover={{ x: 5 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate('/academic')}
+                  aria-label={`${program.cta || "Learn more"} — ${program.title}`}
                 >
-                  Learn More <FaArrowRight />
+                  {program.cta || "Learn More"} <FaArrowRight aria-hidden="true" />
                 </motion.button>
               </motion.div>
             ))}
@@ -410,6 +513,90 @@ const Body = ({ departmentInfo, scrolled }) => {
         </div>
       </section>
 
+      {/* Faculty Preview Section */}
+      <section id="faculty" className="faculty-section" aria-labelledby="faculty-heading">
+        <div className="container">
+          <div className="section-header">
+            <motion.div
+              className="section-badge"
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+            >
+              Our People
+            </motion.div>
+            <motion.h2
+              id="faculty-heading"
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              Meet Our Faculty
+            </motion.h2>
+            <motion.p
+              className="section-subhead"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              Learn from qualified and dedicated educators guiding the next generation of physicists.
+            </motion.p>
+            <motion.div 
+              className="divider"
+              initial={{ width: 0 }}
+              whileInView={{ width: "100px" }}
+              viewport={{ once: true }}
+            />
+          </div>
+          
+          <motion.div 
+            className="faculty-grid"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {teachersData.slice(0, 3).map((teacher, index) => (
+              <motion.div 
+                key={index}
+                className="faculty-card"
+                variants={itemVariants}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              >
+                <div className="faculty-photo">
+                  {teacher.photo ? (
+                    <img src={teacher.photo} alt={`Portrait of ${teacher.name}, ${teacher.title}`} loading="lazy" decoding="async" />
+                  ) : (
+                    <span className="faculty-initials" aria-hidden="true">
+                      {teacher.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
+                    </span>
+                  )}
+                </div>
+                <h4>{teacher.name}</h4>
+                <span className="faculty-title">{teacher.title}</span>
+                <p className="faculty-subject">{teacher.batch || "Department of Physics"}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <motion.div
+            className="section-cta"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            <motion.button
+              className="program-button"
+              whileHover={{ x: 5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/teachers')}
+            >
+              View All Faculty <FaArrowRight />
+            </motion.button>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section id="testimonials" className="testimonials-section">
         <div className="container">
@@ -456,16 +643,23 @@ const Body = ({ departmentInfo, scrolled }) => {
       </section>
 
       {/* News & Announcements Section */}
-      <section id="news" className="news-section">
+      <section id="news" className="news-section" aria-labelledby="news-heading">
         <div className="container">
           <div className="section-header">
+            <motion.div className="section-badge" initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}>
+              Stay Updated
+            </motion.div>
             <motion.h2
+              id="news-heading"
               initial={{ y: 20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
             >
-              Department News & Announcements
+              Notices & Announcements
             </motion.h2>
+            <motion.p className="section-subhead" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+              Admissions, examinations, and seminars — with links to the full details.
+            </motion.p>
             <motion.div 
               className="divider"
               initial={{ width: 0 }}
@@ -481,77 +675,117 @@ const Body = ({ departmentInfo, scrolled }) => {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {Array.isArray(posts) && posts.length > 0 ? (
-              posts.map((post, index) => (
-                <motion.div 
-                  key={post._id || index}
-                  className="news-card"
-                  variants={itemVariants}
-                  whileHover={{ y: -10 }}
-                >
-                  <div className="card-header">
-                    <h3>{post.title}</h3>
-                    <motion.span 
-                      className="post-date"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      {new Date(post.createdAt || Date.now()).toLocaleDateString()}
-                    </motion.span>
-                  </div>
-                  
-                  <div className="card-content">
-                    {editingIndex === index ? (
-                      <div className="edit-container">
-                        <textarea
-                          value={editText}
-                          onChange={(e) => setEditText(e.target.value)}
-                          rows="4"
-                        />
-                        <div className="edit-actions">
-                          <motion.button 
-                            className="save-btn"
-                            onClick={() => handleSaveClick(index)}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <FaSave /> Save
-                          </motion.button>
-                          <motion.button 
-                            className="cancel-btn"
-                            onClick={() => setEditingIndex(null)}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            Cancel
-                          </motion.button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <p>{post.content}</p>
-                        <motion.button 
-                          className="edit-btn"
-                          onClick={() => handleEditClick(index)}
-                          whileHover={{ x: 5 }}
-                          aria-label="Edit this news"
-                        >
-                          <FaExternalLinkAlt /> Edit Post
-                        </motion.button>
-                      </>
-                    )}
-                  </div>
-                  <div className="card-wave"></div>
-                </motion.div>
-              ))
-            ) : (
-              <motion.div 
-                className="no-news"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+            {departmentInfo.notices.map((notice, index) => (
+              <motion.article
+                key={index}
+                className="news-card"
+                variants={itemVariants}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
               >
-                <p>No announcements at the moment. Check back later for updates.</p>
-              </motion.div>
-            )}
+                <div className="card-header">
+                  <span className="notice-tag">{notice.tag}</span>
+                  <span className="post-date"><time>{notice.date}</time>{notice.status ? ` · ${notice.status}` : ""}</span>
+                </div>
+                <div className="card-content">
+                  <h3>{notice.title}</h3>
+                  <p>{notice.excerpt}</p>
+                  {notice.link && (
+                    <button type="button" className="contact-button news-link" onClick={() => navigate(notice.link)}>
+                      View details <FaArrowRight aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
+              </motion.article>
+            ))}
+          </motion.div>
+          <motion.div
+            className="news-cta"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            <motion.button
+              className="program-button"
+              whileHover={{ x: 5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/class-routine')}
+            >
+              View Class Routine <FaArrowRight />
+            </motion.button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ — discoverability + SEO pattern */}
+      <section id="faq" className="faq-section" aria-labelledby="faq-heading">
+        <div className="container">
+          <div className="section-header">
+            <motion.div className="section-badge" initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}>
+              FAQ
+            </motion.div>
+            <motion.h2 id="faq-heading" initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true }}>
+              Frequently Asked Questions
+            </motion.h2>
+            <motion.div className="divider" initial={{ width: 0 }} whileInView={{ width: "100px" }} viewport={{ once: true }} />
+          </div>
+          <div className="faq-list">
+            {(departmentInfo.faqs || []).map((f, i) => {
+              const open = openFaq === i;
+              return (
+                <div key={i} className={`faq-item ${open ? "open" : ""}`}>
+                  <button
+                    type="button"
+                    className="faq-question"
+                    aria-expanded={open}
+                    aria-controls={`faq-answer-${i}`}
+                    id={`faq-button-${i}`}
+                    onClick={() => setOpenFaq(open ? -1 : i)}
+                  >
+                    <span>{f.q}</span>
+                    <FaChevronDown aria-hidden="true" className="faq-chevron" />
+                  </button>
+                  {open && (
+                    <div id={`faq-answer-${i}`} role="region" aria-labelledby={`faq-button-${i}`} className="faq-answer">
+                      <p>{f.a}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Band */}
+      <section className="cta-band" aria-labelledby="cta-heading">
+        <div className="container">
+          <motion.div
+            className="cta-inner"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 id="cta-heading">Study physics where theory meets hands-on labs</h2>
+            <p>B.Sc. (Honours) and M.Sc. under Dhaka Central University — explore programs, routines, and faculty.</p>
+            <div className="cta-actions">
+              <motion.button
+                className="cta-button primary"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/academic')}
+              >
+                Explore Programs <FaArrowRight />
+              </motion.button>
+              <motion.button
+                className="cta-button ghost"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/teachers')}
+              >
+                Meet Our Faculty
+              </motion.button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -560,6 +794,7 @@ const Body = ({ departmentInfo, scrolled }) => {
       <motion.section 
         id="contact"
         className="contact-section"
+        aria-labelledby="contact-heading"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -567,12 +802,16 @@ const Body = ({ departmentInfo, scrolled }) => {
         <div className="container">
           <div className="section-header">
             <motion.h2
+              id="contact-heading"
               initial={{ y: 20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
             >
-              Contact Information
+              Visit & Connect
             </motion.h2>
+            <motion.p className="section-subhead" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+              {departmentInfo.contact?.address} — {departmentInfo.contact?.hours}
+            </motion.p>
             <motion.div 
               className="divider"
               initial={{ width: 0 }}
@@ -593,16 +832,18 @@ const Body = ({ departmentInfo, scrolled }) => {
               variants={itemVariants}
               whileHover={{ scale: 1.02 }}
             >
-              <FaMapMarkerAlt className="contact-icon" />
+              <FaMapMarkerAlt className="contact-icon" aria-hidden="true" />
               <div className="contact-content">
                 <h4>Department Location</h4>
-                <p>Science Building, Government Bangla College</p>
-                <motion.button 
+                <p>{departmentInfo.contact?.address}</p>
+                <a
                   className="contact-button"
-                  whileHover={{ x: 5 }}
+                  href={departmentInfo.contact?.mapUrl}
+                  target="_blank"
+                  rel="noreferrer"
                 >
-                  View on Map <FaExternalLinkAlt />
-                </motion.button>
+                  View on Map <FaExternalLinkAlt aria-hidden="true" />
+                </a>
               </div>
             </motion.div>
 
@@ -613,13 +854,33 @@ const Body = ({ departmentInfo, scrolled }) => {
             >
               <FaChalkboardTeacher className="contact-icon" />
               <div className="contact-content">
-                <h4>Department Head</h4>
-                <p>Professor Taslima Ferdous</p>
+                <h4>Faculty & Staff</h4>
+                <p>Meet our experienced teachers and researchers</p>
                 <motion.button 
                   className="contact-button"
                   whileHover={{ x: 5 }}
+                  onClick={() => navigate('/teachers')}
                 >
-                  Send Email <FaExternalLinkAlt />
+                  View Directory <FaArrowRight />
+                </motion.button>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="contact-card"
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+            >
+              <FaGraduationCap className="contact-icon" aria-hidden="true" />
+              <div className="contact-content">
+                <h4>Admissions</h4>
+                <p>B.Sc. (Honours) and M.Sc. programs under Dhaka Central University</p>
+                <motion.button 
+                  className="contact-button"
+                  whileHover={{ x: 5 }}
+                  onClick={() => navigate('/academic')}
+                >
+                  Explore Programs <FaArrowRight />
                 </motion.button>
               </div>
             </motion.div>
@@ -629,7 +890,9 @@ const Body = ({ departmentInfo, scrolled }) => {
 
       {/* Scroll to Top Button */}
       <motion.button 
+        type="button"
         className="scroll-top"
+        aria-label="Scroll to top"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         initial={{ opacity: 0, y: 20 }}
         animate={{ 
@@ -639,7 +902,7 @@ const Body = ({ departmentInfo, scrolled }) => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
-        ↑
+        <FaArrowUp aria-hidden="true" />
       </motion.button>
     </main>
   );

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { FaHome, FaGraduationCap, FaChalkboardTeacher, FaCalendarAlt, FaGamepad, FaFlask, FaInfoCircle, FaMoon, FaSun } from "react-icons/fa";
+import { FaHome, FaGraduationCap, FaChalkboardTeacher, FaCalendarAlt, FaFlask, FaInfoCircle, FaMoon, FaSun } from "react-icons/fa";
 import { useTheme } from "../../context/ThemeContext.js";
 import "./header.scss";
 
@@ -18,7 +18,7 @@ function Header() {
   const [activeSection, setActiveSection] = useState(location.pathname);
 
   const { scrollY } = useScroll();
-  const headerOpacity = useTransform(scrollY, [0, 100], [0.8, 0.95]);
+  const headerOpacity = useTransform(scrollY, [0, 100], [1, 1]);
   const headerScale = useTransform(scrollY, [0, 100], [1, 0.98]);
 
   const navigationItems = [
@@ -26,7 +26,6 @@ function Header() {
     { path: "/academic", label: "Academic", icon: FaGraduationCap },
     { path: "/teachers", label: "Teachers", icon: FaChalkboardTeacher },
     { path: "/class-routine", label: "Routine", icon: FaCalendarAlt },
-    { path: "/games", label: "Games", icon: FaGamepad },
     { path: "/scientific", label: "Scientific", icon: FaFlask, externalUrl: "https://sciencebee.netlify.app/" },
     { path: "/about", label: "About", icon: FaInfoCircle }
   ];

@@ -26,6 +26,9 @@ yarn-error.log*
 # Local Netlify folder
 .netlify
 
+# Local Vercel folder
+.vercel
+
 # Deployment files (keep template but not actual .env)
 .env
 !.env.template
@@ -122,3 +125,17 @@ public
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Android native app (entire folder excluded from web repo)
+android/
+
+# graphify knowledge-graph outputs (regenerable via /graphify)
+graphify-out/
+raw/
+
+# Android build artifacts (belt-and-braces if android/ is ever un-ignored)
+*.apk
+*.aab
+*.ap_
+local.properties
+.gradle/
