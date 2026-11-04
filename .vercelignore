@@ -13,6 +13,8 @@ build
 android
 graphify-out/
 raw/
+doc/
+docs/
 .cline/
 .clinerules/
 .roo/
