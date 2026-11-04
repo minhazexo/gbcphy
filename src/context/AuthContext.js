@@ -1,99 +1,118 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  getInitialSession,
+  profileFromUser,
+  signIn,
+  signInWithStudentId,
+  signOut,
+  signUp,
+  subscribeToSession,
+  updateProfileAndSave,
+  resetPassword as resetPasswordForEmail,
+  updatePassword as updateUserPassword,
+  resendConfirmation as resendConfirmationEmail
+} from "../data/session.js";
+import { RBACProvider } from "./RBACContext.js";
+export { useRBAC } from "./RBACContext.js";
 
 const AuthContext = createContext();
 
+// Adapter over the Supabase-backed session module; pages keep the same
+// interface they had with the mock, but auth is now real and async.
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
-
-  const getToken = () => localStorage.getItem("authToken");
-  const getUserId = () => localStorage.getItem("userId");
-
-  const fetchUserProfile = useCallback(async () => {
-    const token = getToken();
-    if (!token) {
-      return;
-    }
-
-    // Mock profile data
-    const mockProfile = {
-      id: "guest-user",
-      username: "Guest User",
-      email: "guest@example.com",
-      roll: "123456",
-      session: "2023-24",
-      profile_image: null
-    };
-
-    setUserProfile(mockProfile);
-    console.log("Mock user profile loaded");
-  }, []);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
-    const token = getToken();
-    if (token) {
-      setIsAuthenticated(true);
-      fetchUserProfile();
-    }
-  }, [fetchUserProfile]);
+    let active = true;
 
-  // -------------------------
-  // LOGIN (Stubbed)
-  // -------------------------
+    getInitialSession()
+      .then((session) => {
+        if (!active) return;
+        setUserProfile(profileFromUser(session && session.user));
+        setAuthReady(true);
+      })
+      .catch((error) => {
+        console.error("Could not restore the session:", error.message);
+        if (active) setAuthReady(true);
+      });
+
+    const unsubscribe = subscribeToSession((session) => {
+      setUserProfile(profileFromUser(session && session.user));
+      setAuthReady(true);
+    });
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, []);
+
   const login = async (email, password) => {
-    console.log("Mock login attempt for:", email);
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    localStorage.setItem("authToken", "mock-token");
-    localStorage.setItem("userId", "guest-user");
-    setIsAuthenticated(true);
-    await fetchUserProfile();
-
+    await signIn(email, password);
     return true;
   };
 
-  // -------------------------
-  // LOGOUT (Stubbed)
-  // -------------------------
-  const logout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId");
-    setIsAuthenticated(false);
+  const loginWithStudentId = async (studentId, password) => {
+    await signInWithStudentId(studentId, password);
+    return true;
+  };
+
+  const register = async (username, email, password) => {
+    const { needsConfirmation } = await signUp(username, email, password);
+    return {
+      needsConfirmation,
+      message: needsConfirmation
+        ? "Account created. Check your email to confirm it, then sign in."
+        : "Account created successfully."
+    };
+  };
+
+  const resetPassword = async (email) => {
+    await resetPasswordForEmail(email);
+  };
+
+  const updatePassword = async (newPassword) => {
+    await updateUserPassword(newPassword);
+  };
+
+  const resendConfirmation = async (email) => {
+    await resendConfirmationEmail(email);
+  };
+
+  const logout = async () => {
+    await signOut();
     setUserProfile(null);
   };
 
-  // -------------------------
-  // Upload profile picture (Stubbed)
-  // -------------------------
-  const uploadProfilePicture = async (file) => {
-    console.log("Mock uploadProfilePicture called");
-    await new Promise(resolve => setTimeout(resolve, 500));
-    console.log("Profile picture uploaded (Mock).");
-  };
+  const uploadProfilePicture = async () => null;
 
-  // -------------------------
-  // Update user profile (Stubbed)
-  // -------------------------
-  const updateUserProfile = async (userData, profileImage) => {
-    console.log("Mock updateUserProfile called");
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setUserProfile(prev => ({ ...prev, ...userData }));
-    console.log("Profile updated (Mock).");
+  const updateUserProfile = async (userData) => {
+    const profile = await updateProfileAndSave(userData);
+    setUserProfile(profile);
+    return profile;
   };
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
+        isAuthenticated: Boolean(userProfile),
+        authReady,
         userProfile,
         login,
+        loginWithStudentId,
+        register,
+        resetPassword,
+        updatePassword,
+        resendConfirmation,
         logout,
         uploadProfilePicture,
-        updateUserProfile,
+        updateUserProfile
       }}
     >
-      {children}
+      <RBACProvider>
+        {children}
+      </RBACProvider>
     </AuthContext.Provider>
   );
 };
@@ -101,8 +120,5 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => useContext(AuthContext);
 export default AuthContext;
 
-// Helper to get just user property
-export const useUser = () => {
-  const { userProfile } = useContext(AuthContext);
-  return userProfile;
-};
+// Helper to get just the user property
+export const useUser = () => useContext(AuthContext).userProfile;

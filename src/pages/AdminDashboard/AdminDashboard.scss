@@ -1,0 +1,172 @@
+// Admin dashboard overview styles using admin design tokens.
+@use "../../styles/admin/_variables.scss" as *;
+@use "../../styles/admin/_mixins.scss" as *;
+
+.admin-dashboard-loading {
+  padding: var(--admin-space-6);
+  color: var(--admin-text-secondary);
+  font-size: var(--admin-text-sm);
+  text-align: center;
+}
+
+.admin-dashboard-error {
+  padding: var(--admin-space-3) var(--admin-space-4);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-error-light);
+  border: 1px solid var(--admin-error);
+  color: var(--admin-error);
+  font-size: var(--admin-text-sm);
+  font-weight: var(--admin-font-weight-medium);
+  margin-bottom: var(--admin-space-4);
+  role: alert;
+}
+
+.admin-dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--admin-space-4);
+  margin-bottom: var(--admin-space-6);
+}
+
+.admin-dashboard-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-6);
+}
+
+.admin-dashboard-panel {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  box-shadow: var(--admin-shadow-sm);
+  overflow: hidden;
+}
+
+.admin-dashboard-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--admin-space-4);
+  padding: var(--admin-space-5);
+  border-bottom: 1px solid var(--admin-border);
+  flex-wrap: wrap;
+}
+
+.admin-dashboard-panel-head h2 {
+  margin: 0;
+  font-size: var(--admin-text-lg);
+  font-weight: var(--admin-font-weight-semibold);
+  color: var(--admin-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.admin-dashboard-panel-head p {
+  margin: var(--admin-space-1) 0 0;
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-secondary);
+}
+
+.admin-dashboard-table-wrap {
+  overflow-x: auto;
+  padding: 0 var(--admin-space-5) var(--admin-space-5);
+}
+
+.admin-dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+  font-size: var(--admin-text-sm);
+}
+
+.admin-dashboard-table th {
+  text-align: left;
+  padding: var(--admin-space-3) var(--admin-space-4);
+  font-size: var(--admin-text-xs);
+  font-weight: var(--admin-font-weight-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+  background: var(--admin-surface-hover);
+  border-bottom: 1px solid var(--admin-border);
+  white-space: nowrap;
+}
+
+.admin-dashboard-table td {
+  padding: var(--admin-space-3) var(--admin-space-4);
+  border-bottom: 1px solid var(--admin-border);
+  color: var(--admin-text-primary);
+  vertical-align: middle;
+}
+
+.admin-dashboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-dashboard-table tbody tr:hover {
+  background: var(--admin-surface-hover);
+}
+
+.admin-dashboard-table .right {
+  text-align: right;
+}
+
+.admin-dashboard-table .muted {
+  color: var(--admin-text-secondary);
+}
+
+.admin-dashboard-empty {
+  padding: var(--admin-space-6);
+  text-align: center;
+  color: var(--admin-text-secondary);
+  font-size: var(--admin-text-sm);
+}
+
+.admin-dashboard-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-3);
+  padding: 0 var(--admin-space-5) var(--admin-space-5);
+}
+
+.admin-dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  padding: var(--admin-space-2) var(--admin-space-4);
+  border-radius: var(--admin-radius-md);
+  font-family: var(--admin-font-sans);
+  font-size: var(--admin-text-sm);
+  font-weight: var(--admin-font-weight-medium);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--admin-transition-normal);
+}
+
+.admin-dashboard-btn.primary {
+  background: var(--admin-primary);
+  color: #ffffff;
+  border: none;
+}
+
+.admin-dashboard-btn.primary:hover {
+  background: var(--admin-primary-hover);
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-dashboard-panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--admin-space-2);
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+}
+

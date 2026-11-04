@@ -1,0 +1,85 @@
+@use "../../../styles/admin/_mixins.scss" as *;
+
+.admin-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+
+  .admin-input-label {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-1);
+    font-size: var(--admin-text-sm);
+    font-weight: var(--admin-font-weight-medium);
+    color: var(--admin-text-primary);
+    cursor: pointer;
+  }
+
+  .admin-input-required {
+    color: var(--admin-error);
+  }
+
+  .admin-input-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+  }
+
+  .admin-input-field {
+    @include admin-input();
+    width: 100%;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .admin-input--error {
+    .admin-input-field {
+      border-color: var(--admin-error);
+
+      &:focus {
+        border-color: var(--admin-error);
+        box-shadow: 0 0 0 3px var(--admin-error-light);
+      }
+    }
+  }
+
+  .admin-input-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--admin-text-muted);
+    z-index: 1;
+
+    svg {
+      width: var(--admin-text-sm);
+      height: var(--admin-text-sm);
+      display: block;
+    }
+  }
+
+  .admin-input--has-left-icon .admin-input-field {
+    padding-inline-start: 2.75rem;
+  }
+
+  .admin-input--has-right-icon .admin-input-field {
+    padding-inline-end: 2.75rem;
+  }
+
+  .admin-input--sm .admin-input-field {
+    font-size: var(--admin-text-xs);
+    padding: var(--admin-space-1) var(--admin-space-3);
+  }
+
+  .admin-input-error {
+    margin: 0;
+    color: var(--admin-error);
+    font-size: var(--admin-text-xs);
+  }
+
+  .admin-input-helper {
+    margin: 0;
+    color: var(--admin-text-muted);
+    font-size: var(--admin-text-xs);
+  }
+}

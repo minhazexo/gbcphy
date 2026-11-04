@@ -8,7 +8,7 @@ import {
   FaUniversity, FaLandmark
 } from "react-icons/fa";
 import { useTheme } from "../../context/ThemeContext.js";
-import { teachersData } from "../../pages/Teachers/Teachers.js";
+import { facultyPreview } from "../../data/teachers.js";
 import "./Body.scss";
 
 // Animated count-up value (professional stats-band pattern)
@@ -281,7 +281,7 @@ const Body = ({ departmentInfo, scrolled }) => {
               Government Bangla College & Dhaka Central University
             </motion.h2>
             <motion.p className="section-subhead" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-              Our department stands on a historic college and a new public university — Bangla-medium heritage since 1962, now united with six sister colleges under DCU (2026).
+              {departmentInfo.rootsSummary}
             </motion.p>
             <motion.div className="divider" initial={{ width: 0 }} whileInView={{ width: "100px" }} viewport={{ once: true }} />
           </div>
@@ -556,7 +556,7 @@ const Body = ({ departmentInfo, scrolled }) => {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {teachersData.slice(0, 3).map((teacher, index) => (
+            {facultyPreview(3).map((teacher, index) => (
               <motion.div 
                 key={index}
                 className="faculty-card"

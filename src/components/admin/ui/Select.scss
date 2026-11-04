@@ -1,0 +1,88 @@
+@use "../../../styles/admin/_mixins.scss" as *;
+
+.admin-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+
+  .admin-select-label {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-1);
+    font-size: var(--admin-text-sm);
+    font-weight: var(--admin-font-weight-medium);
+    color: var(--admin-text-primary);
+    cursor: pointer;
+  }
+
+  .admin-select-required {
+    color: var(--admin-error);
+  }
+
+  .admin-select-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+  }
+
+  .admin-select-field {
+    @include admin-input();
+    width: 100%;
+    flex: 1;
+    min-width: 0;
+    appearance: none;
+    background: var(--admin-surface);
+    padding-inline-end: 2.75rem;
+
+    &::-ms-expand {
+      display: none;
+    }
+  }
+
+  .admin-select--error {
+    .admin-select-field {
+      border-color: var(--admin-error);
+
+      &:focus {
+        border-color: var(--admin-error);
+        box-shadow: 0 0 0 3px var(--admin-error-light);
+      }
+    }
+  }
+
+  .admin-select-arrow {
+    position: absolute;
+    right: var(--admin-space-3);
+    color: var(--admin-text-muted);
+    pointer-events: none;
+
+    svg {
+      width: var(--admin-text-sm);
+      height: var(--admin-text-sm);
+      display: block;
+    }
+  }
+
+  .admin-select--sm .admin-select-field {
+    font-size: var(--admin-text-xs);
+    padding: var(--admin-space-1) var(--admin-space-3);
+    padding-inline-end: 2.25rem;
+  }
+
+  .admin-select--sm .admin-select-arrow {
+    right: var(--admin-space-2);
+  }
+
+  .admin-select-error {
+    margin: 0;
+    color: var(--admin-error);
+    font-size: var(--admin-text-xs);
+  }
+
+  .admin-select-helper {
+    margin: 0;
+    color: var(--admin-text-muted);
+    font-size: var(--admin-text-xs);
+  }
+}

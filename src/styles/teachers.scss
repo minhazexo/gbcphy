@@ -3,6 +3,8 @@
 
 .teachers-page {
   padding: 4rem 2rem;
+  // Clear the fixed site header (80px) plus breathing room
+  padding-top: 150px;
   min-height: 100vh;
   background: var(--teachers-bg);
   color: var(--text-color);
@@ -210,7 +212,8 @@
   position: relative;
   width: 140px;
   height: 140px;
-  margin: 0 auto 2rem;
+  // Extra room so the contact pill can sit below the avatar instead of over it
+  margin: 0 auto 5rem;
 
   .image-wrapper {
     position: relative;
@@ -285,9 +288,10 @@
 
   .teacher-overlay {
     position: absolute;
-    bottom: -10px;
+    top: calc(100% + 14px);
     left: 50%;
     transform: translateX(-50%);
+    white-space: nowrap;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 20px;
@@ -500,6 +504,7 @@
 @media (max-width: 768px) {
   .teachers-page {
     padding: 2rem 1rem;
+    padding-top: 120px;
   }
 
   .teacher-list {
@@ -620,6 +625,25 @@ body.light-theme {
 
     .stat-label {
       color: #475569;
+    }
+  }
+
+  // Contact pill sits on the white card, so it needs a light surface and
+  // dark icons — the dark-theme near-white icons are invisible here.
+  .teacher-image-container .teacher-overlay {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(15, 23, 42, 0.14);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+
+    .social-links a {
+      color: #1e293b;
+      background: rgba(15, 23, 42, 0.08);
+
+      &:hover {
+        color: #ffffff;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35);
+      }
     }
   }
 }

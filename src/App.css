@@ -141,12 +141,44 @@ a {
   box-shadow: 0 20px 50px var(--shadow-color);
 }
 
+/* Global responsive container system */
+.responsive-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .responsive-container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-container {
+    padding: 0 0.75rem;
+  }
+}
+
+/* Prevent horizontal overflow on all pages */
+html, body {
+  overflow-x: hidden;
+}
+
 @media (max-width: 768px) {
   /* tablet styles */
+  .responsive-container {
+    padding: 0 1rem;
+  }
 }
 
 @media (max-width: 480px) {
   /* mobile styles */
+  .responsive-container {
+    padding: 0 0.75rem;
+  }
 }
 
 /* Global theme overrides for pages with custom styles */

@@ -1,38 +1,163 @@
 // Header.js
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { FaHome, FaGraduationCap, FaChalkboardTeacher, FaCalendarAlt, FaFlask, FaInfoCircle, FaMoon, FaSun } from "react-icons/fa";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useReducedMotion
+} from "framer-motion";
+import {
+  FaHome,
+  FaGraduationCap,
+  FaChalkboardTeacher,
+  FaCalendarAlt,
+  FaFlask,
+  FaInfoCircle,
+  FaMoon,
+  FaSun,
+  FaEnvelope,
+  FaExternalLinkAlt
+} from "react-icons/fa";
 import { useTheme } from "../../context/ThemeContext.js";
 import "./header.scss";
+
+const navigationItems = [
+  { path: "/", label: "Home", icon: FaHome },
+  { path: "/academic", label: "Academic", icon: FaGraduationCap },
+  { path: "/teachers", label: "Teachers", icon: FaChalkboardTeacher },
+  { path: "/class-routine", label: "Routine", icon: FaCalendarAlt },
+  { path: "/scientific", label: "Scientific", icon: FaFlask, externalUrl: "https://sciencebee.netlify.app/" },
+  { path: "/about", label: "About", icon: FaInfoCircle }
+];
+
+const EXPO = [0.19, 1, 0.22, 1];
+
+const sheetVariants = {
+  hidden: { opacity: 0, y: -18 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: EXPO,
+      when: "beforeChildren",
+      staggerChildren: 0.05,
+      delayChildren: 0.04
+    }
+  },
+  exit: {
+    opacity: 0,
+    y: -14,
+    transition: {
+      duration: 0.22,
+      ease: "easeIn",
+      when: "afterChildren",
+      staggerChildren: 0.02,
+      staggerDirection: -1
+    }
+  }
+};
+
+const listVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.045 } },
+  exit: { transition: { staggerChildren: 0.02, staggerDirection: -1 } }
+};
+
+const pillVariants = {
+  hidden: { opacity: 0, y: -8 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: EXPO } },
+  exit: { opacity: 0, y: -6, transition: { duration: 0.12 } }
+};
+
+const MOBILE_BREAKPOINT = 768;
 
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const canvasRef = useRef(null);
   const particlesRef = useRef(null);
+  const sheetRef = useRef(null);
+  const toggleRef = useRef(null);
+  const wasOpen = useRef(false);
 
+  const reduceMotion = useReducedMotion();
+
+  // Read the viewport on the first render so the mobile bar never flashes on phones.
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth <= MOBILE_BREAKPOINT
+  );
   const [activeSection, setActiveSection] = useState(location.pathname);
 
   const { scrollY } = useScroll();
   const headerOpacity = useTransform(scrollY, [0, 100], [1, 1]);
   const headerScale = useTransform(scrollY, [0, 100], [1, 0.98]);
 
-  const navigationItems = [
-    { path: "/", label: "Home", icon: FaHome },
-    { path: "/academic", label: "Academic", icon: FaGraduationCap },
-    { path: "/teachers", label: "Teachers", icon: FaChalkboardTeacher },
-    { path: "/class-routine", label: "Routine", icon: FaCalendarAlt },
-    { path: "/scientific", label: "Scientific", icon: FaFlask, externalUrl: "https://sciencebee.netlify.app/" },
-    { path: "/about", label: "About", icon: FaInfoCircle }
-  ];
-
   useEffect(() => {
     setActiveSection(location.pathname);
   }, [location]);
+
+  // Navigating from anywhere (pill, browser back/forward, deep link) closes the sheet.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  // Move focus into the sheet on open, return it to the toggle on close.
+  useEffect(() => {
+    if (menuOpen) {
+      wasOpen.current = true;
+      const frame = requestAnimationFrame(() => sheetRef.current?.focus());
+      return () => cancelAnimationFrame(frame);
+    }
+    if (wasOpen.current) {
+      wasOpen.current = false;
+      toggleRef.current?.focus();
+    }
+  }, [menuOpen]);
+
+  // Escape closes; body scroll is locked while the sheet is open.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    // Lock the root scroller as well: html has overflow-x set in App.css, so
+    // `body { overflow: hidden }` alone does not propagate to the viewport.
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+    };
+  }, [menuOpen]);
+
+  // Keep keyboard focus inside the dialog while it is open.
+  const handleSheetKeyDown = useCallback((event) => {
+    if (event.key !== "Tab") return;
+    const focusable = sheetRef.current?.querySelectorAll(
+      'a[href], button:not([disabled])'
+    );
+    if (!focusable || focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,22 +165,21 @@ function Header() {
     };
 
     const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
+      const mobile = window.innerWidth <= MOBILE_BREAKPOINT;
       setIsMobile(mobile);
-      if (!mobile) {
-        setMenuOpen(false);
-      }
+      if (!mobile) setMenuOpen(false);
     };
 
     handleResize();
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
+  // Matrix rain canvas
   useEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -63,8 +187,7 @@ function Header() {
     canvas.width = window.innerWidth;
     canvas.height = 80;
 
-    let letters = "55286324174175286396385274285363682752525363669574152683968527525268";
-    letters = letters.split("");
+    const letters = "55286324174175286396385274285363682752525363669574152683968527525268".split("");
     const fontSize = 12;
     const columns = Math.floor(canvas.width / fontSize);
     const drops = new Array(columns).fill(1);
@@ -72,17 +195,13 @@ function Header() {
     function draw() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       ctx.fillStyle = isScrolled ? "#00ffff" : "#00ff88";
       ctx.font = `${fontSize}px 'Courier New'`;
 
       for (let i = 0; i < drops.length; i++) {
         const text = letters[Math.floor(Math.random() * letters.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
       }
     }
@@ -91,43 +210,35 @@ function Header() {
     return () => clearInterval(interval);
   }, [isScrolled]);
 
+  // Floating particles canvas
   useEffect(() => {
     if (!particlesRef.current) return;
-    const particlesCanvas = particlesRef.current;
-    const ctx = particlesCanvas.getContext("2d");
-    particlesCanvas.width = window.innerWidth;
-    particlesCanvas.height = 80;
+    const canvas = particlesRef.current;
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = 80;
 
-    const particles = [];
-    const particleCount = 50;
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * particlesCanvas.width,
-        y: Math.random() * particlesCanvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.5 + 0.2
-      });
-    }
+    const particles = Array.from({ length: 50 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      size: Math.random() * 2 + 1,
+      opacity: Math.random() * 0.5 + 0.2
+    }));
 
     function animateParticles() {
-      ctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
-
-      particles.forEach(particle => {
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-
-        if (particle.x < 0 || particle.x > particlesCanvas.width) particle.vx *= -1;
-        if (particle.y < 0 || particle.y > particlesCanvas.height) particle.vy *= -1;
-
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 255, 255, ${particle.opacity})`;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 255, 255, ${p.opacity})`;
         ctx.fill();
       });
-
       requestAnimationFrame(animateParticles);
     }
 
@@ -136,19 +247,20 @@ function Header() {
 
   const { theme, toggleTheme } = useTheme();
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleMenu = () => setMenuOpen((p) => !p);
+  const closeMenu = () => setMenuOpen(false);
 
   const handleNavClick = (item) => {
     setMenuOpen(false);
     if (item.externalUrl) {
-      window.open(item.externalUrl, '_blank');
+      window.open(item.externalUrl, "_blank", "noopener,noreferrer");
     } else {
       setActiveSection(item.path);
       navigate(item.path);
     }
   };
 
-  const renderNavItem = (item, isMobileMenu = false) => {
+  const renderDesktopNavItem = (item) => {
     const Icon = item.icon;
     const isActive = activeSection === item.path;
 
@@ -163,12 +275,10 @@ function Header() {
         whileTap={{ scale: 0.95 }}
       >
         <div
-          className={`nav-link ${isActive ? 'active' : ''} ${isMobileMenu ? 'mobile-link' : ''}`}
+          className={`nav-link ${isActive ? 'active' : ''}`}
           onClick={() => handleNavClick(item)}
         >
-          <div className="nav-icon">
-            <Icon />
-          </div>
+          <div className="nav-icon"><Icon /></div>
           <span className="nav-text">{item.label}</span>
           {isActive && (
             <motion.div
@@ -184,6 +294,61 @@ function Header() {
     );
   };
 
+  const renderMobilePill = (item) => {
+    const Icon = item.icon;
+    const isActive = activeSection === item.path;
+    const className = `mnav-pill${isActive ? " is-active" : ""}`;
+
+    const content = (
+      <>
+        <span className="mnav-pill-icon"><Icon aria-hidden="true" /></span>
+        <span className="mnav-pill-label">{item.label}</span>
+        {item.externalUrl && (
+          <FaExternalLinkAlt className="mnav-pill-ext" aria-hidden="true" />
+        )}
+        {isActive && <span className="mnav-pill-dot" aria-hidden="true" />}
+      </>
+    );
+
+    return (
+      <motion.li key={item.path} className="mnav-item" variants={pillVariants}>
+        {item.externalUrl ? (
+          <button
+            type="button"
+            className={className}
+            onClick={() => handleNavClick(item)}
+            aria-label={`${item.label} (opens in a new tab)`}
+          >
+            {content}
+          </button>
+        ) : (
+          <Link
+            to={item.path}
+            className={className}
+            onClick={closeMenu}
+            aria-current={isActive ? "page" : undefined}
+          >
+            {content}
+          </Link>
+        )}
+      </motion.li>
+    );
+  };
+
+  const sheetMotion = reduceMotion
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.01 }
+      }
+    : {
+        variants: sheetVariants,
+        initial: "hidden",
+        animate: "show",
+        exit: "exit"
+      };
+
   return (
     <>
       <motion.header
@@ -193,87 +358,141 @@ function Header() {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        {/* Matrix Rain Background */}
-        <canvas ref={canvasRef} className="matrix-canvas"></canvas>
-
-        {/* Floating Particles */}
-        <canvas ref={particlesRef} className="particles-canvas"></canvas>
-
-        {/* Animated Background Gradient */}
+        {/* Background layers */}
+        <canvas ref={canvasRef} className="matrix-canvas" />
+        <canvas ref={particlesRef} className="particles-canvas" />
         <div className="header-bg">
-          <div className="gradient-orb orb-1"></div>
-          <div className="gradient-orb orb-2"></div>
-          <div className="gradient-orb orb-3"></div>
+          <div className="gradient-orb orb-1" />
+          <div className="gradient-orb orb-2" />
+          <div className="gradient-orb orb-3" />
         </div>
 
+        {/* Desktop header content — always in DOM, hidden on mobile */}
         <div className="header-content">
-          {/* Logo Section */}
+          {/* Logo */}
           <motion.div
             className="logo-container"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <Link to="/">
-              <motion.img
-                src="/images/gbclogo.png"
-                alt="Dept Of Physics Logo"
-                className="logo"
-                initial={{ rotate: -180, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                whileHover={{ rotate: 360 }}
-              />
+              <img src="/images/gbclogo.png" alt="Dept Of Physics Logo" className="logo" loading="eager" />
             </Link>
           </motion.div>
 
-          {/* Theme Toggle */}
-          <button
-            type="button"
-            className={`theme-toggle ${theme}`}
-            onClick={toggleTheme}
-            aria-label="Toggle light / dark mode"
-          >
-            {theme === 'dark' ? <FaSun /> : <FaMoon />}
-          </button>
+          {/* Theme toggle (desktop only) */}
+          {!isMobile && (
+            <button
+              type="button"
+              className={`theme-toggle ${theme}`}
+              onClick={toggleTheme}
+              aria-label="Toggle light / dark mode"
+            >
+              {theme === 'dark' ? <FaSun /> : <FaMoon />}
+            </button>
+          )}
 
-          {/* Hamburger Menu */}
-          <motion.div
-            className={`hamburger ${menuOpen ? "open" : ""}`}
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </motion.div>
-
-          {/* Desktop Navigation */}
+          {/* Desktop navigation */}
           {!isMobile && (
             <nav className="nav-menu desktop-nav">
               <ul>
-                {navigationItems.map(item => renderNavItem(item))}
+                {navigationItems.map((item) => renderDesktopNavItem(item))}
               </ul>
             </nav>
           )}
         </div>
+
+        {/* Mobile top bar — inside header, shown only on mobile (≤768px) */}
+        {isMobile && (
+          <div className="mnav-bar">
+            <motion.div
+              className="mnav-logo-wrap"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link to="/" onClick={closeMenu}>
+                <img src="/images/gbclogo.png" alt="Dept Of Physics Logo" className="mnav-logo" loading="eager" />
+              </Link>
+            </motion.div>
+
+            <div className="mnav-controls">
+              <button
+                type="button"
+                className={`mnav-theme-toggle ${theme}`}
+                onClick={toggleTheme}
+                aria-label="Toggle light / dark mode"
+              >
+                {theme === 'dark' ? <FaSun /> : <FaMoon />}
+              </button>
+
+              <button
+                ref={toggleRef}
+                type="button"
+                className={`mnav-toggle ${menuOpen ? 'is-open' : ''}`}
+                onClick={toggleMenu}
+                aria-expanded={menuOpen}
+                aria-controls="mnav-sheet"
+                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              >
+                <span className="mnav-toggle-box" aria-hidden="true">
+                  <span className="mnav-bar-line" />
+                  <span className="mnav-bar-line" />
+                  <span className="mnav-bar-line" />
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
       </motion.header>
 
-      {/* Mobile Navigation - Rendered outside header to avoid overflow clipping */}
-      {isMobile && (
-        <>
-          <div
-            className={`mobile-nav-overlay ${menuOpen ? 'open' : ''}`}
-            onClick={() => setMenuOpen(false)}
+      {/* Mobile menu — backdrop + sheet are SIBLINGS of the header,
+          mounted only while open so hidden links are never focusable. */}
+      <AnimatePresence>
+        {isMobile && menuOpen && (
+          <motion.div
+            key="mnav-backdrop"
+            className="mnav-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={closeMenu}
+            aria-hidden="true"
           />
-          <nav className={`nav-menu mobile-nav ${menuOpen ? 'open' : ''}`}>
-            <ul>
-              {navigationItems.map(item => renderNavItem(item, true))}
-            </ul>
-          </nav>
-        </>
-      )}
+        )}
+
+        {isMobile && menuOpen && (
+          <motion.div
+            key="mnav-sheet"
+            id="mnav-sheet"
+            ref={sheetRef}
+            className="mnav-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mnav-sheet-title"
+            tabIndex={-1}
+            onKeyDown={handleSheetKeyDown}
+            {...sheetMotion}
+          >
+            <h2 className="mnav-sheet-title" id="mnav-sheet-title">Menu</h2>
+
+            <motion.ul className="mnav-pills" variants={listVariants}>
+              {navigationItems.map((item) => renderMobilePill(item))}
+
+              <motion.li className="mnav-item" variants={pillVariants}>
+                <a
+                  className="mnav-pill mnav-cv"
+                  href="mailto:mehrabhossain7102@gmail.com"
+                  onClick={closeMenu}
+                >
+                  <span className="mnav-pill-icon"><FaEnvelope aria-hidden="true" /></span>
+                  <span className="mnav-pill-label">Email Me</span>
+                </a>
+              </motion.li>
+            </motion.ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

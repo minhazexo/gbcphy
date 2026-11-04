@@ -1,166 +1,171 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+// src/pages/Profile/Profile.js
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext.js";
 import { useNavigate } from "react-router-dom";
-import "../../styles/profile.scss";
+import { supabase, isSupabaseConfigured } from "../../data/supabase.js";
 import { FaUserCircle } from "react-icons/fa";
-import { fetchProfile, updateProfile } from "../../api";
+import "../../styles/profile.scss";
 
-const Profile = () => {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
-  const [username, setUsername] = useState("");
-  const [roll, setRoll] = useState("");
-  const [session, setSession] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
-  const [loading, setLoading] = useState(false);
+const STATUS_LABELS = {
+  pending: "Pending",
+  approved: "Approved",
+  rejected: "Rejected",
+  suspended: "Suspended"
+};
 
-  const { logout } = useAuth();
+export default function Profile() {
+  const { userProfile, isAuthenticated, authReady, logout } = useAuth();
   const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Load profile on mount
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
+    if (!authReady) return;
+    if (!isAuthenticated) {
       navigate("/login");
       return;
     }
-
-    const loadProfile = async () => {
-      try {
-        const data = await fetchProfile();
-        setUser(data);
-        setUsername(data.username || "");
-        setRoll(data.roll || "");
-        setSession(data.session || "");
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError(err.message || "Failed to fetch user details.");
-        if (err.response && err.response.status === 401) {
-          logout();
-          navigate("/login");
-        }
-      }
-    };
-
-    loadProfile();
-  }, [navigate, logout]);
-
-  // Handle image file preview
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImageFile(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setPreviewImage(reader.result);
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage(null);
-    }
-  };
-
-  const handleProfileUpdate = async () => {
-    if (!username && !roll && !session && !imageFile) {
-      return alert("Please update at least one field or upload an image.");
-    }
-
     setLoading(true);
-    setError(null);
+    (async () => {
+      try {
+        if (isSupabaseConfigured && userProfile) {
+          const { data: profileData, error: profileError } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userProfile.id)
+            .single();
+          if (profileError) throw profileError;
 
+          let studentData = null;
+          try {
+            const { data, error } = await supabase
+              .from("students")
+              .select("*")
+              .eq("id", userProfile.id)
+              .single();
+            if (error && error.code !== "PGRST116") throw error;
+            studentData = data || null;
+          } catch (studentErr) {
+            // students table may not exist or have no matching row; ignore
+          }
+
+          setProfile({
+            ...profileData,
+            ...studentData,
+            full_name:
+              profileData.full_name ||
+              studentData?.name ||
+              userProfile.username ||
+              "",
+            student_id:
+              profileData.student_id ||
+              studentData?.student_id ||
+              userProfile.roll ||
+              "",
+            registration_number:
+              profileData.registration_number ||
+              studentData?.registration_number ||
+              "",
+            department:
+              profileData.department || studentData?.department || "",
+            batch: profileData.batch || studentData?.batch || "",
+            academic_session:
+              profileData.academic_session ||
+              studentData?.academic_session ||
+              profileData.session ||
+              userProfile.session ||
+              "",
+            status: profileData.status || studentData?.status || "pending",
+            email: profileData.email || userProfile.email || "",
+            created_at: profileData.created_at
+          });
+        } else {
+          setProfile({
+            ...userProfile,
+            full_name: userProfile.username || "",
+            student_id: userProfile.roll || "",
+            status: "pending"
+          });
+        }
+      } catch (err) {
+        setError(err.message || "Failed to load profile.");
+        setProfile(userProfile ? {
+          ...userProfile,
+          full_name: userProfile.username || "",
+          student_id: userProfile.roll || "",
+          status: "pending"
+        } : null);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [authReady, isAuthenticated, userProfile, navigate]);
+
+  const handleLogout = async () => {
     try {
-      const res = await updateProfile({ username, roll, session, imageFile });
-      alert(res.message);
-
-      // Update local state
-      const updatedUser = { ...user };
-      if (username) updatedUser.username = username;
-      if (roll) updatedUser.roll = roll;
-      if (session) updatedUser.session = session;
-      if (res.profile_image) updatedUser.profile_image = res.profile_image;
-
-      setUser(updatedUser);
-      setImageFile(null);
-      setPreviewImage(null);
+      await logout();
+      navigate("/login");
     } catch (err) {
-      console.error(err);
-      setError(err.message || "Failed to update profile.");
-    } finally {
-      setLoading(false);
+      setError(err.message || "Logout failed.");
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  if (loading) {
+    return (
+      <div className="profile-container">
+        <p>Loading profile...</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="profile-container">
+        <p>Redirecting to sign in...</p>
+      </div>
+    );
+  }
+
+  const p = profile || {};
+  const statusKey = String(p.status || "pending").toLowerCase();
+  const badgeClass = `status-badge ${statusKey}`;
 
   return (
     <div className="profile-container">
       {error && <div className="error-message">{error}</div>}
-
-      {user ? (
-        <div className="profile-card">
-          <div className="profile-image">
-            {previewImage ? (
-              <img src={previewImage} alt="Preview" className="profile-img" />
-            ) : user.profile_image ? (
-              <img
-                src={`http://localhost:5010/uploads/${user.profile_image}`}
-                alt="Profile"
-                className="profile-img"
-              />
-            ) : (
-              <FaUserCircle size={100} />
-            )}
-          </div>
-
-          <div className="profile-details">
-            <h1>{user.username || "Username"}</h1>
-            <p>Email: {user.email}</p>
-            <p>Roll: {user.roll || "N/A"}</p>
-            <p>Session: {user.session || "N/A"}</p>
-          </div>
-
-          <div className="profile-actions">
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Roll"
-              value={roll}
-              onChange={(e) => setRoll(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Session"
-              value={session}
-              onChange={(e) => setSession(e.target.value)}
-            />
-
-            <input type="file" onChange={handleImageChange} />
-
-            <button
-              className="btn-edit"
-              onClick={handleProfileUpdate}
-              disabled={loading}
-            >
-              {loading ? "Saving..." : "Save Changes"}
-            </button>
-
-            <button className="btn-logout" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
+      <div className="profile-card">
+        <div className="profile-image">
+          {p.profile_image ? (
+            <img src={p.profile_image} alt="Profile" className="profile-img" />
+          ) : (
+            <FaUserCircle size={100} />
+          )}
         </div>
-      ) : (
-        <p>Loading profile...</p>
-      )}
+
+        <div className="profile-details">
+          <h1>{p.full_name || p.username || "Student"}</h1>
+          <span className={badgeClass}>{STATUS_LABELS[statusKey] || "Pending"}</span>
+          <p><strong>Student ID:</strong> {p.student_id || p.roll || "N/A"}</p>
+          <p><strong>Registration Number:</strong> {p.registration_number || "N/A"}</p>
+          <p><strong>Department:</strong> {p.department || "N/A"}</p>
+          <p><strong>Batch:</strong> {p.batch || "N/A"}</p>
+          <p><strong>Academic Session:</strong> {p.academic_session || p.session || "N/A"}</p>
+          <p><strong>Email:</strong> {p.email || userProfile.email || "N/A"}</p>
+          <p><strong>Phone:</strong> {p.phone || "N/A"}</p>
+          <p><strong>Verification Status:</strong> {statusKey === "approved" ? "Verified" : "Pending verification"}</p>
+          <p><strong>Account Created:</strong> {p.created_at ? new Date(p.created_at).toLocaleDateString() : "N/A"}</p>
+        </div>
+
+        <div className="profile-actions">
+          <button className="btn-edit" onClick={() => navigate("/edit-profile")}>
+            Edit Profile
+          </button>
+          <button className="btn-logout" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default Profile;
+}

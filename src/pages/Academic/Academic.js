@@ -1,212 +1,209 @@
+// src/pages/Academic/Academic.js
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import * as THREE from "three";
 import "../../styles/academic.scss";
 import Notes from "../Academic/Notes/Notes.js";
+import { getDownloads, getFavorites, recordDownload, saveFavorites } from "../../data/contentStore.js";
 
-// Three.js Background Component - defined first
+// Three.js Background Component - loaded lazily
 const ThreeBackground = ({ containerRef, selectedYear }) => {
+  // Lazy import Three.js only when this component mounts
   useEffect(() => {
-    if (typeof window === 'undefined' || !containerRef.current) return;
+    import("three").then((THREE) => {
+      if (typeof window === "undefined" || !containerRef.current) return;
 
-    const container = containerRef.current;
-    if (!container) return;
+      const container = containerRef.current;
+      if (!container) return;
 
-    // Use window dimensions if container hasn't sized yet
-    const stageWidth = container.clientWidth || window.innerWidth;
-    const stageHeight = container.clientHeight || window.innerHeight;
-    
-    const xRows = 25;
-    const zRows = 25;
-    const cubeSize = 600;
-    const cubeGap = 200;
-    const cubeRow = cubeSize + cubeGap;
+      const stageWidth = container.clientWidth || window.innerWidth;
+      const stageHeight = container.clientHeight || window.innerHeight;
 
-    const camera = new THREE.PerspectiveCamera(55, stageWidth / stageHeight, 1, 20000);
-    camera.position.y = 5000;
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+      const xRows = 25;
+      const zRows = 25;
+      const cubeSize = 600;
+      const cubeGap = 200;
+      const cubeRow = cubeSize + cubeGap;
+      const halfXRows = (cubeRow * -xRows) / 2;
+      const halfZRows = (cubeRow * -zRows) / 2;
 
-    const scene = new THREE.Scene();
-    // Match the --bg-color of light-theme (#f8fafc)
-    const bgColor = new THREE.Color(0xf8fafc);
-    scene.background = bgColor;
-    scene.fog = new THREE.Fog(bgColor, 5000, 10000);
+      const camera = new THREE.PerspectiveCamera(55, stageWidth / stageHeight, 1, 20000);
+      camera.position.y = 5000;
+      camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
-    scene.add(ambientLight);
+      const scene = new THREE.Scene();
+      const bgColor = new THREE.Color(0xf8fafc);
+      scene.background = bgColor;
+      scene.fog = new THREE.Fog(bgColor, 5000, 10000);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(1, 1, 1);
-    scene.add(directionalLight);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+      scene.add(ambientLight);
 
-    const group = new THREE.Object3D();
-    scene.add(group);
-    let cubes = [];
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(1, 1, 1);
+      scene.add(directionalLight);
 
-    const halfXRows = (cubeRow * -xRows) / 2;
-    const halfZRows = (cubeRow * -zRows) / 2;
+      const group = new THREE.Object3D();
+      scene.add(group);
+      let cubes = [];
 
-    const colorSchemes = {
-      "First Year": { hueStart: 180, hueEnd: 240 }, // Blues
-      "Second Year": { hueStart: 240, hueEnd: 300 }, // Purples
-      "Third Year": { hueStart: 300, hueEnd: 360 }, // Pinks/Reds
-      "Fourth Year": { hueStart: 60, hueEnd: 120 }, // Greens
-    };
+      const colorSchemes = {
+        "First Year": { hueStart: 180, hueEnd: 240 }, // Blues
+        "Second Year": { hueStart: 240, hueEnd: 300 }, // Purples
+        "Third Year": { hueStart: 300, hueEnd: 360 }, // Pinks/Reds
+        "Fourth Year": { hueStart: 60, hueEnd: 120 }, // Greens
+      };
 
-    const createCubes = () => {
-      const scheme = colorSchemes[selectedYear] || colorSchemes["First Year"];
+      const createCubes = () => {
+        const scheme = colorSchemes[selectedYear] || colorSchemes["First Year"];
 
-      for (let x = 0; x < xRows; x++) {
-        cubes[x] = [];
-        for (let z = 0; z < zRows; z++) {
-          const cubeHeight = 10 + (Math.sin((x / xRows) * Math.PI) + Math.sin((z / zRows) * Math.PI) * 200 + Math.random() * 150);
-          const geometry = new THREE.BoxGeometry(cubeSize, cubeHeight, cubeSize);
-          
-          const hueProgress = ((x + z) / (xRows + zRows));
-          const hue = scheme.hueStart + (scheme.hueEnd - scheme.hueStart) * hueProgress;
-          
-          const material = new THREE.MeshPhongMaterial({
-            color: new THREE.Color(`hsl(${hue}, 80%, 60%)`),
-            specular: 0xffffff,
-            shininess: 50,
-            emissive: new THREE.Color(`hsl(${hue}, 60%, 10%)`),
-            transparent: true,
-            opacity: 0.9,
-          });
-          
-          const cube = new THREE.Mesh(geometry, material);
-          cube.position.x = halfXRows + x * cubeRow;
-          cube.position.y = cubeHeight / 2;
-          cube.position.z = (cubeRow * -zRows) / 2 + z * cubeRow;
-          cube.height = cubeHeight;
-          cube.originalY = cube.position.y;
-          group.add(cube);
-          cubes[x][z] = cube;
-        }
-      }
-    };
+        for (let x = 0; x < xRows; x++) {
+          cubes[x] = [];
+          for (let z = 0; z < zRows; z++) {
+            const cubeHeight = 10 + (Math.sin((x / xRows) * Math.PI) + Math.sin((z / zRows) * Math.PI) * 200 + Math.random() * 150);
+            const geometry = new THREE.BoxGeometry(cubeSize, cubeHeight, cubeSize);
 
-    createCubes();
+            const hueProgress = ((x + z) / (xRows + zRows));
+            const hue = scheme.hueStart + (scheme.hueEnd - scheme.hueStart) * hueProgress;
 
-    const renderer = new THREE.WebGLRenderer({ 
-      alpha: true,
-      antialias: true 
-    });
-    renderer.setSize(stageWidth, stageHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
+            const material = new THREE.MeshPhongMaterial({
+              color: new THREE.Color(`hsl(${hue}, 80%, 60%)`),
+              specular: 0xffffff,
+              shininess: 50,
+              emissive: new THREE.Color(`hsl(${hue}, 60%, 10%)`),
+              transparent: true,
+              opacity: 0.9,
+            });
 
-    const position = { x: 0, y: 0, z: 0 };
-    const camPos = new THREE.Vector3(0, 0, 0);
-    let t = 0;
-    let animationFrameId;
-    let mouseX = 0;
-    let mouseY = 0;
-
-    const handleMouseMove = (event) => {
-      const rect = container.getBoundingClientRect();
-      const currentWidth = container.clientWidth || window.innerWidth;
-      const currentHeight = container.clientHeight || window.innerHeight;
-      mouseX = ((event.clientX - rect.left) / currentWidth) * 2 - 1;
-      mouseY = -((event.clientY - rect.top) / currentHeight) * 2 + 1;
-    };
-
-    container.addEventListener('mousemove', handleMouseMove);
-
-    const checkRow = () => {
-      const xIndex = position.x / cubeRow;
-      const xLoops = Math.floor(xIndex / xRows);
-      const zIndex = position.z / cubeRow;
-      const zLoops = Math.floor(zIndex / zRows);
-
-      for (let x = 0; x < xRows; x++) {
-        for (let z = 0; z < zRows; z++) {
-          if (!cubes[x] || !cubes[x][z]) continue;
-          
-          let dx = x >= xIndex - xLoops * xRows ? xRows * (1 - xLoops) : xRows * (0 - xLoops);
-          let dz = z >= zIndex - zLoops * zRows ? zRows * (1 - zLoops) : zRows * (0 - zLoops);
-          cubes[x][z].position.x = (x - dx) * cubeRow - halfXRows;
-          cubes[x][z].position.z = (z - dz) * cubeRow - halfZRows;
-          
-          const distanceToMouse = Math.sqrt(
-            Math.pow(cubes[x][z].position.x + position.x + mouseX * 2000, 2) +
-            Math.pow(cubes[x][z].position.z + position.z + mouseY * 2000, 2)
-          );
-          
-          const mouseInfluence = Math.max(0, 1 - distanceToMouse / 3000);
-          let scale = (cubes[x][z].position.z + group.position.z) / 1500;
-          scale = scale < 1 ? 1 : Math.pow(scale, 1.2);
-          scale += mouseInfluence * 0.5;
-          
-          cubes[x][z].scale.y = scale;
-          cubes[x][z].position.y = (cubes[x][z].height * scale) / 2;
-          
-          if (cubes[x][z].material.emissive) {
-            cubes[x][z].material.emissiveIntensity = 0.1 + mouseInfluence * 0.4;
+            const cube = new THREE.Mesh(geometry, material);
+            cube.position.x = halfXRows + x * cubeRow;
+            cube.position.y = cubeHeight / 2;
+            cube.position.z = (cubeRow * -zRows) / 2 + z * cubeRow;
+            cube.height = cubeHeight;
+            cube.originalY = cube.position.y;
+            group.add(cube);
+            cubes[x][z] = cube;
           }
         }
-      }
-    };
+      };
 
-    const animate = () => {
-      t += 16;
-      position.x += Math.sin(t * 0.001) * 20;
-      position.z += (Math.cos(t * 0.0008) + 5) * 20;
-      group.position.x = -position.x;
-      group.position.z = -position.z;
-      checkRow();
-      
-      camera.position.x = Math.sin(t * 0.0003) * 1000 + mouseX * 500;
-      camera.position.z = -4000 + mouseY * 300;
-      camera.position.y = (Math.cos(t * 0.0004) + 1.3) * 3000;
-      camera.lookAt(camPos);
-      
-      renderer.render(scene, camera);
-      animationFrameId = requestAnimationFrame(animate);
-    };
+      createCubes();
 
-    animate();
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(stageWidth, stageHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
 
-    const handleResize = () => {
-      const newWidth = container.clientWidth || window.innerWidth;
-      const newHeight = container.clientHeight || window.innerHeight;
-      camera.aspect = newWidth / newHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(newWidth, newHeight);
-    };
+      const position = { x: 0, y: 0, z: 0 };
+      const camPos = new THREE.Vector3(0, 0, 0);
+      let t = 0;
+      let animationFrameId;
+      let mouseX = 0;
+      let mouseY = 0;
 
-    window.addEventListener("resize", handleResize);
+      const handleMouseMove = (event) => {
+        const rect = container.getBoundingClientRect();
+        const currentWidth = container.clientWidth || window.innerWidth;
+        const currentHeight = container.clientHeight || window.innerHeight;
+        mouseX = ((event.clientX - rect.left) / currentWidth) * 2 - 1;
+        mouseY = -((event.clientY - rect.top) / currentHeight) * 2 + 1;
+      };
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      container.removeEventListener('mousemove', handleMouseMove);
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      
-      if (renderer) {
-        renderer.dispose();
-        if (container.contains(renderer.domElement)) {
-          container.removeChild(renderer.domElement);
-        }
-      }
-      
-      // Thorough cleanup of Three.js objects
-      scene.traverse((object) => {
-        if (object.isMesh) {
-          if (object.geometry) object.geometry.dispose();
-          if (object.material) {
-            if (Array.isArray(object.material)) {
-              object.material.forEach((m) => m.dispose());
-            } else {
-              object.material.dispose();
+      container.addEventListener("mousemove", handleMouseMove);
+
+      const checkRow = () => {
+        const xIndex = position.x / cubeRow;
+        const xLoops = Math.floor(xIndex / xRows);
+        const zIndex = position.z / cubeRow;
+        const zLoops = Math.floor(zIndex / zRows);
+
+        for (let x = 0; x < xRows; x++) {
+          for (let z = 0; z < zRows; z++) {
+            if (!cubes[x] || !cubes[x][z]) continue;
+
+            let dx = x >= xIndex - xLoops * xRows ? xRows * (1 - xLoops) : xRows * (0 - xLoops);
+            let dz = z >= zIndex - zLoops * zRows ? zRows * (1 - zLoops) : zRows * (0 - zLoops);
+            cubes[x][z].position.x = (x - dx) * cubeRow - halfXRows;
+            cubes[x][z].position.z = (z - dz) * cubeRow - halfZRows;
+
+            const distanceToMouse = Math.sqrt(
+              Math.pow(cubes[x][z].position.x + position.x + mouseX * 2000, 2) +
+                Math.pow(cubes[x][z].position.z + position.z + mouseY * 2000, 2)
+            );
+
+            const mouseInfluence = Math.max(0, 1 - distanceToMouse / 3000);
+            let scale = (cubes[x][z].position.z + group.position.z) / 1500;
+            scale = scale < 1 ? 1 : Math.pow(scale, 1.2);
+            scale += mouseInfluence * 0.5;
+
+            cubes[x][z].scale.y = scale;
+            cubes[x][z].position.y = (cubes[x][z].height * scale) / 2;
+
+            if (cubes[x][z].material.emissive) {
+              cubes[x][z].material.emissiveIntensity = 0.1 + mouseInfluence * 0.4;
             }
           }
         }
-      });
-      
-      while(scene.children.length > 0) {
-        scene.remove(scene.children[0]);
-      }
-    };
+      };
+
+      const animate = () => {
+        t += 16;
+        position.x += Math.sin(t * 0.001) * 20;
+        position.z += (Math.cos(t * 0.0008) + 5) * 20;
+        group.position.x = -position.x;
+        group.position.z = -position.z;
+        checkRow();
+
+        camera.position.x = Math.sin(t * 0.0003) * 1000 + mouseX * 500;
+        camera.position.z = -4000 + mouseY * 300;
+        camera.position.y = (Math.cos(t * 0.0004) + 1.3) * 3000;
+        camera.lookAt(camPos);
+
+        renderer.render(scene, camera);
+        animationFrameId = requestAnimationFrame(animate);
+      };
+
+      animate();
+
+      const handleResize = () => {
+        const newWidth = container.clientWidth || window.innerWidth;
+        const newHeight = container.clientHeight || window.innerHeight;
+        camera.aspect = newWidth / newHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(newWidth, newHeight);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+        container.removeEventListener("mousemove", handleMouseMove);
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+        if (renderer) {
+          renderer.dispose();
+          if (container.contains(renderer.domElement)) {
+            container.removeChild(renderer.domElement);
+          }
+        }
+
+        scene.traverse((object) => {
+          if (object.isMesh) {
+            if (object.geometry) object.geometry.dispose();
+            if (object.material) {
+              if (Array.isArray(object.material)) {
+                object.material.forEach((m) => m.dispose());
+              } else {
+                object.material.dispose();
+              }
+            }
+          }
+        });
+
+        while (scene.children.length > 0) {
+          scene.remove(scene.children[0]);
+        }
+      };
+    });
   }, [selectedYear, containerRef]);
 
   return <div ref={containerRef} className="three-background"></div>;
@@ -218,39 +215,26 @@ const Academic = () => {
   const [selectedYear, setSelectedYear] = useState("First Year");
   const [selectedType, setSelectedType] = useState("Notes");
   const [searchTerm, setSearchTerm] = useState("");
-  const [downloadCounts, setDownloadCounts] = useState({});
-  const [favorites, setFavorites] = useState([]);
+  const [downloadCounts, setDownloadCounts] = useState(getDownloads);
+  const [favorites, setFavorites] = useState(getFavorites);
   const containerRef = useRef(null);
 
-  // Load data from localStorage on component mount
-  useEffect(() => {
-    const savedDownloads = localStorage.getItem('downloadCounts');
-    const savedFavorites = localStorage.getItem('favorites');
-    
-    if (savedDownloads) {
-      setDownloadCounts(JSON.parse(savedDownloads));
-    }
-    if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
-    }
-  }, []);
+  const handleDownloadRecorded = (title) => {
+    setDownloadCounts(recordDownload(title));
+  };
 
-  // Save to localStorage when data changes
-  useEffect(() => {
-    localStorage.setItem('downloadCounts', JSON.stringify(downloadCounts));
-  }, [downloadCounts]);
-
-  useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites]);
+  const handleToggleFavorite = (itemKey) => {
+    const next = favorites.includes(itemKey)
+      ? favorites.filter((key) => key !== itemKey)
+      : [...favorites, itemKey];
+    setFavorites(next);
+    saveFavorites(next);
+  };
 
   return (
     <>
       {/* Three.js Background Component */}
-      <ThreeBackground 
-        containerRef={containerRef} 
-        selectedYear={selectedYear} 
-      />
+      <ThreeBackground containerRef={containerRef} selectedYear={selectedYear} />
 
       <div className="ocean">
         <div className="wave wave1"></div>
@@ -258,8 +242,8 @@ const Academic = () => {
       </div>
 
       <div className="notes-container light-theme">
-        <button 
-          className="class-routine-button" 
+        <button
+          className="class-routine-button"
           onClick={() => navigate("/class-routine")}
         >
           📅 Class Routine
@@ -273,9 +257,9 @@ const Academic = () => {
 
       <div className="controls-container">
         <div className="dropdown-container">
-          <select 
-            value={selectedYear} 
-            onChange={(e) => setSelectedYear(e.target.value)} 
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
             className="year-select"
           >
             <option value="First Year">First Year</option>
@@ -284,9 +268,9 @@ const Academic = () => {
             <option value="Fourth Year">Fourth Year</option>
           </select>
 
-          <select 
-            value={selectedType} 
-            onChange={(e) => setSelectedType(e.target.value)} 
+          <select
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
             className="type-select"
           >
             <option value="Notes">Notes</option>
@@ -312,9 +296,9 @@ const Academic = () => {
         selectedType={selectedType}
         searchTerm={searchTerm}
         downloadCounts={downloadCounts}
-        setDownloadCounts={setDownloadCounts}
+        onDownloadRecorded={handleDownloadRecorded}
         favorites={favorites}
-        setFavorites={setFavorites}
+        onToggleFavorite={handleToggleFavorite}
       />
       </div>
     </>
