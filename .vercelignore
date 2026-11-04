@@ -1,6 +1,6 @@
 # Vercel deploy ignore — keep serverless bundle lean
 node_modules
-# .git is kept intentionally so git lfs pull works during build
+.git
 .env
 .env.local
 .env.development.local
