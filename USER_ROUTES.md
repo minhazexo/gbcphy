@@ -57,7 +57,7 @@ Add placeholder env vars to `.env.example` (never commit `.env.local` or secrets
 | `/` | Home | Landing page with hero section, notices, and quick links |
 | `/about` | About | Department and college information |
 | `/teachers` | Teachers | Official faculty roster |
-| `/scientific` | Scientific | Scientific visualization / particle background |
+| `/scientific` | Scientific | Scientific simulation and visualization links |
 | `/academic` | Academic | Notes and syllabus library by year |
 | `/class-routine` | ClassRoutine | Class schedule / routine |
 | `/login` | Login | Sign in with email/password or student ID |

@@ -1,4 +1,4 @@
-# AGENTS.md — Department of Physics (Bun migration)
+# AGENTS.md ï¿½ Department of Physics (Bun migration)
 
 This file instructs AI coding agents working on this repository. It reflects the actual, verified implementation after the Bun migration.
 
@@ -38,7 +38,6 @@ src/
     Layout/           # Header, Footer, Layout (Outlet)
     Home/             # Hero, Body
     AI/               # AIChat (Gemini, lazy-loaded)
-    Scientific/       # ParticleBackground
     ProtectedRoute.js # route guard gating by auth state + RBAC role
   pages/
     Home, About, Academic, Teachers, ClassRoutine, NotFound
@@ -99,7 +98,7 @@ Permission checks are performed via `RBACContext` (`hasPermission(permissionName
 
 ## ProtectedRoute component
 
-`src/components/ProtectedRoute.js` — default export.
+`src/components/ProtectedRoute.js` ï¿½ default export.
 
 Wraps route elements and enforces:
 1. Authentication: if no session, redirect to `Login` (with optional `from` return path).
@@ -117,26 +116,26 @@ Props: `children` (required), `requiredRole` (optional string), `requiredPermiss
 ## Bun-specific instructions
 
 Runtime lock: `.bun-version` = `1.4.3`. `bunfig.toml` pins install/run/test behavior.
-Package manager: **Bun only** — do not introduce npm/yarn/pnpm scripts or lockfiles (`package-lock.json` is legacy; `bun.lock` is authoritative).
+Package manager: **Bun only** ï¿½ do not introduce npm/yarn/pnpm scripts or lockfiles (`package-lock.json` is legacy; `bun.lock` is authoritative).
 Lockfile: `bun.lock` is committed; regenerate only via `bun install` after `package.json` changes.
 
 Available scripts (all verified working):
-- `bun install` — install from `bun.lock`
-- `bun run dev` — CRA webpack dev server (HMR), `PORT=`/`BROWSER=none` supported
-- `bun run build` — `GENERATE_SOURCEMAP=false react-scripts build` ? `build/`
-- `bun run start` — `serve -s build -l 3000` (production preview)
-- `bun run preview` — alias for `start`
-- `bun run test` — Bun test runner (Jest-compatible, jsdom shim)
-- `bun run lint` — ESLint 9 flat config over `src/`
-- `bun run typecheck` — `tsc --noEmit -p tsconfig.json`
-- `bun run format` — Prettier over `src/**`
+- `bun install` ï¿½ install from `bun.lock`
+- `bun run dev` ï¿½ CRA webpack dev server (HMR), `PORT=`/`BROWSER=none` supported
+- `bun run build` ï¿½ `GENERATE_SOURCEMAP=false react-scripts build` ? `build/`
+- `bun run start` ï¿½ `serve -s build -l 3000` (production preview)
+- `bun run preview` ï¿½ alias for `start`
+- `bun run test` ï¿½ Bun test runner (Jest-compatible, jsdom shim)
+- `bun run lint` ï¿½ ESLint 9 flat config over `src/`
+- `bun run typecheck` ï¿½ `tsc --noEmit -p tsconfig.json`
+- `bun run format` ï¿½ Prettier over `src/**`
 
 Dependency rule: prefer Bun-native tooling where it adds real value (test runner, lockfile, install speed). Do NOT replace working runtime dependencies (react, react-router-dom, supabase-js, framer-motion, three, @google/generative-ai) without justification.
 
 ## Coding conventions
 
 - Files use `.js`/`.jsx` extensions; JSX via `react-jsx` (tsconfig `allowJs: true`, `checkJs: false`).
-- React 19 with automatic runtime — `import React` is **not required** in JSX files (ESLint flags unused `React` as a warning only). Prefer omitting it in new files.
+- React 19 with automatic runtime ï¿½ `import React` is **not required** in JSX files (ESLint flags unused `React` as a warning only). Prefer omitting it in new files.
 - Named exports for utilities/context; default exports for page/layout components.
 - SCSS modules per page/component, imported relatively (`../../styles/x.scss`).
 - Env vars must be `REACT_APP_*` prefixed (Create React App requirement). Never log secrets.
@@ -171,14 +170,14 @@ AGENTS.md         # this file
 
 ## Important configuration files
 
-- `package.json` — scripts, deps split into `dependencies`/`devDependencies`, `engines.bun >= 1.4.0`
-- `bunfig.toml` — Bun install (`auto=fallback`, `exact=false`), run (`silent=false`), test (`include`, `timeout`)
-- `bun.lock` — committed lockfile; do not hand-edit
-- `tsconfig.json` — typecheck only (`noEmit`), `allowJs`, JSX `react-jsx`
-- `eslint.config.js` — ESLint 9 flat config (react, react-hooks, jsx-a11y, prettier)
-- `.prettierrc` — prettier style
-- `vercel.json` — install/build/dev commands, SPA rewrite, security headers
-- `public/_redirects` — Netlify SPA fallback (`/* /index.html 200`)
+- `package.json` ï¿½ scripts, deps split into `dependencies`/`devDependencies`, `engines.bun >= 1.4.0`
+- `bunfig.toml` ï¿½ Bun install (`auto=fallback`, `exact=false`), run (`silent=false`), test (`include`, `timeout`)
+- `bun.lock` ï¿½ committed lockfile; do not hand-edit
+- `tsconfig.json` ï¿½ typecheck only (`noEmit`), `allowJs`, JSX `react-jsx`
+- `eslint.config.js` ï¿½ ESLint 9 flat config (react, react-hooks, jsx-a11y, prettier)
+- `.prettierrc` ï¿½ prettier style
+- `vercel.json` ï¿½ install/build/dev commands, SPA rewrite, security headers
+- `public/_redirects` ï¿½ Netlify SPA fallback (`/* /index.html 200`)
 
 ## Verified commands (post-migration)
 

@@ -39,8 +39,7 @@
       height: 80px;
     }
 
-    .matrix-canvas,
-    .particles-canvas {
+    .matrix-canvas {
       opacity: 0.7;
     }
   }
@@ -51,9 +50,8 @@
     }
   }
 
-  // Canvas backgrounds
-  .matrix-canvas,
-  .particles-canvas {
+  // Canvas background
+  .matrix-canvas {
     position: absolute;
     top: 0;
     left: 0;
@@ -62,10 +60,6 @@
     z-index: 1;
     pointer-events: none;
     transition: opacity var(--transition-slow);
-  }
-
-  .particles-canvas {
-    z-index: 2;
   }
 
   // Animated gradient background

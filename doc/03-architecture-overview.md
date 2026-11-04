@@ -39,7 +39,6 @@ src/
     Layout/           # Header, Footer, Layout
     Home/             # Hero, Body
     AI/               # AIChat (Gemini)
-    Scientific/       # ParticleBackground
   pages/
     Home, About, Academic, Teachers, ClassRoutine, NotFound
     Login, Register, Profile, EditProfile, ProfileImageUpload

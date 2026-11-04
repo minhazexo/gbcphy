@@ -81,31 +81,3 @@ button:focus, .nav-btn:focus, .indicator:focus, .cta-button:focus, a:focus {
   }
 }
 
-.particles-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-  
-  .particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: $primary-color;
-    border-radius: 50%;
-    animation: particle-float 20s infinite linear;
-    
-    &:nth-child(odd) {
-      background: $secondary-color;
-      animation-duration: 25s;
-    }
-    
-    &:nth-child(3n) {
-      background: $accent-color;
-      animation-duration: 30s;
-    }
-  }
-}
