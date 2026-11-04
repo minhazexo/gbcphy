@@ -110,7 +110,7 @@ const Scientific = () => {
 
   const openFractalExplorer = () => {
     window.open(
-      `${process.env.PUBLIC_URL}/Scientific/fractal-explorer-themes/index.html`,
+      `/Scientific/fractal-explorer-themes/index.html`,
       "_blank",
       "noopener,noreferrer"
     );

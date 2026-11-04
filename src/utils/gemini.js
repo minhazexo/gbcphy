@@ -9,7 +9,7 @@ export const getGeminiResponse = async (prompt) => {
   if (!genAI) {
     // Lazy import the heavy SDK
     const { GoogleGenerativeAI } = await import("@google/generative-ai");
-    const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+    const API_KEY = import.meta.env.REACT_APP_GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
     genAI = new GoogleGenerativeAI(API_KEY);
     model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   }
