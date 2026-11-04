@@ -33,14 +33,17 @@ Follow these steps to provision a new Supabase project and connect it to the app
 ### 1.3 Enable and configure Auth
 
 1. Open **Authentication → Settings**.
-2. Under **Site URL**, add your production URL (e.g. `https://gbc-physics.netlify.app`)
-   and any local dev URLs you test redirects against (e.g. `http://localhost:3000`).
-3. Under **Redirect URLs**, add the same URLs plus auth-callback paths:
+2. Under **Site URL**, put the production URL (for Vercel, `https://<project>.vercel.app`
+   or your custom domain).
+3. Under **Redirect URLs**, add the production domain and local dev origin:
    - `http://localhost:3000/*`
-   - `https://gbc-physics.netlify.app/*`
-   - `https://gbc-physics.netlify.app/auth/callback` (if you add a callback route)
+   - `https://<project>.vercel.app/*`
+   - `https://<custom-domain>/*` (if you attach one)
+   - `https://<project>.vercel.app/auth/callback` (if you add a callback route)
 4. Under **Email settings**, configure email confirmation and templates (see section 5).
 5. Save changes.
+
+Every Vercel **preview** deployment gets a unique URL. If you test auth on previews, either add a wildcard such as `https://*-<team>.vercel.app/*` or test auth on the production domain only.
 
 ### 1.4 Enable Storage
 

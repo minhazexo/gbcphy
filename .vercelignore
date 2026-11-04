@@ -20,3 +20,9 @@ raw/
 .vscode/
 *.log
 npm-debug.log*
+package-lock.json
+Supabase Pass.txt
+.env.template
+typecheck_out*.txt
+lighthouse_*.json
+__pycache__/
