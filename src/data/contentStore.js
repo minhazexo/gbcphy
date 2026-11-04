@@ -11,7 +11,9 @@ const CONTENT_EVENT = "gbc-content-changed";
 export const YEARS = ["First Year", "Second Year", "Third Year", "Fourth Year"];
 
 // R2 bucket public domain — upload your PDFs here with matching filenames.
-const R2_BASE = "https://dbf09b601bde7f71e3895ad546841b5d.r2.cloudflarestorage.com/gbc-physics-pdfs";
+// Using the auto-generated r2.dev public development URL.
+// For production, connect a custom domain to this bucket.
+const R2_BASE = "https://pub-f03874d54e81451fa22595f6280655a5.r2.dev/gbc-physics-pdfs";
 
 // URL-encode a path segment for R2 (spaces → %20, etc.)
 const r2 = (path) => `${R2_BASE}/${encodeURI(path)}`;
