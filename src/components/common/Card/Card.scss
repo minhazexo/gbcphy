@@ -1,0 +1,46 @@
+.common-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.common-card--padding-none {
+  padding: 0;
+}
+
+.common-card--padding-sm {
+  padding: 0.75rem;
+}
+
+.common-card--padding-md {
+  padding: 1.25rem;
+}
+
+.common-card--padding-lg {
+  padding: 2rem;
+}
+
+.common-card--bordered {
+  border-color: #e2e8f0;
+}
+
+.common-card--hover {
+  cursor: pointer;
+}
+
+.common-card--hover:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.common-card--clickable {
+  cursor: pointer;
+}
+
+.common-card--clickable:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}

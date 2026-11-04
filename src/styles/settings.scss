@@ -1,0 +1,221 @@
+@use "./admin/_variables.scss" as *;
+@use "./admin/_mixins.scss" as *;
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-6);
+  color: var(--admin-text-primary);
+  width: 100%;
+}
+
+.settings__tabs {
+  display: flex;
+  gap: var(--admin-space-1);
+  border-bottom: 1px solid var(--admin-border);
+  padding-bottom: var(--admin-space-1);
+  margin-bottom: var(--admin-space-6);
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-top: var(--admin-space-2);
+}
+
+.settings__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  padding: var(--admin-space-2) var(--admin-space-3);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: var(--admin-radius-md);
+  background: transparent;
+  color: var(--admin-text-muted);
+  font-family: var(--admin-font-sans);
+  font-size: var(--admin-text-sm);
+  font-weight: var(--admin-font-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  @include admin-transition();
+}
+
+.settings__tab:hover {
+  color: var(--admin-text-primary);
+  background: var(--admin-surface-hover);
+}
+
+.settings__tab--active {
+  color: var(--admin-primary);
+  border-bottom-color: var(--admin-primary);
+  background: var(--admin-primary-light);
+}
+
+.settings__tab-icon {
+  flex-shrink: 0;
+}
+
+.settings__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-4);
+}
+
+.settings__panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+}
+
+.settings__panel-title {
+  margin: 0;
+  font-size: var(--admin-text-lg);
+  font-weight: var(--admin-font-weight-semibold);
+  color: var(--admin-text-primary);
+}
+
+.settings__panel-description {
+  margin: 0;
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-secondary);
+}
+
+.settings__card {
+  width: 100%;
+  max-width: 720px;
+}
+
+.settings__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-4);
+}
+
+.settings__form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--admin-space-4);
+}
+
+.settings__form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  margin-top: var(--admin-space-1);
+}
+
+.settings__theme-options {
+  display: flex;
+  gap: var(--admin-space-3);
+  flex-wrap: wrap;
+}
+
+.settings__theme-btn {
+  min-width: 140px;
+}
+
+.settings__pref-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-3);
+}
+
+.settings__pref-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--admin-space-3) var(--admin-space-4);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-surface);
+  @include admin-transition();
+}
+
+.settings__pref-item:hover {
+  border-color: var(--admin-border-hover);
+}
+
+.settings__pref-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-0_5);
+  flex: 1;
+  min-width: 0;
+}
+
+.settings__pref-label {
+  font-size: var(--admin-text-sm);
+  font-weight: var(--admin-font-weight-medium);
+  color: var(--admin-text-primary);
+}
+
+.settings__pref-description {
+  font-size: var(--admin-text-xs);
+  color: var(--admin-text-muted);
+  margin: 0;
+}
+
+.settings__pref-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--admin-border);
+  border-radius: var(--admin-radius-full);
+  border: none;
+  cursor: pointer;
+  @include admin-transition();
+  flex-shrink: 0;
+}
+
+.settings__pref-toggle:hover {
+  background: var(--admin-border-hover);
+}
+
+.settings__pref-toggle--active {
+  background: var(--admin-primary);
+}
+
+.settings__pref-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border-radius: 50%;
+  @include admin-transition();
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.settings__pref-toggle--active .settings__pref-toggle-thumb {
+  transform: translateX(20px);
+}
+
+@media (max-width: 768px) {
+  .settings__tabs {
+    gap: var(--admin-space-1);
+  }
+  .settings__tab {
+    padding: var(--admin-space-2) var(--admin-space-2);
+    font-size: var(--admin-text-xs);
+  }
+  .settings__tab-icon {
+    display: none;
+  }
+  .settings__form-grid {
+    grid-template-columns: 1fr;
+  }
+  .settings__card {
+    max-width: 100%;
+  }
+  .settings__theme-btn {
+    min-width: 120px;
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings__pref-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--admin-space-2);
+  }
+}

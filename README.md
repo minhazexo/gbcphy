@@ -4,11 +4,63 @@ A Bun-powered React educational website and department management system for the
 
 The management system adds real Supabase Auth, Role-Based Access Control (RBAC), user profiles with avatar uploads, an admin dashboard, student/registration management, faculty management, content management (announcements, notices, events), activity logging, and Supabase Storage-backed file assets — all protected by Row Level Security (RLS) policies.
 
+## Architecture
+
+The codebase follows a **professional feature-based architecture** for maintainability and scalability. See `ARCHITECTURE.md` for the complete folder structure and `AGENTS.md` for AI coding agent instructions.
+
+```
+src/
+  app/              # Application wiring (App.js, routes, providers)
+  components/       # Reusable UI components (common + admin)
+  layouts/          # Page shell layouts (MainLayout, AuthLayout, AdminLayout)
+  features/         # Feature-based modules (auth, home, faculty, students, academic, admin, …)
+  hooks/            # Shared React hooks (useAuth, useTheme, usePermissions)
+  services/         # Business logic (Supabase auth, storage, content API)
+  context/          # React context (AuthContext, ThemeContext, RBACContext)
+  config/           # Centralized configuration (environment, app.config)
+  styles/           # Global & shared SCSS
+  utils/            # Pure helpers (validators, formatters, helpers)
+  data/             # Canonical data & local storage (legacy Supabase modules)
+  index.js          # React entry point
+```
+
+### Key Locations
+
+| What to modify           | Location                                    |
+|--------------------------|---------------------------------------------|
+| Header (public)          | `src/layouts/MainLayout/Header.js`          |
+| Navbar (public)          | `src/layouts/MainLayout/Navbar.js`          |
+| Footer (public)          | `src/layouts/MainLayout/Footer.js`          |
+| Homepage                 | `src/features/home/pages/Home.js`           |
+| About page               | `src/features/about/pages/About.js`         |
+| Teachers / Faculty       | `src/features/faculty/pages/TeacherDirectory.js` |
+| Academic page            | `src/features/academic/pages/Academic.js`   |
+| Class Routine            | `src/features/academic/pages/ClassRoutine.js` |
+| Scientific tools         | `src/features/scientific/pages/Scientific.js` |
+| Login                    | `src/features/authentication/pages/Login.js` |
+| Register                 | `src/features/authentication/pages/Register.js` |
+| Profile                  | `src/features/profile/pages/Profile.js`     |
+| Edit Profile             | `src/features/profile/pages/EditProfile.js` |
+| Settings                 | `src/features/settings/pages/Settings.js`   |
+| Admin Dashboard          | `src/features/admin/pages/AdminDashboard.js` |
+| Student Management       | `src/features/students/pages/StudentManagement.js` |
+| Faculty Management       | `src/features/faculty/pages/FacultyManagement.js` |
+| Registration Approvals   | `src/features/admin/pages/RegistrationApprovals.js` |
+| Content Management       | `src/features/admin/pages/ContentManagement.js` |
+| Activity Logs            | `src/features/admin/pages/ActivityLogs.js`   |
+| Supabase client          | `src/services/supabase/client.js`           |
+| Auth service             | `src/services/supabase/auth.service.js`     |
+| Storage service          | `src/services/supabase/storage.service.js`  |
+| Content service          | `src/services/api/content.service.js`       |
+| Routing                  | `src/app/routes/AppRoutes.js`               |
+| RBAC / permissions       | `src/context/RBACContext.js`                |
+| Theme                    | `src/context/ThemeContext.js`               |
+
 ## Technology Stack
 
 - **Runtime & package manager**: Bun 1.4.3
 - **Frontend**: React 19, React Router v7
-- **Styling**: SCSS (via sass), CSS Modules
+- **Styling**: SCSS (via sass)
 - **Build tool**: Vite 7 (`@vitejs/plugin-react`), static output in `build/`
 - **Authentication**: Supabase Auth (Supabase JS client)
 - **Database**: Supabase (PostgreSQL) — 6 managed migrations (schema, content, activity logs, RLS policies, indexes/constraints, storage buckets)
@@ -27,17 +79,16 @@ The management system adds real Supabase Auth, Role-Based Access Control (RBAC),
 
 - **Department portal**: home, about, teachers, academic, class routine, scientific tools, games
 - **Authentication**: email/password sign-in, sign-up with email confirmation, forgot/reset password, resend confirmation, student-ID-based login
-- **Role-Based Access Control (RBAC)**: role hierarchy super_admin > department_admin > faculty > student with granular permissions (manage students, approve registrations, manage faculty, manage content, view dashboard, edit own profile)
+- **Role-Based Access Control (RBAC)**: role hierarchy super_admin > department_admin > faculty > student with granular permissions
 - **User profiles**: profile view/edit, avatar upload via Supabase Storage, role-based data access
-- **Admin dashboard**: overview stats (students by status, faculty, admins), recent registrations, quick actions
-- **Student management**: view all student records, filter/search, registration status lifecycle (pending/approved/rejected/suspended)
-- **Registration approval**: approve/reject pending student registrations with notes/reasons
+- **Admin dashboard**: overview stats, recent registrations, quick actions
+- **Student management**: view all student records, filter/search, registration status lifecycle
+- **Registration approval**: approve/reject pending student registrations
 - **Faculty management**: view and manage faculty records
 - **Content management**: announcements, notices, events — create, edit, publish/unpublish, archive
-- **Activity logs**: audit trail of admin actions (actor, action, target, metadata)
+- **Activity logs**: audit trail of admin actions
 - **Unauthorized access page**: RBAC denial handling
 - **AI chat assistant**: Gemini 1.5 Flash, lazy-loaded
-- **Interactive tools & games**: chess, snake, flappy bird
 
 ## Prerequisites
 
@@ -149,8 +200,6 @@ The app is a static site: `bun run build` emits `build/` containing `index.html`
 4. Add the production domain to Supabase **Authentication → URL Configuration** (Site URL plus Redirect URLs, e.g. `https://<project>.vercel.app/*`). Without this, email confirmation and password-reset links redirect to the wrong host. See `SUPABASE_SETUP.md` §1.3.
 
 5. Optional: attach a custom domain in Vercel, then update `VITE_SITE_URL` and the canonical/OG URLs in `index.html`.
-
-CLI deploys: `bunx vercel` for a preview, `bunx vercel --prod` for production. `.vercelignore` keeps secrets, logs, and stale artifacts out of the upload.
 
 ### Netlify (legacy)
 
