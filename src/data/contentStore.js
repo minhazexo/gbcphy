@@ -10,59 +10,65 @@ const CONTENT_EVENT = "gbc-content-changed";
 
 export const YEARS = ["First Year", "Second Year", "Third Year", "Fourth Year"];
 
+// R2 bucket public domain — upload your PDFs here with matching filenames.
+const R2_BASE = "https://dbf09b601bde7f71e3895ad546841b5d.r2.cloudflarestorage.com/gbc-physics-pdfs";
+
+// URL-encode a path segment for R2 (spaces → %20, etc.)
+const r2 = (path) => `${R2_BASE}/${encodeURI(path)}`;
+
 export const DEFAULT_NOTES = {
   "First Year": [
-    { title: "Analytical and Vector Geometry", url: "/1st Year Notes/Analytical and Vector Geometry.pdf", type: "pdf" },
-    { title: "Calculus-1", url: "/1st Year Notes/Calculus-1.pdf", type: "pdf" },
-    { title: "Electricity", url: "/1st Year Notes/Electricity.pdf", type: "pdf" },
-    { title: "Mechanics and Properties of Matter", url: "/1st Year Notes/Mechanics and Properties of Matter.pdf", type: "pdf" },
-    { title: "NM Stat", url: "/1st Year Notes/NM Stat.pdf", type: "pdf" },
-    { title: "Thermal Physics", url: "/1st Year Notes/Thermal Physics.pdf", type: "pdf" }
+    { title: "Analytical and Vector Geometry", url: r2("1st Year Notes/Analytical and Vector Geometry.pdf"), type: "pdf" },
+    { title: "Calculus-1", url: r2("1st Year Notes/Calculus-1.pdf"), type: "pdf" },
+    { title: "Electricity", url: r2("1st Year Notes/Electricity.pdf"), type: "pdf" },
+    { title: "Mechanics and Properties of Matter", url: r2("1st Year Notes/Mechanics and Properties of Matter.pdf"), type: "pdf" },
+    { title: "NM Stat", url: r2("1st Year Notes/NM Stat.pdf"), type: "pdf" },
+    { title: "Thermal Physics", url: r2("1st Year Notes/Thermal Physics.pdf"), type: "pdf" }
   ],
   "Second Year": [
-    { title: "PHA 201 (OPTICS)", url: "/2nd Year Notes/EMON { PHA 201 (OPTICS) }_compressed.pdf", type: "pdf" },
-    { title: "PHA 202 (ELECTRONICS 1)", url: "/2nd Year Notes/EMON { PHA 202 (ELECTRONICS 1) }_compressed.pdf", type: "pdf" },
-    { title: "PHA 203 (MP)", url: "/2nd Year Notes/EMON { PHA 203 (MP) }_compressed.pdf", type: "pdf" },
-    { title: "PHA 204 (AMP)", url: "/2nd Year Notes/EMON { PHA 204 (AMP) }_compressed.pdf", type: "pdf" },
-    { title: "PHA 205 (WOAM)", url: "/2nd Year Notes/EMON {PHA 205 (WOAM) }_compressed.pdf", type: "pdf" }
+    { title: "PHA 201 (OPTICS)", url: r2("2nd Year Notes/EMON { PHA 201 (OPTICS) }_compressed.pdf"), type: "pdf" },
+    { title: "PHA 202 (ELECTRONICS 1)", url: r2("2nd Year Notes/EMON { PHA 202 (ELECTRONICS 1) }_compressed.pdf"), type: "pdf" },
+    { title: "PHA 203 (MP)", url: r2("2nd Year Notes/EMON { PHA 203 (MP) }_compressed.pdf"), type: "pdf" },
+    { title: "PHA 204 (AMP)", url: r2("2nd Year Notes/EMON { PHA 204 (AMP) }_compressed.pdf"), type: "pdf" },
+    { title: "PHA 205 (WOAM)", url: r2("2nd Year Notes/EMON {PHA 205 (WOAM) }_compressed.pdf"), type: "pdf" }
   ],
   "Third Year": [
-    { title: "Astrophysics", url: "/3rd Year Notes/Astrophysics.PHA-308.pdf", type: "pdf" },
-    { title: "Classical Mechanics", url: "/3rd Year Notes/Classical Mechanics.PHA-301.pdf", type: "pdf" },
-    { title: "Electrodynamics", url: "/3rd Year Notes/Electrodynamics.PHA-305.pdf", type: "pdf" },
-    { title: "Lasers and Photonics", url: "/3rd Year Notes/Lasers and Photonics..pdf", type: "pdf" },
-    { title: "Nuclear Physics", url: "/3rd Year Notes/Nuclear Physics.PHA-304.pdf", type: "pdf" },
-    { title: "Quantum Mechanics", url: "/3rd Year Notes/Quantum Machanics.PHA-302.pdf", type: "pdf" },
-    { title: "Solid State Physics", url: "/3rd Year Notes/Solid State Physics.PH-303.pdf", type: "pdf" },
-    { title: "Astrophysics Roy(20-21)", url: "/3rd Year Notes/Roy Notes/Astrophysics (ROY).pdf", type: "pdf" },
-    { title: "Classical Mechanics and Relativity Roy(20-21)", url: "/3rd Year Notes/Roy Notes/Classical mechanics and relativity (ROY).pdf", type: "pdf" },
-    { title: "Electrodynamics Roy(20-21)", url: "/3rd Year Notes/Roy Notes/Electrodynamics (ROY).pdf", type: "pdf" },
-    { title: "Lasers and Photonics Roy(20-21)", url: "/3rd Year Notes/Roy Notes/Lasers(ROY).pdf", type: "pdf" },
-    { title: "Nuclear Physics Roy(20-21)", url: "/3rd Year Notes/Roy Notes/Nuclear (ROY).pdf", type: "pdf" },
-    { title: "Quantum Mechanics Roy(20-21)", url: "/3rd Year Notes/Roy Notes/Quantum (ROY).pdf", type: "pdf" },
-    { title: "Solid State Physics Roy(20-21)", url: "/3rd Year Notes/Roy Notes/Solid(ROY).pdf", type: "pdf" }
+    { title: "Astrophysics", url: r2("3rd Year Notes/Astrophysics.PHA-308.pdf"), type: "pdf" },
+    { title: "Classical Mechanics", url: r2("3rd Year Notes/Classical Mechanics.PHA-301.pdf"), type: "pdf" },
+    { title: "Electrodynamics", url: r2("3rd Year Notes/Electrodynamics.PHA-305.pdf"), type: "pdf" },
+    { title: "Lasers and Photonics", url: r2("3rd Year Notes/Lasers and Photonics..pdf"), type: "pdf" },
+    { title: "Nuclear Physics", url: r2("3rd Year Notes/Nuclear Physics.PHA-304.pdf"), type: "pdf" },
+    { title: "Quantum Mechanics", url: r2("3rd Year Notes/Quantum Machanics.PHA-302.pdf"), type: "pdf" },
+    { title: "Solid State Physics", url: r2("3rd Year Notes/Solid State Physics.PH-303.pdf"), type: "pdf" },
+    { title: "Astrophysics Roy(20-21)", url: r2("3rd Year Notes/Roy Notes/Astrophysics (ROY).pdf"), type: "pdf" },
+    { title: "Classical Mechanics and Relativity Roy(20-21)", url: r2("3rd Year Notes/Roy Notes/Classical mechanics and relativity (ROY).pdf"), type: "pdf" },
+    { title: "Electrodynamics Roy(20-21)", url: r2("3rd Year Notes/Roy Notes/Electrodynamics (ROY).pdf"), type: "pdf" },
+    { title: "Lasers and Photonics Roy(20-21)", url: r2("3rd Year Notes/Roy Notes/Lasers(ROY).pdf"), type: "pdf" },
+    { title: "Nuclear Physics Roy(20-21)", url: r2("3rd Year Notes/Roy Notes/Nuclear (ROY).pdf"), type: "pdf" },
+    { title: "Quantum Mechanics Roy(20-21)", url: r2("3rd Year Notes/Roy Notes/Quantum (ROY).pdf"), type: "pdf" },
+    { title: "Solid State Physics Roy(20-21)", url: r2("3rd Year Notes/Roy Notes/Solid(ROY).pdf"), type: "pdf" }
   ],
   "Fourth Year": [
-    { title: "Experimental Physics (ROY)", url: "/4th Year Notes/Experimental 4 th yr (ROY).pdf", type: "pdf", size: "33 MB" },
-    { title: "Nuclear Physics II (ROY)", url: "/4th Year Notes/Nuclear 4 th yr (ROY).pdf", type: "pdf", size: "32 MB" },
-    { title: "Quantum Mechanics II (ROY)", url: "/4th Year Notes/Quantum -2 4th yr (ROY).pdf", type: "pdf", size: "40 MB" },
-    { title: "Solid State Physics II (ROY)", url: "/4th Year Notes/SSP-2 4th yr (ROY).pdf", type: "pdf", size: "41 MB" },
-    { title: "Statistical Physics (ROY)", url: "/4th Year Notes/Statistical 4th yr (ROY).pdf", type: "pdf", size: "41 MB" }
+    { title: "Experimental Physics (ROY)", url: r2("4th Year Notes/Experimental 4 th yr (ROY).pdf"), type: "pdf", size: "33 MB" },
+    { title: "Nuclear Physics II (ROY)", url: r2("4th Year Notes/Nuclear 4 th yr (ROY).pdf"), type: "pdf", size: "32 MB" },
+    { title: "Quantum Mechanics II (ROY)", url: r2("4th Year Notes/Quantum -2 4th yr (ROY).pdf"), type: "pdf", size: "40 MB" },
+    { title: "Solid State Physics II (ROY)", url: r2("4th Year Notes/SSP-2  4th yr (ROY).pdf"), type: "pdf", size: "41 MB" },
+    { title: "Statistical Physics (ROY)", url: r2("4th Year Notes/Statistical 4th yr (ROY).pdf"), type: "pdf", size: "41 MB" }
   ]
 };
 
 export const DEFAULT_SYLLABUS = {
   "First Year": [
-    { title: "1st & 2nd Year Syllabus", url: "/Syllabus/1st and 2nd Year.pdf", type: "pdf", size: "1.2 MB" }
+    { title: "1st & 2nd Year Syllabus", url: r2("Syllabus/1st and 2nd Year.pdf"), type: "pdf", size: "1.2 MB" }
   ],
   "Second Year": [
-    { title: "1st & 2nd Year Syllabus", url: "/Syllabus/1st and 2nd Year.pdf", type: "pdf", size: "1.2 MB" }
+    { title: "1st & 2nd Year Syllabus", url: r2("Syllabus/1st and 2nd Year.pdf"), type: "pdf", size: "1.2 MB" }
   ],
   "Third Year": [
-    { title: "3rd Year Syllabus", url: "/Syllabus/3rd Year.pdf", type: "pdf", size: "0.9 MB" }
+    { title: "3rd Year Syllabus", url: r2("Syllabus/3rd Year.pdf"), type: "pdf", size: "0.9 MB" }
   ],
   "Fourth Year": [
-    { title: "4th Year Syllabus", url: "/Syllabus/4th Year.pdf", type: "pdf", size: "1.1 MB" }
+    { title: "4th Year Syllabus", url: r2("Syllabus/4th Year.pdf"), type: "pdf", size: "1.1 MB" }
   ]
 };
 
