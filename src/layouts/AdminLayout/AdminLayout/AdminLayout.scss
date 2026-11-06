@@ -1,0 +1,151 @@
+.admin-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.admin-layout--sidebar-open {
+  overflow: hidden;
+}
+
+.admin-layout__skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #4f46e5;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  z-index: 100;
+  transition: top 0.2s;
+}
+
+.admin-layout__skip-link:focus {
+  top: 0;
+}
+
+.admin-layout__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+
+.admin-layout__navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
+}
+
+.admin-layout__body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.admin-layout__main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.admin-layout__content {
+  animation: none;
+}
+
+.admin-layout__breadcrumbs {
+  margin-bottom: 1rem;
+}
+
+.admin-layout__breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+.admin-layout__breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+.admin-layout__breadcrumb-link {
+  color: #64748b;
+  text-decoration: none;
+}
+
+.admin-layout__breadcrumb-link:hover {
+  color: #4f46e5;
+}
+
+.admin-layout__breadcrumb-current {
+  color: #475569;
+  font-weight: 500;
+}
+
+.admin-layout__breadcrumb-separator {
+  color: #94a3b8;
+  margin: 0 0.25rem;
+}
+
+.admin-layout__toasts {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.admin-layout__toast {
+  pointer-events: auto;
+}
+
+.admin-layout__toast--error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.admin-layout__toast--success {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.admin-layout__toast--warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.admin-layout__toast--info {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+@media (max-width: 768px) {
+  .admin-layout__main {
+    padding: 1rem;
+  }
+
+  .admin-layout__body {
+    flex-direction: column;
+  }
+
+  .admin-layout__navbar {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+  }
+
+  .admin-layout__overlay {
+    z-index: 110;
+  }
+}

@@ -1,0 +1,16 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-separator {
+  border: none;
+  height: 1px;
+  background: var(--admin-border);
+  margin: 0;
+}
+
+.admin-separator--vertical {
+  height: auto;
+  width: 1px;
+  min-height: 1.25rem;
+  margin: 0;
+}

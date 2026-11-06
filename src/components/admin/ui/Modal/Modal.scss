@@ -1,0 +1,117 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--admin-z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: adminModalFadeIn var(--admin-transition-fast);
+}
+
+.admin-modal {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  margin: var(--admin-space-6);
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-xl);
+  box-shadow: var(--admin-shadow-xl);
+  color: var(--admin-text-primary);
+  animation: adminModalSlideIn var(--admin-transition-normal);
+}
+
+.admin-modal--sm {
+  max-width: 420px;
+}
+
+.admin-modal--md {
+  max-width: 560px;
+}
+
+.admin-modal--lg {
+  max-width: 760px;
+}
+
+.admin-modal-close {
+  position: absolute;
+  top: var(--admin-space-3);
+  right: var(--admin-space-3);
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: var(--admin-surface-hover);
+  color: var(--admin-text-muted);
+  border-radius: var(--admin-radius-md);
+  cursor: pointer;
+  line-height: 1;
+  font-size: 1.25rem;
+  @include admin-transition();
+
+  &:hover {
+    background: var(--admin-surface-active);
+    color: var(--admin-text-primary);
+  }
+}
+
+.admin-modal-title {
+  margin: 0;
+  font-size: var(--admin-text-lg);
+  font-weight: var(--admin-font-weight-semibold);
+  color: var(--admin-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.admin-modal-description {
+  margin: var(--admin-space-1) 0 var(--admin-space-4);
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-secondary);
+}
+
+.admin-modal-content {
+  padding: 0 var(--admin-space-6) var(--admin-space-6);
+}
+
+.admin-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--admin-space-2);
+  padding: var(--admin-space-4) var(--admin-space-6);
+  border-top: 1px solid var(--admin-border);
+  background: var(--admin-surface-hover);
+  border-bottom-left-radius: var(--admin-radius-xl);
+  border-bottom-right-radius: var(--admin-radius-xl);
+}
+
+@keyframes adminModalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes adminModalSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .admin-modal {
+    margin: var(--admin-space-4);
+    border-radius: var(--admin-radius-lg);
+  }
+  .admin-modal-content {
+    padding: 0 var(--admin-space-4) var(--admin-space-5);
+  }
+  .admin-modal-footer {
+    padding: var(--admin-space-4);
+  }
+}

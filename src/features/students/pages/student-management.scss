@@ -1,0 +1,76 @@
+@use "../../../styles/admin/_variables.scss" as *;
+@use "../../../styles/admin/_mixins.scss" as *;
+
+.student-management {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-6);
+  color: var(--admin-text-primary);
+}
+
+.student-management__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-3);
+  flex-wrap: wrap;
+  padding: var(--admin-space-3) 0;
+}
+
+.student-management__toolbar-separator {
+  height: 2rem;
+  min-height: 2rem;
+}
+
+.student-management__loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--admin-space-8) 0;
+  color: var(--admin-text-secondary);
+}
+
+.student-management__cell-student {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+}
+
+.student-management__cell-id {
+  font-size: var(--admin-text-xs);
+  color: var(--admin-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.student-management__actions {
+  display: flex;
+  gap: var(--admin-space-1_5);
+}
+
+.student-management__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--admin-space-3) 0;
+}
+
+.student-management__pagination-info {
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-muted);
+}
+
+@media (max-width: 640px) {
+  .student-management__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .student-management__toolbar-separator {
+    display: none;
+  }
+  .student-management__toolbar > * {
+    width: 100%;
+  }
+  .student-management__pagination {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--admin-space-2);
+  }
+}

@@ -1,0 +1,322 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.registration-approval {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-6);
+  color: var(--admin-text-primary);
+}
+
+.registration-approval__error {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  padding: var(--admin-space-3) var(--admin-space-4);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-error-light);
+  color: var(--admin-error);
+  font-size: var(--admin-text-sm);
+  font-weight: var(--admin-font-weight-medium);
+  border: 1px solid color-mix(in srgb, var(--admin-error), transparent 80%);
+}
+
+.registration-approval__error svg {
+  flex-shrink: 0;
+  width: var(--admin-space-5);
+  height: var(--admin-space-5);
+}
+
+/* Stat cards */
+.approval-stats {
+  display: flex;
+  gap: var(--admin-space-3);
+}
+
+.approval-stats__card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+}
+
+.approval-stats__head {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+}
+
+.approval-stats__label {
+  font-size: var(--admin-text-xs);
+  font-weight: var(--admin-font-weight-semibold);
+  color: var(--admin-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.approval-stats__icon {
+  color: var(--admin-text-muted);
+  flex-shrink: 0;
+}
+
+.approval-stats__value {
+  font-size: var(--admin-text-2xl);
+  font-weight: 800;
+  color: var(--admin-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.approval-stats__sub {
+  font-size: var(--admin-text-xs);
+  color: var(--admin-text-secondary);
+}
+
+.approval-stats__card--pending .approval-stats__icon { color: var(--admin-warning); }
+.approval-stats__card--approved .approval-stats__icon { color: var(--admin-success); }
+.approval-stats__card--rejected .approval-stats__icon { color: var(--admin-error); }
+
+/* Toolbar */
+.registration-approval__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-3);
+  flex-wrap: wrap;
+  padding: var(--admin-space-3) 0;
+}
+
+.registration-approval__toolbar-separator {
+  height: 2rem;
+  min-height: 2rem;
+}
+
+.registration-approval__filter-group {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+}
+
+.registration-approval__filter-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--admin-space-1);
+  font-size: var(--admin-text-xs);
+  font-weight: var(--admin-font-weight-semibold);
+  color: var(--admin-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.registration-approval__status-chips {
+  display: flex;
+  gap: var(--admin-space-1);
+  flex-wrap: wrap;
+}
+
+.registration-approval__status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--admin-space-1_5);
+  padding: var(--admin-space-2) var(--admin-space-3);
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  color: var(--admin-text-secondary);
+  font-size: var(--admin-text-sm);
+  font-weight: var(--admin-font-weight-medium);
+  border-radius: var(--admin-radius-md);
+  cursor: pointer;
+  @include admin-transition();
+
+  &:hover {
+    border-color: var(--admin-border-hover);
+    color: var(--admin-text-primary);
+  }
+
+  &--active {
+    background: var(--admin-primary);
+    border-color: var(--admin-primary);
+    color: #ffffff;
+    box-shadow: var(--admin-shadow-glow);
+  }
+}
+
+.registration-approval__pending-badge {
+  font-size: 0.65rem;
+  padding: 0.125rem 0.4rem;
+  margin-left: 0;
+}
+
+/* Table */
+.registration-approval__table {
+  overflow-x: auto;
+}
+
+.registration-approval__cell-student {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+}
+
+.registration-approval__cell-avatar {
+  flex-shrink: 0;
+}
+
+.registration-approval__cell-student-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.registration-approval__cell-student-name {
+  font-size: var(--admin-text-sm);
+  font-weight: var(--admin-font-weight-semibold);
+  color: var(--admin-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.registration-approval__cell-student-email {
+  font-size: var(--admin-text-xs);
+  color: var(--admin-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.registration-approval__cell-applied {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-1);
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-secondary);
+}
+
+.registration-approval__cell-icon {
+  width: var(--admin-space-5);
+  height: var(--admin-space-5);
+  color: var(--admin-text-muted);
+  flex-shrink: 0;
+}
+
+.registration-approval__cell-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1_5);
+}
+
+.registration-approval__status-badge {
+  font-size: var(--admin-text-xs);
+}
+
+.registration-approval__status-icon {
+  font-size: 0.625rem;
+}
+
+/* Modals */
+.registration-approval__modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--admin-space-2);
+  padding-top: var(--admin-space-2);
+}
+
+.registration-approval__modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+  margin-bottom: var(--admin-space-3);
+}
+
+.registration-approval__modal-label {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-1);
+  font-size: var(--admin-text-sm);
+  font-weight: var(--admin-font-weight-medium);
+  color: var(--admin-text-primary);
+}
+
+.registration-approval__required {
+  color: var(--admin-error);
+}
+
+.registration-approval__textarea {
+  width: 100%;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  color: var(--admin-text-primary);
+  font-family: var(--admin-font-sans);
+  font-size: var(--admin-text-sm);
+  line-height: var(--admin-line-height-normal);
+  padding: var(--admin-space-3) var(--admin-space-4);
+  resize: vertical;
+  min-height: 4rem;
+  @include admin-transition();
+
+  &:hover {
+    border-color: var(--admin-border-hover);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 3px var(--admin-primary-light);
+  }
+}
+
+.registration-approval__field-error {
+  font-size: var(--admin-text-xs);
+  color: var(--admin-error);
+  font-weight: var(--admin-font-weight-medium);
+}
+
+.registration-approval__view-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--admin-space-3);
+}
+
+.registration-approval__view-label {
+  font-size: var(--admin-text-xs);
+  font-weight: var(--admin-font-weight-semibold);
+  color: var(--admin-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.registration-approval__view-value {
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-primary);
+  word-break: break-word;
+}
+
+.registration-approval__view-badge {
+  font-size: var(--admin-text-xs);
+}
+
+@media (max-width: 640px) {
+  .approval-stats {
+    flex-direction: column;
+  }
+  .registration-approval__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .registration-approval__toolbar-separator {
+    display: none;
+  }
+  .registration-approval__filter-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .registration-approval__status-chips {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: var(--admin-space-1);
+  }
+  .registration-approval__view-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,38 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-skeleton {
+  background: var(--admin-surface-hover);
+  border-radius: var(--admin-radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.admin-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
+  animation: adminSkeletonShimmer 1.4s ease-in-out infinite;
+}
+
+.admin-skeleton--circle {
+  border-radius: var(--admin-radius-full);
+}
+
+@keyframes adminSkeletonShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.admin-skeleton--text,
+.admin-skeleton--circle {
+  background: var(--admin-surface-hover);
+}

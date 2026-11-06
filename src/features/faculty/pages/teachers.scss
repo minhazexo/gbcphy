@@ -1,0 +1,533 @@
+// Teachers page — theme-aware styling for light and dark modes.
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+.teachers-page {
+  padding: 4rem 2rem;
+  // Clear the fixed site header (80px) plus breathing room
+  padding-top: 150px;
+  min-height: 100vh;
+  background: var(--teachers-bg);
+  color: var(--text-color);
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  overflow: hidden;
+
+  // Floating background elements
+  .floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+
+    .floating-element {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+      opacity: 0.1;
+      animation: float 20s infinite linear;
+
+      &.el-1 {
+        width: 200px;
+        height: 200px;
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+      }
+
+      &.el-2 {
+        width: 150px;
+        height: 150px;
+        top: 60%;
+        right: 10%;
+        animation-delay: -5s;
+        background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+      }
+
+      &.el-3 {
+        width: 100px;
+        height: 100px;
+        bottom: 20%;
+        left: 15%;
+        animation-delay: -10s;
+        background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+      }
+
+      &.el-4 {
+        width: 120px;
+        height: 120px;
+        top: 20%;
+        right: 20%;
+        animation-delay: -15s;
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+      }
+    }
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  33% {
+    transform: translateY(-30px) rotate(120deg);
+  }
+
+  66% {
+    transform: translateY(15px) rotate(240deg);
+  }
+}
+
+.teachers-page-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+.teachers-page-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--text-color) 0%, var(--secondary-color) 50%, var(--primary-color) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-shadow: 0 4px 20px rgba(79, 70, 229, 0.2);
+}
+
+.teachers-page-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.teacher-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2.5rem;
+  max-width: 1400px;
+  margin: 0 auto 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+.teacher-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s ease;
+  will-change: transform;
+
+  // Static accent border behind the card (no animated gradient)
+  .animated-border {
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    border-radius: 26px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  // Soft glow behind the card
+  .card-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center,
+        color-mix(in srgb, var(--primary-color), transparent 90%) 0%,
+        transparent 70%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    border-radius: 24px;
+    z-index: -1;
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    z-index: 10;
+  }
+
+  &.active {
+    background: color-mix(in srgb, var(--surface-color), transparent 8%);
+  }
+}
+
+.card-content {
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    transform: none;
+  }
+
+  .teacher-image-container:hover .teacher-image {
+    transform: scale(1);
+  }
+
+  .teacher-image-container:hover .image-shine {
+    left: 100%;
+  }
+}
+
+.teacher-image-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  // Extra room so the contact pill can sit below the avatar instead of over it
+  margin: 0 auto 5rem;
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow:
+      0 8px 32px color-mix(in srgb, black, 70%),
+      0 0 0 3px var(--glass-border);
+
+    .teacher-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .image-fallback {
+      display: none;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-color);
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+
+      &.show {
+        display: flex;
+      }
+    }
+
+    .image-shine {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          color-mix(in srgb, var(--text-color), transparent 75%),
+          transparent);
+      transition: left 0.6s ease;
+    }
+  }
+
+  &:hover {
+    .image-shine {
+      left: 100%;
+    }
+  }
+
+  .experience-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #ffffff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--primary-color), transparent 55%);
+    border: 2px solid var(--glass-border);
+  }
+
+  .teacher-overlay {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--glass-border);
+
+    .social-links {
+      display: flex;
+      gap: 0.8rem;
+
+      a {
+        color: var(--accent-color);
+        font-size: 1rem;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        transition: all 0.3s ease;
+        text-decoration: none;
+
+        &:hover {
+          background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+          color: white;
+          border-color: var(--primary-color);
+          box-shadow: 0 4px 15px color-mix(in srgb, var(--primary-color), transparent 55%);
+        }
+      }
+    }
+  }
+}
+
+.teacher-info {
+  text-align: center;
+
+  .teacher-header {
+    margin-bottom: 1.5rem;
+
+    .teacher-name {
+      font-size: 1.4rem;
+      color: var(--text-color);
+      margin-bottom: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .serial {
+        color: var(--primary-color);
+        font-weight: 800;
+        font-size: 1.1rem;
+      }
+    }
+
+    .teacher-name-bn {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin: -0.4rem 0 0.8rem;
+      font-weight: 500;
+    }
+
+    .title-badge {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--primary-color), transparent 82%), color-mix(in srgb, var(--accent-color), transparent 82%));
+      color: var(--primary-color);
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid color-mix(in srgb, var(--primary-color), transparent 72%);
+      display: inline-block;
+    }
+  }
+
+  .batch-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+
+    i {
+      color: var(--primary-color);
+    }
+  }
+
+  .subjects-taught {
+    margin-bottom: 2rem;
+
+    h4 {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .subject-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+
+      .subject-tag {
+        background: color-mix(in srgb, var(--primary-color), transparent 82%);
+        color: var(--primary-color);
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: 1px solid color-mix(in srgb, var(--primary-color), transparent 72%);
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: color-mix(in srgb, var(--primary-color), transparent 75%);
+          color: var(--text-color);
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+
+  .teacher-contact {
+    min-width: 0;
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      min-width: 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin: 0.8rem 0;
+      padding: 0.8rem;
+      background: var(--glass-bg);
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: color-mix(in srgb, var(--glass-bg), white 10%);
+        transform: translateX(5px);
+      }
+
+      i {
+        color: var(--primary-color);
+        width: 16px;
+        flex-shrink: 0;
+        text-align: center;
+      }
+
+      a {
+        color: var(--accent-color);
+        text-decoration: none;
+        transition: color 0.2s ease;
+        min-width: 0;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+
+        &:hover {
+          color: var(--primary-color);
+        }
+      }
+    }
+  }
+}
+
+.stats-footer {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--divider-color);
+
+  .stat-item {
+    text-align: center;
+
+    .stat-number {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1200px) {
+  .teacher-list {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .teachers-page {
+    padding: 2rem 1rem;
+    padding-top: 120px;
+  }
+
+  .teacher-list {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .stats-footer {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .teachers-page-title {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .teacher-card {
+    padding: 1.5rem;
+  }
+
+  .teacher-image-container {
+    width: 120px;
+    height: 120px;
+  }
+
+  .teachers-page-header {
+    margin-bottom: 3rem;
+  }
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--glass-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+}

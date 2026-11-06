@@ -1,0 +1,79 @@
+@use "../../../styles/admin/_variables.scss" as *;
+@use "../../../styles/admin/_mixins.scss" as *;
+
+.faculty-management {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-6);
+  color: var(--admin-text-primary);
+}
+
+.faculty-management__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-3);
+  flex-wrap: wrap;
+  padding: var(--admin-space-3) 0;
+}
+
+.faculty-management__toolbar-separator {
+  height: 2rem;
+  min-height: 2rem;
+}
+
+.faculty-management__loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--admin-space-8) 0;
+  color: var(--admin-text-secondary);
+}
+
+.faculty-management__cell-name {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-0_5);
+}
+
+.faculty-management__cell-name strong {
+  color: var(--admin-text-primary);
+}
+
+.faculty-management__cell-dept {
+  font-size: var(--admin-text-xs);
+  color: var(--admin-text-muted);
+}
+
+.faculty-management__actions {
+  display: flex;
+  gap: var(--admin-space-1_5);
+}
+
+.faculty-management__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--admin-space-3) 0;
+}
+
+.faculty-management__pagination-info {
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-muted);
+}
+
+@media (max-width: 640px) {
+  .faculty-management__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .faculty-management__toolbar-separator {
+    display: none;
+  }
+  .faculty-management__toolbar > * {
+    width: 100%;
+  }
+  .faculty-management__pagination {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--admin-space-2);
+  }
+}

@@ -1,0 +1,117 @@
+.edit-profile-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 100px 2rem 2rem;
+  background: var(--page-surface);
+  box-shadow: 0px 10px 20px var(--shadow-color);
+  border-radius: 16px;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+
+  .error-message {
+    background: rgba(248, 113, 113, 0.18);
+    color: #b91c1c;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  .edit-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .image-preview {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid var(--accent-color);
+      background: rgba(255, 255, 255, 0.08);
+
+      .profile-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      p {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--muted-color);
+        font-size: 0.85rem;
+      }
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-input-label {
+      background: var(--accent-color);
+      color: #fff;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background: var(--accent-strong);
+      }
+    }
+
+    .username-input {
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      background: var(--input-bg);
+      color: var(--text-color);
+
+      &:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0px 0px 5px rgba(34, 211, 238, 0.5);
+      }
+    }
+
+    .btn-save {
+      background: var(--button-bg);
+      color: var(--button-text);
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s;
+
+      &:hover {
+        background: var(--accent-strong);
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

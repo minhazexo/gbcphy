@@ -1,10 +1,12 @@
 // Theme Variables
 :root, .light-theme, body.light-theme {
+  color-scheme: light;
   --primary-color: #2563eb;
   --secondary-color: #7c3aed;
   --accent-color: #06b6d4;
   --bg-color: #f8fafc;
   --page-bg: #f8fafc; // Synchronize with App.css
+  --teachers-bg: #f8fafc;
   --text-color: #1e293b;
   --text-muted: #64748b;
   --card-bg: rgba(255, 255, 255, 0.7);
@@ -20,11 +22,13 @@
 }
 
 .dark-theme, body.dark-theme {
+  color-scheme: dark;
   --primary-color: #3b82f6;
   --secondary-color: #a78bfa;
   --accent-color: #22d3ee;
   --bg-color: #0f172a;
   --page-bg: #0f172a;
+  --teachers-bg: #0f172a;
   --text-color: #f1f5f9;
   --text-muted: #94a3b8;
   --card-bg: rgba(30, 41, 59, 0.7);

@@ -1,0 +1,296 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.content-management__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-3);
+  margin-bottom: var(--admin-space-1);
+}
+
+.content-management__tabs {
+  display: flex;
+  gap: var(--admin-space-1);
+  border-bottom: 1px solid var(--admin-border);
+  padding-bottom: var(--admin-space-1);
+  margin-bottom: var(--admin-space-6);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.content-management__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  padding: var(--admin-space-2) var(--admin-space-3);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: var(--admin-radius-md);
+  background: transparent;
+  color: var(--admin-text-muted);
+  font-family: var(--admin-font-sans);
+  font-size: var(--admin-text-sm);
+  font-weight: var(--admin-font-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  @include admin-transition();
+
+  &:hover {
+    color: var(--admin-text-primary);
+    background: var(--admin-surface-hover);
+  }
+
+  &--active {
+    color: var(--admin-primary);
+    border-bottom-color: var(--admin-primary);
+    background: var(--admin-primary-light);
+  }
+}
+
+.content-management__tab-icon {
+  flex-shrink: 0;
+}
+
+.content-management__stats {
+  display: flex;
+  gap: var(--admin-space-3);
+}
+
+.cm-stat-card {
+  flex: 1;
+  min-width: 0;
+}
+
+.cm-stat-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--admin-space-4);
+}
+
+.cm-stat-value {
+  font-size: var(--admin-text-2xl);
+  font-weight: 800;
+  color: var(--admin-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cm-stat-label {
+  font-size: var(--admin-text-xs);
+  font-weight: var(--admin-font-weight-semibold);
+  color: var(--admin-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.content-management__tab-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-management__loading {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  padding: var(--admin-space-4);
+  color: var(--admin-text-secondary);
+}
+
+.cm-loading-separator {
+  height: 2rem;
+  min-height: 2rem;
+}
+
+.content-management__section {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-management__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-3);
+  flex-wrap: wrap;
+  padding: var(--admin-space-3) 0;
+}
+
+.content-management__table-wrapper {
+  overflow-x: auto;
+}
+
+.content-management__table {
+  width: 100%;
+}
+
+.cm-muted {
+  color: var(--admin-text-muted);
+  font-size: var(--admin-text-sm);
+}
+
+.cm-tag-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--admin-space-1);
+}
+
+.cm-cell-excerpt {
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+  display: block;
+  overflow: hidden;
+}
+
+.cm-field-label {
+  display: block;
+  font-size: var(--admin-text-xs);
+  font-weight: var(--admin-font-weight-medium);
+  color: var(--admin-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--admin-space-1);
+}
+
+.cm-field-row {
+  display: flex;
+  gap: var(--admin-space-3);
+  flex-wrap: wrap;
+}
+
+.cm-label {
+  font-size: var(--admin-text-xs);
+  font-weight: var(--admin-font-weight-medium);
+  color: var(--admin-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Editor */
+.content-management__editor-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-3);
+}
+
+.content-management__editor-row {
+  display: flex;
+  gap: var(--admin-space-3);
+  flex-wrap: wrap;
+}
+
+.content-management__editor-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+}
+
+.content-management__editor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--admin-space-2);
+  padding-top: var(--admin-space-2);
+  border-top: 1px solid var(--admin-border);
+  background: var(--admin-surface-hover);
+  padding: var(--admin-space-3) var(--admin-space-4);
+}
+
+.content-management__editor-textarea {
+  width: 100%;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  color: var(--admin-text-primary);
+  font-family: var(--admin-font-sans);
+  font-size: var(--admin-text-sm);
+  line-height: var(--admin-line-height-normal);
+  padding: var(--admin-space-3) var(--admin-space-4);
+  resize: vertical;
+  min-height: 4rem;
+  @include admin-transition();
+
+  &:hover {
+    border-color: var(--admin-border-hover);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 3px var(--admin-primary-light);
+  }
+}
+
+.content-management__editor-error {
+  font-size: var(--admin-text-xs);
+  color: var(--admin-error);
+  font-weight: var(--admin-font-weight-medium);
+}
+
+.content-management__modal-form {
+  display: contents;
+}
+
+.content-management__form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--admin-space-2);
+  margin-top: var(--admin-space-2);
+}
+
+.content-management__confirm-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--admin-space-2);
+  padding-top: var(--admin-space-3);
+}
+
+.content-management__modal {
+  width: 100%;
+  max-width: 640px;
+}
+
+.content-management__modal--confirm {
+  max-width: 460px;
+}
+
+@media (max-width: 640px) {
+  .content-management__header {
+    gap: var(--admin-space-2);
+  }
+  .content-management__tabs {
+    gap: var(--admin-space-1);
+  }
+  .content-management__tab {
+    padding: var(--admin-space-2) var(--admin-space-2);
+    font-size: var(--admin-text-xs);
+  }
+  .content-management__tab-icon {
+    display: none;
+  }
+  .content-management__stats {
+    flex-direction: column;
+  }
+  .content-management__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .content-management__toolbar > * {
+    width: 100%;
+  }
+  .cm-field-row {
+    flex-direction: column;
+  }
+  .content-management__editor-col {
+    width: 100%;
+  }
+  .content-management__modal {
+    max-width: 100%;
+  }
+}

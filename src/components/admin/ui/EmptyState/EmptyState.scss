@@ -1,0 +1,45 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--admin-space-12) var(--admin-space-4);
+  color: var(--admin-text-secondary);
+}
+
+.admin-empty-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--admin-radius-lg);
+  background: var(--admin-surface-hover);
+  color: var(--admin-text-muted);
+  font-size: 2rem;
+  margin-bottom: var(--admin-space-4);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-empty-state__title {
+  margin: 0 0 var(--admin-space-2);
+  font-size: var(--admin-text-lg);
+  font-weight: var(--admin-font-weight-semibold);
+  color: var(--admin-text-primary);
+}
+
+.admin-empty-state__description {
+  margin: 0 0 var(--admin-space-4);
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-secondary);
+  max-width: 320px;
+  line-height: var(--admin-line-height-normal);
+}
+
+.admin-empty-state__action {
+  display: flex;
+  gap: var(--admin-space-2);
+}

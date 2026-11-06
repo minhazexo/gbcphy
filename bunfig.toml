@@ -14,5 +14,5 @@ silent = false
 
 [test]
 # Bun's test runner is Jest-compatible; run source files under src/.
-include = ["src/**/*.test.{js,jsx}"]
+include = ["src/**/*.test.{js,jsx,ts,tsx}"]
 timeout = 30000

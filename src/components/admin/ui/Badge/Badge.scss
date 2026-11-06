@@ -1,0 +1,63 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-badge {
+  @include admin-badge(var(--admin-secondary), #ffffff);
+  @include admin-transition();
+  border: 1px solid transparent;
+
+  &.admin-badge--sm {
+    min-height: var(--admin-space-5);
+    padding: 0 var(--admin-space-2);
+    font-size: var(--admin-text-xs);
+  }
+
+  &.admin-badge--md {
+    min-height: var(--admin-space-6);
+    padding: 0 var(--admin-space-3);
+    font-size: var(--admin-text-xs);
+  }
+}
+
+.admin-badge--default {
+  background: var(--admin-secondary);
+  color: #ffffff;
+}
+
+.admin-badge--primary {
+  background: var(--admin-primary);
+  color: #ffffff;
+}
+
+.admin-badge--secondary {
+  background: var(--admin-surface-hover);
+  color: var(--admin-text-secondary);
+  border-color: var(--admin-border);
+}
+
+.admin-badge--success {
+  background: var(--admin-success-light);
+  color: var(--admin-success);
+}
+
+.admin-badge--warning {
+  background: var(--admin-warning-light);
+  color: var(--admin-warning);
+}
+
+.admin-badge--error {
+  background: var(--admin-error-light);
+  color: var(--admin-error);
+}
+
+.admin-badge--info {
+  background: var(--admin-info-light);
+  color: var(--admin-info);
+}
+
+.dark-theme .admin-badge--secondary,
+body.dark-theme .admin-badge--secondary {
+  background: var(--admin-surface-hover);
+  color: var(--admin-text-secondary);
+  border-color: var(--admin-border);
+}

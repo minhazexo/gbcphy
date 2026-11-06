@@ -1,0 +1,17 @@
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-layout__content {
+  flex: 1;
+  padding-top: 80px; // clears the fixed site header (80px) on every MainLayout page
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .main-layout__content {
+    padding-top: 80px; // header stays 80px on mobile too
+  }
+}

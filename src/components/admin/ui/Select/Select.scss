@@ -1,0 +1,82 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+}
+
+.admin-select-label {
+  font-size: var(--admin-text-xs);
+  font-weight: var(--admin-font-weight-medium);
+  color: var(--admin-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-select-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.admin-select {
+  width: 100%;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  color: var(--admin-text-primary);
+  font-family: var(--admin-font-sans);
+  font-size: var(--admin-text-sm);
+  line-height: var(--admin-line-height-normal);
+  padding: var(--admin-space-3) var(--admin-space-4);
+  padding-right: 2.5rem;
+  box-sizing: border-box;
+  appearance: none;
+  cursor: pointer;
+  @include admin-transition();
+
+  &:hover {
+    border-color: var(--admin-border-hover);
+  }
+
+  &:focus {
+    @include admin-focus-ring(var(--admin-primary-light));
+    border-color: var(--admin-primary);
+  }
+
+  &::placeholder {
+    color: var(--admin-text-muted);
+    opacity: 1;
+  }
+
+  & option {
+    font-family: var(--admin-font-sans);
+    color: var(--admin-text-primary);
+    background: var(--admin-surface);
+  }
+
+  &::-ms-expand {
+    display: none;
+  }
+}
+
+.admin-select--sm {
+  font-size: var(--admin-text-xs);
+  padding: var(--admin-space-2) var(--admin-space-3);
+}
+
+.admin-select-field::after {
+  content: "";
+  position: absolute;
+  right: var(--admin-space-3);
+  width: 0.75rem;
+  height: 0.75rem;
+  border-width: 2px 2px 0 0;
+  border-style: solid;
+  border-color: var(--admin-text-muted);
+  transform: rotate(45deg);
+  pointer-events: none;
+  opacity: 0.6;
+}

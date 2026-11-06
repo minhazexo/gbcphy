@@ -1,0 +1,43 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-card {
+  @include admin-card();
+  @include admin-transition();
+  display: flex;
+  flex-direction: column;
+
+  &.admin-card--unbordered {
+    border: none;
+  }
+
+  &.admin-card--hoverable:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow-md);
+    border-color: var(--admin-border-hover);
+  }
+
+  &.admin-card--clickable {
+    cursor: pointer;
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  &.admin-card--padding-none {
+    padding: 0;
+  }
+
+  &.admin-card--padding-sm {
+    padding: var(--admin-space-2);
+  }
+
+  &.admin-card--padding-md {
+    padding: var(--admin-space-4);
+  }
+
+  &.admin-card--padding-lg {
+    padding: var(--admin-space-6);
+  }
+}

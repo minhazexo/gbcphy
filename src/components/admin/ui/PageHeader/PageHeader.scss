@@ -1,0 +1,52 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--admin-space-4);
+  margin-bottom: var(--admin-space-6);
+}
+
+.admin-page-header__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+  min-width: 0;
+}
+
+.admin-page-header__title {
+  margin: 0;
+  font-size: var(--admin-text-xl);
+  font-weight: var(--admin-font-weight-bold);
+  color: var(--admin-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.admin-page-header__description {
+  margin: 0;
+  font-size: var(--admin-text-sm);
+  color: var(--admin-text-secondary);
+}
+
+.admin-page-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--admin-space-3);
+  }
+
+  .admin-page-header__actions {
+    align-self: stretch;
+    justify-content: flex-end;
+    width: 100%;
+  }
+}

@@ -1,0 +1,50 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--admin-font-sans);
+  font-weight: var(--admin-font-weight-semibold);
+  border-radius: var(--admin-radius-md);
+  overflow: hidden;
+  background: var(--admin-surface-hover);
+  color: var(--admin-text-secondary);
+  user-select: none;
+  flex-shrink: 0;
+  border: 1px solid var(--admin-border);
+}
+
+.admin-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-avatar--sm {
+  width: var(--admin-space-7);
+  height: var(--admin-space-7);
+  font-size: var(--admin-text-xs);
+}
+
+.admin-avatar--md {
+  width: var(--admin-space-9);
+  height: var(--admin-space-9);
+  font-size: var(--admin-text-sm);
+}
+
+.admin-avatar--lg {
+  width: var(--admin-space-10);
+  height: var(--admin-space-10);
+  font-size: var(--admin-text-base);
+}
+
+.admin-avatar--circle {
+  border-radius: var(--admin-radius-full);
+}
+
+.admin-avatar--bordered {
+  border: 2px solid var(--admin-border);
+}

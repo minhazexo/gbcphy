@@ -1,0 +1,379 @@
+@import "../../../styles/variables";
+
+// Hero = a clean photo showcase, with the department copy on a
+// dedicated band underneath it. No text is layered over the photos.
+.hero-banner {
+  position: relative;
+  width: 100%;
+  padding-top: 80px; // clears the fixed site header
+  background: #020617;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------- */
+/* Photo showcase                                                    */
+/* ---------------------------------------------------------------- */
+// Height follows the width (~2.2:1) so photos are framed like a
+// banner instead of being cropped into a thin strip.
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: clamp(280px, 46vw, 820px);
+  background: #020617;
+  overflow: hidden;
+
+  @media (max-width: 900px) {
+    height: clamp(240px, 58vw, 460px);
+  }
+}
+
+.hero-slider {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  isolation: isolate;
+
+  .hero-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    .slide-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    // Very light top scrim so the fixed header never fights the photo
+    .slide-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        180deg,
+        rgba(2, 6, 23, 0.38) 0%,
+        rgba(2, 6, 23, 0) 22%
+      );
+    }
+  }
+
+  // Sits above the photo, below the controls: fades the picture into
+  // the copy band so the photo never ends on a hard seam.
+  .hero-fade {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 26%;
+    z-index: 20;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(2, 6, 23, 0) 0%,
+      rgba(2, 6, 23, 0.3) 55%,
+      rgba(2, 6, 23, 0.75) 88%,
+      #020617 100%
+    );
+  }
+
+  .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 40;
+    background: rgba(2, 6, 23, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: white;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      background: rgba(53, 151, 242, 0.85);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-50%) scale(1.08);
+    }
+
+    &.prev-btn { left: 1.75rem; }
+    &.next-btn { right: 1.75rem; }
+
+    @media (max-width: 768px) {
+      width: 42px;
+      height: 42px;
+      font-size: 0.85rem;
+      &.prev-btn { left: 0.75rem; }
+      &.next-btn { right: 0.75rem; }
+    }
+  }
+
+  // Indicators
+  .slide-controls {
+    position: absolute;
+    bottom: 1.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    z-index: 30;
+
+    @media (max-width: 768px) {
+      bottom: 1rem;
+    }
+
+    .autoplay-toggle {
+      min-width: 40px;
+      min-height: 40px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(2, 6, 23, 0.35);
+      color: #fff;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      font-size: 0.75rem;
+      transition: background 0.3s ease, border-color 0.3s ease;
+
+      &:hover {
+        background: rgba(53, 151, 242, 0.85);
+        border-color: rgba(255, 255, 255, 0.45);
+      }
+    }
+  }
+
+  .slide-indicators {
+    display: flex;
+    gap: 0.9rem;
+
+    .indicator {
+      width: 10px;
+      height: 10px;
+      min-width: 10px;
+      min-height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+      border: none;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
+      transition: all 0.4s ease;
+
+      &.active {
+        background: #3597f2;
+        width: 40px;
+        border-radius: 100px;
+        box-shadow: 0 0 15px rgba(53, 151, 242, 0.5);
+      }
+    }
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Copy band below the photos                                        */
+/* ---------------------------------------------------------------- */
+.hero-intro {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 3rem 24px 4.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 2.25rem 16px 3.25rem;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    background: rgba(53, 151, 242, 0.12);
+    color: #5fb0ff;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(53, 151, 242, 0.32);
+    line-height: 1.5;
+    text-align: center;
+
+    // On small screens the pill would wrap awkwardly — show the
+    // affiliation as a plain uppercase eyebrow instead.
+    @media (max-width: 600px) {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      margin-bottom: 1rem;
+    }
+  }
+
+  h1 {
+    margin: 0 0 1.25rem 0;
+    font-weight: 900;
+
+    .department-name {
+      display: block;
+      font-size: clamp(2.25rem, 6vw, 4.25rem);
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      background: linear-gradient(135deg, #ffffff 0%, #a5d3ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.6rem;
+    }
+
+    .college-name {
+      display: block;
+      font-size: clamp(0.95rem, 2.2vw, 1.5rem);
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 0 auto;
+      width: fit-content;
+    }
+  }
+
+  .hero-tagline {
+    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    color: rgba(255, 255, 255, 0.72);
+    max-width: 620px;
+    margin: 0 0 1.75rem;
+    font-weight: 300;
+    line-height: 1.65;
+  }
+
+  .hero-trust {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    list-style: none;
+    margin: 0 0 2.25rem;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+
+    li {
+      position: relative;
+      padding-left: 1.1rem;
+
+      &::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #4ade80;
+      }
+    }
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1.25rem;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .cta-button {
+      padding: 1rem 2.25rem;
+      font-size: 0.98rem;
+      font-weight: 700;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: all 0.3s ease;
+
+      background: #3597f2;
+      color: #fff;
+      box-shadow: 0 10px 30px -8px rgba(53, 151, 242, 0.55);
+
+      &:hover {
+        background: #4fa8f5;
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px -8px rgba(53, 151, 242, 0.65);
+      }
+
+      &.secondary {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: none;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.12);
+          border-color: rgba(255, 255, 255, 0.32);
+        }
+      }
+    }
+  }
+
+  // Audience quick-links row (professional dept-homepage pattern)
+  .hero-quicklinks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+
+    .quicklink {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 100px;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      .quicklink-icon {
+        display: inline-flex;
+        color: #3597f2;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.32);
+        transform: translateY(-2px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      gap: 0.5rem;
+      .quicklink {
+        padding: 0.5rem 0.95rem;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

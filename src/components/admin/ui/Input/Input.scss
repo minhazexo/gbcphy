@@ -1,0 +1,59 @@
+@use "../../../../styles/admin/_variables.scss" as *;
+@use "../../../../styles/admin/_mixins.scss" as *;
+
+.admin-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+}
+
+.admin-input-label {
+  font-size: var(--admin-text-xs);
+  font-weight: var(--admin-font-weight-medium);
+  color: var(--admin-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-input-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.admin-input-icon {
+  position: absolute;
+  left: var(--admin-space-3);
+  color: var(--admin-text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.admin-input {
+  @include admin-input();
+}
+
+.admin-input--sm {
+  font-size: var(--admin-text-xs);
+  padding: var(--admin-space-2) var(--admin-space-3);
+}
+
+.admin-input--error {
+  border-color: var(--admin-error);
+
+  &:focus {
+    border-color: var(--admin-error);
+    @include admin-focus-ring(var(--admin-error-light));
+  }
+}
+
+.admin-input-error {
+  font-size: var(--admin-text-xs);
+  color: var(--admin-error);
+  font-weight: var(--admin-font-weight-medium);
+}
+
+.admin-input-helper {
+  font-size: var(--admin-text-xs);
+  color: var(--admin-text-muted);
+}
