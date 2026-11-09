@@ -3,8 +3,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./academic.scss";
-import Notes from "../components/Notes.tsx";
-import { getDownloads, getFavorites, recordDownload, saveFavorites } from "../../../data/contentStore.ts";
+import Notes, { NoteItem } from "../components/Notes.tsx";
+import {
+  getDownloads,
+  getFavorites,
+  getQuestions,
+  recordDownload,
+  saveFavorites
+} from "../../../data/contentStore.ts";
 
 const Academic = () => {
   const navigate = useNavigate();
@@ -13,6 +19,7 @@ const Academic = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [downloadCounts, setDownloadCounts] = useState<Record<string, number>>(getDownloads());
   const [favorites, setFavorites] = useState<string[]>(getFavorites());
+  const [questions] = useState<Record<string, NoteItem[]>>(() => getQuestions());
 
   const handleDownloadRecorded = (title: string) => {
     setDownloadCounts(recordDownload(title));
@@ -61,6 +68,7 @@ const Academic = () => {
           >
             <option value="Notes">Notes</option>
             <option value="Syllabus">Syllabus</option>
+            <option value="Questions">Questions</option>
           </select>
         </div>
 
@@ -84,6 +92,7 @@ const Academic = () => {
         onDownloadRecorded={handleDownloadRecorded}
         favorites={favorites}
         onToggleFavorite={handleToggleFavorite}
+        questions={questions}
       />
     </div>
   );

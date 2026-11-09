@@ -5,18 +5,24 @@
 
 const NOTES_KEY = "gbc-content-notes";
 const SYLLABUS_KEY = "gbc-content-syllabus";
+const QUESTIONS_KEY = "gbc-content-questions";
 const NOTICES_KEY = "gbc-content-notices";
 const CONTENT_EVENT = "gbc-content-changed";
 
-export const YEARS = ["First Year", "Second Year", "Third Year", "Fourth Year"];
+export const YEARS = [
+  "First Year",
+  "Second Year",
+  "Third Year",
+  "Fourth Year"
+];
 
-// R2 bucket public domain — upload your PDFs here with matching filenames.
-// Using the auto-generated r2.dev public development URL.
-// For production, connect a custom domain to this bucket.
-const R2_BASE = "https://pub-f03874d54e81451fa22595f6280655a5.r2.dev";
+// Cloudflare R2 public domain
+const R2_BASE =
+  "https://pub-f03874d54e81451fa22595f6280655a5.r2.dev";
 
-// URL-encode a path segment for R2 (spaces → %20, etc.)
-const r2 = (path: string): string => `${R2_BASE}/${encodeURI(path)}`;
+// URL-encode paths for R2
+const r2 = (path: string): string =>
+  `${R2_BASE}/${encodeURI(path)}`;
 
 export interface NoteItem {
   title: string;
@@ -34,6 +40,10 @@ export interface NoticeItem {
   status: string;
 }
 
+// ==========================================
+// NOTES
+// ==========================================
+
 export const DEFAULT_NOTES: Record<string, NoteItem[]> = {
   "First Year": [
     { title: "Analytical and Vector Geometry", url: r2("1st Year Notes/Analytical and Vector Geometry.pdf"), type: "pdf" },
@@ -43,6 +53,7 @@ export const DEFAULT_NOTES: Record<string, NoteItem[]> = {
     { title: "NM Stat", url: r2("1st Year Notes/NM Stat.pdf"), type: "pdf" },
     { title: "Thermal Physics", url: r2("1st Year Notes/Thermal Physics.pdf"), type: "pdf" }
   ],
+
   "Second Year": [
     { title: "PHA 201 (OPTICS)", url: r2("2nd Year Notes/EMON { PHA 201 (OPTICS) }_compressed.pdf"), type: "pdf" },
     { title: "PHA 202 (ELECTRONICS 1)", url: r2("2nd Year Notes/EMON { PHA 202 (ELECTRONICS 1) }_compressed.pdf"), type: "pdf" },
@@ -50,6 +61,7 @@ export const DEFAULT_NOTES: Record<string, NoteItem[]> = {
     { title: "PHA 204 (AMP)", url: r2("2nd Year Notes/EMON { PHA 204 (AMP) }_compressed.pdf"), type: "pdf" },
     { title: "PHA 205 (WOAM)", url: r2("2nd Year Notes/EMON {PHA 205 (WOAM) }_compressed.pdf"), type: "pdf" }
   ],
+
   "Third Year": [
     { title: "Astrophysics", url: r2("3rd Year Notes/Astrophysics.PHA-308.pdf"), type: "pdf" },
     { title: "Classical Mechanics", url: r2("3rd Year Notes/Classical Mechanics.PHA-301.pdf"), type: "pdf" },
@@ -66,6 +78,7 @@ export const DEFAULT_NOTES: Record<string, NoteItem[]> = {
     { title: "Quantum Mechanics Roy(20-21)", url: r2("3rd Year Notes/Roy Notes/Quantum (ROY).pdf"), type: "pdf" },
     { title: "Solid State Physics Roy(20-21)", url: r2("3rd Year Notes/Roy Notes/Solid(ROY).pdf"), type: "pdf" }
   ],
+
   "Fourth Year": [
     { title: "Experimental Physics (ROY)", url: r2("4th Year Notes/Experimental 4 th yr (ROY).pdf"), type: "pdf", size: "33 MB" },
     { title: "Nuclear Physics II (ROY)", url: r2("4th Year Notes/Nuclear 4 th yr (ROY).pdf"), type: "pdf", size: "32 MB" },
@@ -75,20 +88,80 @@ export const DEFAULT_NOTES: Record<string, NoteItem[]> = {
   ]
 };
 
+// ==========================================
+// SYLLABUS
+// ==========================================
+
 export const DEFAULT_SYLLABUS: Record<string, NoteItem[]> = {
   "First Year": [
     { title: "1st & 2nd Year Syllabus", url: r2("Syllabus/1st and 2nd Year.pdf"), type: "pdf", size: "1.2 MB" }
   ],
+
   "Second Year": [
     { title: "1st & 2nd Year Syllabus", url: r2("Syllabus/1st and 2nd Year.pdf"), type: "pdf", size: "1.2 MB" }
   ],
+
   "Third Year": [
     { title: "3rd Year Syllabus", url: r2("Syllabus/3rd Year.pdf"), type: "pdf", size: "0.9 MB" }
   ],
+
   "Fourth Year": [
     { title: "4th Year Syllabus", url: r2("Syllabus/4th Year.pdf"), type: "pdf", size: "1.1 MB" }
   ]
 };
+
+// ==========================================
+// QUESTION BANK
+// ==========================================
+
+export const DEFAULT_QUESTIONS: Record<string, NoteItem[]> = {
+  "First Year": [
+    {
+      title: "Analytic and Vector Geometry",
+      url: r2("Questions/1st year/Analytic and Vector Geometry.pdf"),
+      type: "pdf"
+    },
+    {
+      title: "Calculus I",
+      url: r2("Questions/1st year/Calculus I.pdf"),
+      type: "pdf"
+    },
+    {
+      title: "Electricity and Magnetism",
+      url: r2("Questions/1st year/Electricity and Magnetism.pdf"),
+      type: "pdf"
+    },
+    {
+      title: "Fundamental Chemistry",
+      url: r2("Questions/1st year/Fundamental Chemistry.pdf"),
+      type: "pdf"
+    },
+    {
+      title: "Introduction to Computers and Programming",
+      url: r2("Questions/1st year/Introduction to Computers and Programming.pdf"),
+      type: "pdf"
+    },
+    {
+      title: "Mechanics and Properties of Matter",
+      url: r2("Questions/1st year/Mechanics and Properties of Matter.pdf"),
+      type: "pdf"
+    },
+    {
+      title: "Thermal Physics",
+      url: r2("Questions/1st year/Thermal Physics.pdf"),
+      type: "pdf"
+    }
+  ],
+
+  // Add actual R2 PDF filenames when available.
+  "Second Year": [],
+  "Third Year": [],
+  "Fourth Year": []
+};
+
+// ==========================================
+// NOTICES
+// ==========================================
 
 export const DEFAULT_NOTICES: NoticeItem[] = [
   {
@@ -117,7 +190,12 @@ export const DEFAULT_NOTICES: NoticeItem[] = [
   }
 ];
 
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
+// ==========================================
+// CONTENT STORAGE UTILITIES
+// ==========================================
+
+const clone = <T>(value: T): T =>
+  JSON.parse(JSON.stringify(value));
 
 const emitChange = (): void => {
   window.dispatchEvent(new Event(CONTENT_EVENT));
@@ -126,9 +204,15 @@ const emitChange = (): void => {
 const read = <T>(key: string, fallback: T): T => {
   try {
     const raw = localStorage.getItem(key);
+
     if (!raw) return clone(fallback);
+
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : clone(fallback);
+
+    return parsed && typeof parsed === "object"
+      ? parsed
+      : clone(fallback);
+
   } catch (error) {
     console.warn(`Could not read ${key}, using defaults.`, error);
     return clone(fallback);
@@ -140,60 +224,115 @@ const write = (key: string, value: unknown): boolean => {
     localStorage.setItem(key, JSON.stringify(value));
     emitChange();
     return true;
+
   } catch (error) {
     console.error(`Could not save ${key}.`, error);
     return false;
   }
 };
 
-export const getNotes = (): Record<string, NoteItem[]> => read(NOTES_KEY, DEFAULT_NOTES);
-export const getSyllabus = (): Record<string, NoteItem[]> => read(SYLLABUS_KEY, DEFAULT_SYLLABUS);
-export const getNotices = (): NoticeItem[] => read(NOTICES_KEY, DEFAULT_NOTICES);
+// ==========================================
+// GET CONTENT
+// ==========================================
 
+export const getNotes = (): Record<string, NoteItem[]> =>
+  read(NOTES_KEY, DEFAULT_NOTES);
+
+export const getSyllabus = (): Record<string, NoteItem[]> =>
+  read(SYLLABUS_KEY, DEFAULT_SYLLABUS);
+
+export const getQuestions = (): Record<string, NoteItem[]> =>
+  read(QUESTIONS_KEY, DEFAULT_QUESTIONS);
+
+export const getNotices = (): NoticeItem[] =>
+  read(NOTICES_KEY, DEFAULT_NOTICES);
+
+// Load all website content
 export const loadSiteContent = () => ({
   notes: getNotes(),
   syllabus: getSyllabus(),
+  questions: getQuestions(),
   notices: getNotices()
 });
 
-export const saveNotes = (notes: Record<string, NoteItem[]>): boolean => write(NOTES_KEY, notes);
-export const saveSyllabus = (syllabus: Record<string, NoteItem[]>): boolean => write(SYLLABUS_KEY, syllabus);
-export const saveNotices = (notices: NoticeItem[]): boolean => write(NOTICES_KEY, notices);
+// ==========================================
+// SAVE CONTENT
+// ==========================================
+
+export const saveNotes = (
+  notes: Record<string, NoteItem[]>
+): boolean => write(NOTES_KEY, notes);
+
+export const saveSyllabus = (
+  syllabus: Record<string, NoteItem[]>
+): boolean => write(SYLLABUS_KEY, syllabus);
+
+export const saveQuestions = (
+  questions: Record<string, NoteItem[]>
+): boolean => write(QUESTIONS_KEY, questions);
+
+export const saveNotices = (
+  notices: NoticeItem[]
+): boolean => write(NOTICES_KEY, notices);
+
+// ==========================================
+// RESET CONTENT
+// ==========================================
 
 export const resetSiteContent = (): void => {
   localStorage.removeItem(NOTES_KEY);
   localStorage.removeItem(SYLLABUS_KEY);
+  localStorage.removeItem(QUESTIONS_KEY);
   localStorage.removeItem(NOTICES_KEY);
+
   emitChange();
 };
 
-// Downloads and favorites belong to the same library as notes and syllabus,
-// so they live behind this module rather than inside the pages that use them.
+// ==========================================
+// DOWNLOAD STATISTICS & FAVORITES
+// ==========================================
+
 const DOWNLOADS_KEY = "downloadStats";
 const FAVORITES_KEY = "favorites";
 
-export const getDownloads = (): Record<string, number> => read(DOWNLOADS_KEY, {});
+export const getDownloads = (): Record<string, number> =>
+  read(DOWNLOADS_KEY, {});
 
-export const recordDownload = (title: string): Record<string, number> => {
+export const recordDownload = (
+  title: string
+): Record<string, number> => {
   const stats = getDownloads();
+
   stats[title] = (stats[title] || 0) + 1;
+
   write(DOWNLOADS_KEY, stats);
+
   return stats;
 };
 
 export const getFavorites = (): string[] => {
   const value = read(FAVORITES_KEY, []);
+
   return Array.isArray(value) ? value : [];
 };
 
-export const saveFavorites = (favorites: string[]): boolean => write(FAVORITES_KEY, favorites);
+export const saveFavorites = (
+  favorites: string[]
+): boolean => write(FAVORITES_KEY, favorites);
 
-// Keeps every mounted consumer in sync (same tab via a custom event,
-// other tabs via the native storage event).
-export const subscribeToContent = (callback: () => void): (() => void) => {
+// ==========================================
+// CONTENT CHANGE SUBSCRIPTION
+// ==========================================
+
+export const subscribeToContent = (
+  callback: () => void
+): (() => void) => {
+
   const handler = () => callback();
+
   window.addEventListener(CONTENT_EVENT, handler);
   window.addEventListener("storage", handler);
+
   return () => {
     window.removeEventListener(CONTENT_EVENT, handler);
     window.removeEventListener("storage", handler);

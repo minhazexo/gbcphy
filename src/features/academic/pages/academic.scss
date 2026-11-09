@@ -168,37 +168,41 @@
     flex-wrap: wrap;
     justify-content: center;
 
-    .stat-card {
-      background: linear-gradient(135deg,
-          rgba(255, 255, 255, 0.1) 0%,
-          rgba(255, 255, 255, 0.05) 100%);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 15px;
-      padding: 1.5rem;
-      text-align: center;
-      min-width: 120px;
-      transition: transform 0.3s ease;
+      .stat-card {
+        background: linear-gradient(135deg,
+            var(--glass-bg) 0%,
+            rgba(255, 255, 255, 0.05) 100%);
+        backdrop-filter: blur(10px);
+        border: 1px solid #000;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        min-width: 120px;
+        transition: transform 0.3s ease;
 
-      &:hover {
-        transform: translateY(-5px);
-      }
+        .dark-theme & {
+          border: 1px solid #fff;
+        }
 
-      .stat-number {
-        display: block;
-        font-size: 2rem;
-        font-weight: bold;
-        color: #fff;
-        margin-bottom: 0.5rem;
-      }
+        &:hover {
+          transform: translateY(-5px);
+        }
 
-      .stat-label {
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.8);
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        .stat-number {
+          display: block;
+          font-size: 2rem;
+          font-weight: bold;
+          color: var(--text-color);
+          margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+          font-size: 0.9rem;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
       }
-    }
   }
 
   .notes-content {

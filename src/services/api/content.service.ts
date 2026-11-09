@@ -6,10 +6,12 @@
 import {
   getNotes,
   getSyllabus,
+  getQuestions,
   getNotices,
   loadSiteContent,
   saveNotes,
   saveSyllabus,
+  saveQuestions,
   saveNotices,
   resetSiteContent,
   subscribeToContent,
@@ -20,16 +22,19 @@ import {
   YEARS,
   DEFAULT_NOTES,
   DEFAULT_SYLLABUS,
+  DEFAULT_QUESTIONS,
   DEFAULT_NOTICES,
 } from "../../data/contentStore.ts";
 
 export const contentService = {
   getNotes,
   getSyllabus,
+  getQuestions,
   getNotices,
   loadSiteContent,
   saveNotes,
   saveSyllabus,
+  saveQuestions,
   saveNotices,
   resetSiteContent,
   subscribeToContent,
@@ -40,6 +45,7 @@ export const contentService = {
   YEARS,
   DEFAULT_NOTES,
   DEFAULT_SYLLABUS,
+  DEFAULT_QUESTIONS,
   DEFAULT_NOTICES,
 };
 

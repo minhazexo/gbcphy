@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getNotes, getSyllabus, subscribeToContent } from "../../../data/contentStore.ts";
+import { getNotes, getSyllabus, getQuestions, subscribeToContent } from "../../../data/contentStore.ts";
 import NoteCard from "./NoteCard.tsx";
 
 export interface NoteItem {
@@ -17,6 +17,7 @@ interface NotesProps {
   onDownloadRecorded: (title: string) => void;
   favorites: string[];
   onToggleFavorite: (key: string) => void;
+  questions: Record<string, NoteItem[]>;
 }
 
 const Notes = ({
@@ -26,18 +27,21 @@ const Notes = ({
   downloadCounts,
   onDownloadRecorded,
   favorites,
-  onToggleFavorite
+  onToggleFavorite,
+  questions
 }: NotesProps) => {
   const [loading, setLoading] = useState(false);
 
   const [notes, setNotes] = useState<Record<string, NoteItem[]>>(() => getNotes());
   const [syllabus, setSyllabus] = useState<Record<string, NoteItem[]>>(() => getSyllabus());
+  const [questionsState, setQuestionsState] = useState<Record<string, NoteItem[]>>(() => questions);
 
   useEffect(
     () =>
       subscribeToContent(() => {
         setNotes(getNotes());
         setSyllabus(getSyllabus());
+        setQuestionsState(getQuestions());
       }),
     []
   );
@@ -60,7 +64,12 @@ const Notes = ({
     }, 800);
   };
 
-  const currentItems = selectedType === "Notes" ? notes[selectedYear] : syllabus[selectedYear];
+  const currentItems =
+    selectedType === "Notes"
+      ? notes[selectedYear]
+      : selectedType === "Syllabus"
+      ? syllabus[selectedYear]
+      : questionsState[selectedYear];
   const filteredItems = (currentItems || []).filter((item) =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
