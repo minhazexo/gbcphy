@@ -312,17 +312,21 @@ export default function StorageManager() {
 
   const breadcrumbs = prefix.split("/").filter(Boolean);
 
-  const renderFileActions = (item: StorageItem) => (
+  const renderFileActions = (item: StorageItem) => {
+    const canMutate = item.key.startsWith("Admin Uploads/");
+    const protectedTitle = "Protected object: destructive actions are limited to Admin Uploads/";
+    return (
     <div className="storage-manager__actions">
       <button type="button" title="Preview / details" aria-label={`Preview ${item.name}`} onClick={() => void openPreview(item)}><FaEye /></button>
       <button type="button" title="Download" aria-label={`Download ${item.name}`} onClick={() => void download(item)}><FaDownload /></button>
       <button type="button" title="Copy public URL" aria-label={`Copy URL for ${item.name}`} onClick={() => void copyUrl(item)}><FaCopy /></button>
-      <button type="button" title="Replace" aria-label={`Replace ${item.name}`} onClick={() => openModal("replace", item)}><FaSyncAlt /></button>
-      <button type="button" title="Rename" aria-label={`Rename ${item.name}`} onClick={() => openModal("rename", item)}><FaPen /></button>
-      <button type="button" title="Move" aria-label={`Move ${item.name}`} onClick={() => openModal("move", item)}><FaArrowLeft /></button>
-      <button type="button" title="Delete" aria-label={`Delete ${item.name}`} onClick={() => openModal("delete", item)}><FaTrash /></button>
+      <button type="button" disabled={!canMutate} title={canMutate ? "Replace" : protectedTitle} aria-label={`Replace ${item.name}`} onClick={() => openModal("replace", item)}><FaSyncAlt /></button>
+      <button type="button" disabled={!canMutate} title={canMutate ? "Rename" : protectedTitle} aria-label={`Rename ${item.name}`} onClick={() => openModal("rename", item)}><FaPen /></button>
+      <button type="button" disabled={!canMutate} title={canMutate ? "Move" : protectedTitle} aria-label={`Move ${item.name}`} onClick={() => openModal("move", item)}><FaArrowLeft /></button>
+      <button type="button" disabled={!canMutate} title={canMutate ? "Delete" : protectedTitle} aria-label={`Delete ${item.name}`} onClick={() => openModal("delete", item)}><FaTrash /></button>
     </div>
-  );
+    );
+  };
 
   return (
     <AdminLayout>
