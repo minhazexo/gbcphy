@@ -32,6 +32,7 @@ import About from "../../features/about/pages/About.tsx";
 import TeacherDirectory from "../../features/faculty/pages/TeacherDirectory.tsx";
 import Scientific from "../../features/scientific/pages/Scientific.tsx";
 import Academic from "../../features/academic/pages/Academic.tsx";
+import AcademicCategory from "../../features/academic/pages/AcademicCategory.tsx";
 import ClassRoutine from "../../features/academic/pages/ClassRoutine.tsx";
 import Profile from "../../features/profile/pages/Profile.tsx";
 import EditProfile from "../../features/profile/pages/EditProfile.tsx";
@@ -127,6 +128,7 @@ export const AppRoutes = () => (
             <Route path="/teachers" element={<TeacherDirectory />} />
             <Route path="/scientific" element={<Scientific />} />
             <Route path="/academic" element={<Academic />} />
+            <Route path="/academic/:category" caseSensitive element={<AcademicCategory />} />
             <Route path="/class-routine" element={<ClassRoutine />} />
             <Route
               path="/profile"
