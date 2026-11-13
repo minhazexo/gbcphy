@@ -338,8 +338,8 @@ export default function StorageManager() {
           <div className="storage-manager__header-actions">
             <Button variant="outline" size="sm" onClick={() => openModal("folder")} icon={<FaFolderPlus />}>New folder</Button>
             <Button variant="primary" size="sm" onClick={() => fileInputRef.current?.click()} icon={<FaCloudUploadAlt />}>Upload files</Button>
-            <input ref={fileInputRef} type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.gif" hidden onChange={handleFileInput} />
-            <input ref={replaceFileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif" hidden onChange={handleReplaceInput} />
+            <input ref={fileInputRef} type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.rtf,.zip" hidden onChange={handleFileInput} />
+            <input ref={replaceFileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.rtf,.zip" hidden onChange={handleReplaceInput} />
           </div>
         </div>
 
@@ -354,7 +354,7 @@ export default function StorageManager() {
           onDrop={handleDrop}
         >
           <FaCloudUploadAlt aria-hidden="true" />
-          <div><strong>Drag files here to upload</strong><span>PDF, JPG, PNG, WebP, GIF · Maximum 50 MiB per file</span></div>
+          <div><strong>Drag files here to upload</strong><span>PDF, images, Office, text, CSV, RTF, ZIP · Maximum 50 MiB per file</span></div>
           <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()}>Browse files</Button>
         </div>
 
