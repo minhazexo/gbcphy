@@ -9,6 +9,7 @@ import { useRBAC } from "../../context/RBACContext.tsx";
 // Role hierarchy rank: higher rank can access lower-role routes.
 const ROLE_RANK: Record<string, number> = {
   super_admin: 4,
+  admin: 4,
   department_admin: 3,
   faculty: 2,
   student: 1
