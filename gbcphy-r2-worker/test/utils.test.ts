@@ -36,8 +36,12 @@ describe("R2 upload validation", () => {
   test("accepts only extension and MIME combinations on the allow-list", () => {
     expect(getAllowedMime("lecture.pdf", "application/pdf")).toBe("application/pdf");
     expect(getAllowedMime("photo.webp", "image/webp")).toBe("image/webp");
+    expect(getAllowedMime("syllabus.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+      .toBe("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    expect(getAllowedMime("archive.zip", "application/zip")).toBe("application/zip");
+    expect(getAllowedMime("notes.txt", "text/plain")).toBe("text/plain");
     expect(() => getAllowedMime("lecture.pdf", "image/png")).toThrow(ApiError);
-    expect(() => getAllowedMime("archive.zip", "application/zip")).toThrow(ApiError);
+    expect(() => getAllowedMime("script.html", "text/html")).toThrow(ApiError);
   });
 });
 
