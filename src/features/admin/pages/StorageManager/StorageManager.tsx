@@ -313,17 +313,15 @@ export default function StorageManager() {
   const breadcrumbs = prefix.split("/").filter(Boolean);
 
   const renderFileActions = (item: StorageItem) => {
-    const canMutate = item.key.startsWith("Admin Uploads/");
-    const protectedTitle = "Protected object: destructive actions are limited to Admin Uploads/";
     return (
     <div className="storage-manager__actions">
       <button type="button" title="Preview / details" aria-label={`Preview ${item.name}`} onClick={() => void openPreview(item)}><FaEye /></button>
       <button type="button" title="Download" aria-label={`Download ${item.name}`} onClick={() => void download(item)}><FaDownload /></button>
       <button type="button" title="Copy public URL" aria-label={`Copy URL for ${item.name}`} onClick={() => void copyUrl(item)}><FaCopy /></button>
-      <button type="button" disabled={!canMutate} title={canMutate ? "Replace" : protectedTitle} aria-label={`Replace ${item.name}`} onClick={() => openModal("replace", item)}><FaSyncAlt /></button>
-      <button type="button" disabled={!canMutate} title={canMutate ? "Rename" : protectedTitle} aria-label={`Rename ${item.name}`} onClick={() => openModal("rename", item)}><FaPen /></button>
-      <button type="button" disabled={!canMutate} title={canMutate ? "Move" : protectedTitle} aria-label={`Move ${item.name}`} onClick={() => openModal("move", item)}><FaArrowLeft /></button>
-      <button type="button" disabled={!canMutate} title={canMutate ? "Delete" : protectedTitle} aria-label={`Delete ${item.name}`} onClick={() => openModal("delete", item)}><FaTrash /></button>
+      <button type="button" title="Replace object" aria-label={`Replace ${item.name}`} onClick={() => openModal("replace", item)}><FaSyncAlt /></button>
+      <button type="button" title="Rename object" aria-label={`Rename ${item.name}`} onClick={() => openModal("rename", item)}><FaPen /></button>
+      <button type="button" title="Move object" aria-label={`Move ${item.name}`} onClick={() => openModal("move", item)}><FaArrowLeft /></button>
+      <button type="button" title="Delete object" aria-label={`Delete ${item.name}`} onClick={() => openModal("delete", item)}><FaTrash /></button>
     </div>
     );
   };
@@ -346,7 +344,7 @@ export default function StorageManager() {
         </div>
 
         <div className="storage-manager__notice">
-          <strong>Protected storage:</strong> Existing academic resources are read-only here. Rename, move, replace, and delete are limited to the dedicated <code>Admin Uploads/</code> folder until a shared reference index exists.
+          <strong>Administrator access:</strong> Authorized administrators can manage every object in this bucket, including existing academic resources. Renaming, moving, replacing, or deleting a published file can break public links or academic pages. Confirm the exact object key before proceeding.
         </div>
 
         <div
@@ -473,7 +471,7 @@ export default function StorageManager() {
           <div className="storage-manager__modal-body">
             <p>The existing object <strong>{modal.item.name}</strong> will be overwritten with the selected file.</p>
             <p className="storage-manager__key-preview">{modal.item.key}</p>
-            <p>The Worker checks the current ETag before replacing it. Replacement is allowed only inside <code>Admin Uploads/</code>.</p>
+            <p>The Worker checks the current ETag before replacing it. Administrators can replace any object. Existing links keep the same key but will display the replacement file.</p>
             <div className="storage-manager__modal-actions">
               <Button variant="ghost" onClick={closeModal}>Cancel</Button>
               <Button loading={working} onClick={() => replaceFileInputRef.current?.click()}>Choose replacement file</Button>
@@ -484,7 +482,7 @@ export default function StorageManager() {
           <div className="storage-manager__modal-body">
             <p>Current key: <code>{modal.item.key}</code></p>
             <label>{modal.kind === "rename" ? "New filename" : "Destination object key"}<input autoFocus value={modalValue} onChange={(event) => setModalValue(event.target.value)} placeholder={modal.kind === "rename" ? "new-file.pdf" : "Admin Uploads/folder/file.pdf"} /></label>
-            {modal.kind === "move" && <p>Move and rename operations are enabled only for objects in <code>Admin Uploads/</code>.</p>}
+            {modal.kind === "move" && <p>Moving or renaming a published object changes its key and can break academic resource links. Update every affected reference after the operation.</p>}
             <div className="storage-manager__modal-actions"><Button variant="ghost" onClick={closeModal}>Cancel</Button><Button loading={working} onClick={() => void saveModal()}>Confirm</Button></div>
           </div>
         )}
@@ -492,7 +490,7 @@ export default function StorageManager() {
           <div className="storage-manager__modal-body">
             <p>You are about to permanently delete <strong>{modal.item.name}</strong>.</p>
             <p className="storage-manager__key-preview">{modal.item.key}</p>
-            <p>This action is limited to <code>Admin Uploads/</code> and cannot be undone.</p>
+            <p>This action can permanently break every page or download link that references this object. It cannot be undone.</p>
             <div className="storage-manager__modal-actions"><Button variant="ghost" onClick={closeModal}>Cancel</Button><Button variant="danger" loading={working} onClick={() => void confirmDelete()}>Delete file</Button></div>
           </div>
         )}
