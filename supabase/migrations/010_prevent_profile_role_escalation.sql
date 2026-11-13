@@ -16,7 +16,7 @@ SECURITY DEFINER
 SET search_path = pg_catalog
 AS $$
 DECLARE
-  request_role TEXT := current_setting('request.jwt.claim.role', true);
+  request_role TEXT := auth.role();
 BEGIN
   IF NEW.role IS DISTINCT FROM OLD.role
      AND COALESCE(request_role, '') <> 'service_role'
