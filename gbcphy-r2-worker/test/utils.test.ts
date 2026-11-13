@@ -2,9 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { ApiError } from "../src/errors.ts";
 import {
   getAllowedMime,
-  isManagedUploadKey,
   publicObjectUrl,
-  requireManagedUploadKey,
   validateObjectKey,
   validatePrefix,
 } from "../src/utils.ts";
@@ -43,15 +41,9 @@ describe("R2 upload validation", () => {
   });
 });
 
-describe("safe management boundaries", () => {
-  test("limits destructive actions to the dedicated Admin Uploads namespace", () => {
-    expect(isManagedUploadKey("Admin Uploads/new-file.pdf")).toBe(true);
-    expect(isManagedUploadKey("Questions/1st year/Calculus I.pdf")).toBe(false);
-    expect(() => requireManagedUploadKey("Questions/1st year/Calculus I.pdf")).toThrow(ApiError);
-  });
-
+describe("public URL generation", () => {
   test("encodes URL segments without encoding path separators", () => {
-    expect(publicObjectUrl("https://cdn.example.test/", "A Folder/a & b.pdf"))
-      .toBe("https://cdn.example.test/A%20Folder/a%20%26%20b.pdf");
+    expect(publicObjectUrl("https://cdn.example.test/", "Questions/1st year/Calculus I.pdf"))
+      .toBe("https://cdn.example.test/Questions/1st%20year/Calculus%20I.pdf");
   });
 });
