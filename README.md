@@ -134,7 +134,7 @@ The GitHub Actions workflow runs the same four verification steps for pushes and
 
 1. Create a Supabase project.
 2. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env.local`.
-3. Review and apply the SQL files in `supabase/migrations/` in numeric order (currently `001` through `009`).
+3. Review and apply the SQL files in `supabase/migrations/` in numeric order (currently `001` through `010`).
 4. Configure the Supabase Auth Site URL and allowed redirect URLs for localhost and `https://gbcphy.vercel.app`.
 5. Verify table policies and Storage bucket policies in the Supabase dashboard before enabling real user accounts.
 
@@ -171,6 +171,6 @@ This project is licensed under the [ISC License](./LICENSE).
 
 ## Cloudflare R2 Storage Manager
 
-The Admin Panel includes a protected `/admin/storage` interface backed by the separate `gbcphy-r2-worker/` Cloudflare Worker project. The Worker binds the existing `gbc-physics-pdfs` bucket and uses the signed-in Supabase session. It is source-only and is **not deployed** by this repository change.
+The Admin Panel includes a protected `/admin/storage` interface backed by the separate `gbcphy-r2-worker/` Cloudflare Worker project. `super_admin`, `department_admin`, and legacy `admin` accounts receive full control of every object in the existing `gbc-physics-pdfs` bucket: browse, preview, download, upload, replace, rename, move, delete, search, and folder creation. Faculty and students cannot call the Worker management API.
 
-See [gbcphy-r2-worker/README.md](./gbcphy-r2-worker/README.md) for the API, local setup, security gates, staging checklist, and rollback instructions. Do not set `VITE_R2_API_URL` until an authorized Worker deployment exists. The Worker intentionally denies management requests until the production Supabase role source is audited; the existing migrations need review because the self-profile UPDATE policy may permit role self-escalation.
+Apply Supabase migration `010_prevent_profile_role_escalation.sql` before enabling the Worker; it prevents clients from changing their own profile role. Keep `STORAGE_ROLE_SOURCE_VERIFIED=false` until that migration has been applied to the live project and verified. See [gbcphy-r2-worker/README.md](./gbcphy-r2-worker/README.md) for setup, API details, security gates, and rollback. The Worker is source-only and is **not deployed** by this repository change.
