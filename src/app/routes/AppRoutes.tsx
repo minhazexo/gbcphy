@@ -7,6 +7,7 @@ import { AuthProvider } from "../../context/AuthContext.tsx";
 import { ThemeProvider } from "../../context/ThemeContext.tsx";
 import { ToastProvider } from "../../components/common/Toast/Toast.tsx";
 import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute.tsx";
+import ScrollToTop from "../../components/common/ScrollToTop.tsx";
 
 // Auth pages
 import Login from "../../features/authentication/pages/Login.tsx";
@@ -50,6 +51,7 @@ export const AppRoutes = () => (
       {/* Toasts live above the routes so any page (and AdminLayout itself) can
           call useToast(). */}
       <ToastProvider>
+        <ScrollToTop />
         <Routes>
           {/* Authentication pages — AuthLayout */}
           <Route element={<AuthLayout />}>
