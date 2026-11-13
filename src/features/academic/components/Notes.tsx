@@ -48,20 +48,48 @@ const Notes = ({
 
   const itemKey = (item: NoteItem) => `${selectedYear}-${selectedType}-${item.title}`;
 
-  const handleDownload = (item: NoteItem) => {
+  const handleDownload = async (item: NoteItem) => {
+    if (!item.url || item.url === "#") return;
+
     setLoading(true);
 
-    setTimeout(() => {
-      onDownloadRecorded(item.title);
-      setLoading(false);
+    try {
+      // R2 files are hosted on a different origin. Fetch the PDF as a Blob
+      // so the browser's download attribute is honored instead of opening
+      // the PDF viewer (which happens with cross-origin direct links).
+      const response = await fetch(item.url, {
+        method: "GET",
+        mode: "cors"
+      });
 
-      if (item.url !== "#") {
-        const link = document.createElement("a");
-        link.href = item.url;
-        link.download = item.title;
-        link.click();
+      if (!response.ok) {
+        throw new Error(`Download failed (HTTP ${response.status}).`);
       }
-    }, 800);
+
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const pathname = new URL(item.url).pathname;
+      const originalFilename = decodeURIComponent(pathname.split("/").pop() || "");
+      const filename = originalFilename || `${item.title}.pdf`;
+
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = filename;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      onDownloadRecorded(item.title);
+    } catch (error) {
+      console.error("Unable to download file:", error);
+      window.alert(
+        "Could not download this file. Please check the R2 bucket CORS settings and allow GET requests from this website."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const currentItems =

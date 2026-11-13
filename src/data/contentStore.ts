@@ -116,47 +116,44 @@ export const DEFAULT_SYLLABUS: Record<string, NoteItem[]> = {
 
 export const DEFAULT_QUESTIONS: Record<string, NoteItem[]> = {
   "First Year": [
-    {
-      title: "Analytic and Vector Geometry",
-      url: r2("Questions/1st year/Analytic and Vector Geometry.pdf"),
-      type: "pdf"
-    },
-    {
-      title: "Calculus I",
-      url: r2("Questions/1st year/Calculus I.pdf"),
-      type: "pdf"
-    },
-    {
-      title: "Electricity and Magnetism",
-      url: r2("Questions/1st year/Electricity and Magnetism.pdf"),
-      type: "pdf"
-    },
-    {
-      title: "Fundamental Chemistry",
-      url: r2("Questions/1st year/Fundamental Chemistry.pdf"),
-      type: "pdf"
-    },
-    {
-      title: "Introduction to Computers and Programming",
-      url: r2("Questions/1st year/Introduction to Computers and Programming.pdf"),
-      type: "pdf"
-    },
-    {
-      title: "Mechanics and Properties of Matter",
-      url: r2("Questions/1st year/Mechanics and Properties of Matter.pdf"),
-      type: "pdf"
-    },
-    {
-      title: "Thermal Physics",
-      url: r2("Questions/1st year/Thermal Physics.pdf"),
-      type: "pdf"
-    }
+    { title: "Analytic and Vector Geometry", url: r2("Questions/1st year/Analytic and Vector Geometry.pdf"), type: "pdf" },
+    { title: "Calculus I", url: r2("Questions/1st year/Calculus I.pdf"), type: "pdf" },
+    { title: "Electricity and Magnetism", url: r2("Questions/1st year/Electricity and Magnetism.pdf"), type: "pdf" },
+    { title: "Fundamental Chemistry", url: r2("Questions/1st year/Fundamental Chemistry.pdf"), type: "pdf" },
+    { title: "Introduction to Computers and Programming", url: r2("Questions/1st year/Introduction to Computers and Programming.pdf"), type: "pdf" },
+    { title: "Mechanics and Properties of Matter", url: r2("Questions/1st year/Mechanics and Properties of Matter.pdf"), type: "pdf" },
+    { title: "Thermal Physics", url: r2("Questions/1st year/Thermal Physics.pdf"), type: "pdf" }
   ],
 
-  // Add actual R2 PDF filenames when available.
-  "Second Year": [],
-  "Third Year": [],
-  "Fourth Year": []
+  "Second Year": [
+    { title: "Atomic Physics", url: r2("Questions/2nd year/Atomic.pdf"), type: "pdf" },
+    { title: "Electronics I", url: r2("Questions/2nd year/Electronics1.pdf"), type: "pdf" },
+    { title: "Mathematical Physics", url: r2("Questions/2nd year/Mathematical Physics .pdf"), type: "pdf" },
+    { title: "Optics", url: r2("Questions/2nd year/Optics.pdf"), type: "pdf" },
+    { title: "Waves", url: r2("Questions/2nd year/Wave.pdf"), type: "pdf" }
+  ],
+
+  "Third Year": [
+    { title: "Classical Electrodynamics", url: r2("Questions/3rd year/Classical Electrodynamics.pdf"), type: "pdf", size: "3.35 MB" },
+    { title: "Classical Mechanics & Relativity", url: r2("Questions/3rd year/Classical Mechanics & Relativity.pdf"), type: "pdf", size: "4.52 MB" },
+    { title: "Computational Physics", url: r2("Questions/3rd year/Computational Physics.pdf"), type: "pdf", size: "3.08 MB" },
+    { title: "Introduction to Astrophysics", url: r2("Questions/3rd year/Introduction to Astrophysics.pdf"), type: "pdf", size: "3.51 MB" },
+    { title: "Nuclear Physics", url: r2("Questions/3rd year/Nuclear Physics.pdf"), type: "pdf", size: "2.26 MB" },
+    { title: "Photonics & Lasers", url: r2("Questions/3rd year/Photonics & Lasers.pdf"), type: "pdf", size: "4.14 MB" },
+    { title: "Quantum Mechanics I", url: r2("Questions/3rd year/Quantum Mechanics I.pdf"), type: "pdf", size: "4.06 MB" },
+    { title: "Solid State Physics I", url: r2("Questions/3rd year/Solid State Physics I.pdf"), type: "pdf", size: "3.45 MB" }
+  ],
+
+  "Fourth Year": [
+    { title: "Electronics II", url: r2("Questions/4th year/Electronics II.pdf"), type: "pdf" },
+    { title: "Introduction to Materials Science and Nanotechnology", url: r2("Questions/4th year/Introduction to Materials Science and Nanotechnology.pdf"), type: "pdf" },
+    { title: "Methods of Experimental Physics", url: r2("Questions/4th year/Methods of Experimental Physics.pdf"), type: "pdf" },
+    { title: "Nuclear and Particle Physics", url: r2("Questions/4th year/Nuclear and Particle Physics.pdf"), type: "pdf" },
+    { title: "Quantum Mechanics II", url: r2("Questions/4th year/Quantum Mechanics-II.pdf"), type: "pdf" },
+    { title: "Solid State Physics II (1)", url: r2("Questions/4th year/Solid State Physics II (1).pdf"), type: "pdf" },
+    { title: "Solid State Physics II", url: r2("Questions/4th year/Solid State Physics II.pdf"), type: "pdf" },
+    { title: "Statistical Mechanics", url: r2("Questions/4th year/Statistical Mechanics.pdf"), type: "pdf" }
+  ]
 };
 
 // ==========================================
