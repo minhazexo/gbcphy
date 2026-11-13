@@ -10,7 +10,7 @@ import {
   validatePrefix,
 } from "./utils.ts";
 
-const WRITE_LIMIT = 30;
+const WRITE_LIMIT = 120;
 const WRITE_WINDOW_MS = 60_000;
 const writeEvents = new Map<string, number[]>();
 
