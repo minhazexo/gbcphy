@@ -78,8 +78,9 @@ async function getCurrentProfileRole(userId: string, env: Env): Promise<string> 
 
   const response = await fetch(endpoint, {
     headers: {
+      // Supabase secret API keys are not JWTs. Keep the elevated key in
+      // the apikey header only; the end-user JWT was verified separately.
       apikey: serverKey,
-      Authorization: `Bearer ${serverKey}`,
       Accept: "application/json",
     },
     cache: "no-store",
