@@ -6,29 +6,26 @@ import { supabase } from "../data/supabase.ts";
 import { getUserRole } from "../data/db.ts";
 
 export const SUPER_ADMIN = "super_admin";
+export const ADMIN = "admin";
 export const DEPARTMENT_ADMIN = "department_admin";
 export const FACULTY = "faculty";
 export const STUDENT = "student";
 
-export type Role = typeof SUPER_ADMIN | typeof DEPARTMENT_ADMIN | typeof FACULTY | typeof STUDENT;
+export type Role = typeof SUPER_ADMIN | typeof DEPARTMENT_ADMIN | typeof ADMIN | typeof FACULTY | typeof STUDENT;
+
+const ADMIN_PERMISSIONS = [
+  "canManageStudents",
+  "canApproveRegistrations",
+  "canManageFaculty",
+  "canManageContent",
+  "canViewDashboard",
+  "canEditOwnProfile"
+];
 
 const PERMISSIONS: Record<Role, string[]> = {
-  [SUPER_ADMIN]: [
-    "canManageStudents",
-    "canApproveRegistrations",
-    "canManageFaculty",
-    "canManageContent",
-    "canViewDashboard",
-    "canEditOwnProfile"
-  ],
-  [DEPARTMENT_ADMIN]: [
-    "canManageStudents",
-    "canApproveRegistrations",
-    "canManageFaculty",
-    "canManageContent",
-    "canViewDashboard",
-    "canEditOwnProfile"
-  ],
+  [SUPER_ADMIN]: ADMIN_PERMISSIONS,
+  [DEPARTMENT_ADMIN]: ADMIN_PERMISSIONS,
+  [ADMIN]: ADMIN_PERMISSIONS,
   [FACULTY]: ["canManageContent", "canViewDashboard", "canEditOwnProfile"],
   [STUDENT]: ["canEditOwnProfile"]
 };
@@ -91,7 +88,7 @@ export const RBACProvider = ({ children }: { children: React.ReactNode }) => {
     return () => { active = false; };
   }, [fetchRole]);
 
-  const isAdmin = userRole === SUPER_ADMIN || userRole === DEPARTMENT_ADMIN;
+  const isAdmin = userRole === SUPER_ADMIN || userRole === DEPARTMENT_ADMIN || userRole === ADMIN;
   const isFaculty = userRole === FACULTY;
   const isStudent = userRole === STUDENT;
 

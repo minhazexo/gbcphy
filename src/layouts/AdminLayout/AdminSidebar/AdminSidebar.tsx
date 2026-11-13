@@ -9,6 +9,7 @@ import {
   FaChalkboardTeacher,
   FaClipboardCheck,
   FaFile,
+  FaFolderOpen,
   FaHistory,
   FaCog,
   FaBell,
@@ -22,6 +23,7 @@ const SIDEBAR_ITEMS = [
   { path: "/admin/faculty", label: "Faculty", icon: FaChalkboardTeacher },
   { path: "/admin/approvals", label: "Approvals", icon: FaClipboardCheck },
   { path: "/admin/content", label: "Content", icon: FaFile },
+  { path: "/admin/storage", label: "Storage", icon: FaFolderOpen },
   { path: "/admin/activity-logs", label: "Activity Logs", icon: FaHistory },
   { path: "/admin/settings", label: "Settings", icon: FaCog },
 ];
@@ -31,10 +33,13 @@ export default function AdminSidebar({ onToggle, collapsed, open }: { onToggle: 
 
   const isAdminRoute = (path: string) => {
     if (path === "/admin/students" || path === "/admin/faculty" || path === "/admin/approvals" || path === "/admin/content") {
-      return userRole === "department_admin" || userRole === "super_admin";
+      return userRole === "department_admin" || userRole === "super_admin" || userRole === "admin";
+    }
+    if (path === "/admin/storage") {
+      return userRole === "department_admin" || userRole === "super_admin" || userRole === "admin";
     }
     if (path === "/admin/activity-logs" || path === "/admin/settings") {
-      return userRole === "super_admin";
+      return userRole === "super_admin" || userRole === "admin";
     }
     return true;
   };

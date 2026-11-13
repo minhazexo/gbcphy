@@ -1,0 +1,7 @@
+# Copy to .dev.vars. Never commit actual values.
+SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
+# Prefer a new Supabase sb_secret_ key. Legacy service_role is fallback only.
+SUPABASE_SECRET_KEY=YOUR_SERVER_ONLY_SUPABASE_SECRET_KEY
+# Set true only after live profiles.role immutability/RLS has been verified.
+STORAGE_ROLE_SOURCE_VERIFIED=false
