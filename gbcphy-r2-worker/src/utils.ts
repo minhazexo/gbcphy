@@ -56,22 +56,6 @@ export function safeDownloadName(name: string): string {
   return name.replace(/[\r\n"\\]/g, "_").replace(/[\u0000-\u001f\u007f]/g, "");
 }
 
-export function isManagedUploadKey(key: string): boolean {
-  // Destructive changes are limited to this dedicated namespace until a
-  // persistent reference index exists for the localStorage-backed catalog.
-  return key.startsWith("Admin Uploads/") && key.length > "Admin Uploads/".length;
-}
-
-export function requireManagedUploadKey(key: string): void {
-  if (!isManagedUploadKey(key)) {
-    throw new ApiError(
-      409,
-      "REFERENCE_CHECK_REQUIRED",
-      "This object is outside Admin Uploads/. Rename, move, replace, and delete are disabled until its academic-content references can be verified.",
-    );
-  }
-}
-
 export function getPageLimit(value: string | null): number {
   const parsed = Number(value ?? 50);
   if (!Number.isInteger(parsed) || parsed < 1) {
