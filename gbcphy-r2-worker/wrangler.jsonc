@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gbcphy-r2-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-14",
+  "compatibility_flags": [],
+  "r2_buckets": [
+    {
+      "binding": "GBC_PHYSICS_BUCKET",
+      "bucket_name": "gbc-physics-pdfs"
+    }
+  ],
+  "vars": {
+    "SUPABASE_URL": "https://YOUR_PROJECT_REF.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "YOUR_SUPABASE_PUBLISHABLE_KEY",
+    "ALLOWED_ORIGINS": "https://gbcphy.vercel.app,http://localhost:3000",
+    "MAX_UPLOAD_BYTES": "52428800",
+    "STORAGE_ROLE_SOURCE_VERIFIED": "false"
+  }
+}

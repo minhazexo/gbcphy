@@ -22,6 +22,7 @@ import StudentManagement from "../../features/students/pages/StudentManagement.t
 import FacultyManagement from "../../features/faculty/pages/FacultyManagement.tsx";
 import RegistrationApprovals from "../../features/admin/pages/RegistrationApprovals";
 import ContentManagement from "../../features/admin/pages/ContentManagement";
+import StorageManager from "../../features/admin/pages/StorageManager";
 import ActivityLogs from "../../features/admin/pages/ActivityLogs";
 import Settings from "../../features/settings/pages/Settings.tsx";
 import AdminHome from "../../features/admin/pages/AdminHome";
@@ -100,6 +101,14 @@ export const AppRoutes = () => (
             element={
               <ProtectedRoute requiredRole="department_admin">
                 <ContentManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/storage"
+            element={
+              <ProtectedRoute requiredRole="department_admin">
+                <StorageManager />
               </ProtectedRoute>
             }
           />

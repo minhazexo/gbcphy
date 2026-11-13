@@ -167,3 +167,10 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) and [SECURITY.md](./SECURITY.md).
 ## License
 
 This project is licensed under the [ISC License](./LICENSE).
+
+
+## Cloudflare R2 Storage Manager
+
+The Admin Panel includes a protected `/admin/storage` interface backed by the separate `gbcphy-r2-worker/` Cloudflare Worker project. The Worker binds the existing `gbc-physics-pdfs` bucket and uses the signed-in Supabase session. It is source-only and is **not deployed** by this repository change.
+
+See [gbcphy-r2-worker/README.md](./gbcphy-r2-worker/README.md) for the API, local setup, security gates, staging checklist, and rollback instructions. Do not set `VITE_R2_API_URL` until an authorized Worker deployment exists. The Worker intentionally denies management requests until the production Supabase role source is audited; the existing migrations need review because the self-profile UPDATE policy may permit role self-escalation.
