@@ -40,3 +40,19 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      - name: Install Worker dependencies
+        working-directory: gbcphy-r2-worker
+        run: bun install
+
+      - name: Worker typecheck
+        working-directory: gbcphy-r2-worker
+        run: bun run typecheck
+
+      - name: Worker tests
+        working-directory: gbcphy-r2-worker
+        run: bun run test
+
+      - name: Worker dry-run build
+        working-directory: gbcphy-r2-worker
+        run: bunx wrangler deploy --dry-run
