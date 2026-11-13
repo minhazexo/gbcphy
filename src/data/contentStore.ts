@@ -149,7 +149,7 @@ export const DEFAULT_QUESTIONS: Record<string, NoteItem[]> = {
     { title: "Introduction to Materials Science and Nanotechnology", url: r2("Questions/4th year/Introduction to Materials Science and Nanotechnology.pdf"), type: "pdf" },
     { title: "Methods of Experimental Physics", url: r2("Questions/4th year/Methods of Experimental Physics.pdf"), type: "pdf" },
     { title: "Nuclear and Particle Physics", url: r2("Questions/4th year/Nuclear and Particle Physics.pdf"), type: "pdf" },
-    { title: "Quantum Mechanics II", url: r2("Questions/4th year/Quantum Mechanics -II.pdf"), type: "pdf" },
+    { title: "Quantum Mechanics II", url: r2("Questions/4th year/Quantum Mechanics-II.pdf"), type: "pdf" },
     { title: "Solid State Physics II (1)", url: r2("Questions/4th year/Solid State Physics II (1).pdf"), type: "pdf" },
     { title: "Solid State Physics II", url: r2("Questions/4th year/Solid State Physics II.pdf"), type: "pdf" },
     { title: "Statistical Mechanics", url: r2("Questions/4th year/Statistical Mechanics.pdf"), type: "pdf" }
