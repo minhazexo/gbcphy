@@ -5,7 +5,6 @@ import {
   getAllowedMime,
   getPageLimit,
   publicObjectUrl,
-  requireManagedUploadKey,
   safeDownloadName,
   validateObjectKey,
   validatePrefix,
@@ -165,7 +164,6 @@ async function uploadFile(request: Request, url: URL, env: Env): Promise<Respons
   let condition: R2Conditional;
   if (existing) {
     if (!overwrite) throw new ApiError(409, "ALREADY_EXISTS", "The destination already exists. Confirm overwrite explicitly.");
-    requireManagedUploadKey(key);
     const expectedEtag = request.headers.get("X-If-Match");
     if (!expectedEtag || expectedEtag !== existing.etag) {
       throw new ApiError(409, "ETAG_MISMATCH", "The object changed. Refresh its details before replacing it.");
@@ -186,7 +184,6 @@ async function uploadFile(request: Request, url: URL, env: Env): Promise<Respons
 
 async function deleteFile(url: URL, env: Env): Promise<Response> {
   const key = validateObjectKey(url.searchParams.get("key") ?? "");
-  requireManagedUploadKey(key);
   const existing = await env.GBC_PHYSICS_BUCKET.head(key);
   if (!existing) throw new ApiError(404, "NOT_FOUND", "The requested object was not found.");
   await env.GBC_PHYSICS_BUCKET.delete(key);
@@ -197,8 +194,6 @@ async function moveOrRename(request: Request, env: Env): Promise<Response> {
   const body = await requireJson(request);
   const sourceKey = validateObjectKey(String(body.sourceKey ?? ""));
   const destinationKey = validateObjectKey(String(body.destinationKey ?? ""));
-  requireManagedUploadKey(sourceKey);
-  requireManagedUploadKey(destinationKey);
   if (sourceKey === destinationKey) {
     throw new ApiError(400, "SAME_KEY", "Source and destination must be different.");
   }
