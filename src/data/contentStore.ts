@@ -134,14 +134,14 @@ export const DEFAULT_QUESTIONS: Record<string, NoteItem[]> = {
   ],
 
   "Third Year": [
-    { title: "Classical Electrodynamics", url: r2("Questions/3rd year/Classical Electrodynamics.pdf"), type: "pdf" },
-    { title: "Computational Physics", url: r2("Questions/3rd year/Computational Physics.pdf"), type: "pdf" },
-    { title: "Introduction to Astrophysics", url: r2("Questions/3rd year/Introduction to Astrophysics.pdf"), type: "pdf" },
-    { title: "Lasers and Photonics", url: r2("Questions/3rd year/Lasers and Photonics.pdf"), type: "pdf" },
-    { title: "Nuclear Physics", url: r2("Questions/3rd year/Nuclear Physics.pdf"), type: "pdf" },
-    { title: "PHA-301 Question", url: r2("Questions/3rd year/Q - PHA -301.pdf"), type: "pdf" },
-    { title: "PHA-302 Question", url: r2("Questions/3rd year/Q - PHA -302.pdf"), type: "pdf" },
-    { title: "Solid State Physics I", url: r2("Questions/3rd year/Solid State Physics - I.pdf"), type: "pdf" }
+    { title: "Classical Electrodynamics", url: r2("Questions/3rd year/Classical Electrodynamics.pdf"), type: "pdf", size: "3.35 MB" },
+    { title: "Classical Mechanics & Relativity", url: r2("Questions/3rd year/Classical Mechanics & Relativity.pdf"), type: "pdf", size: "4.52 MB" },
+    { title: "Computational Physics", url: r2("Questions/3rd year/Computational Physics.pdf"), type: "pdf", size: "3.08 MB" },
+    { title: "Introduction to Astrophysics", url: r2("Questions/3rd year/Introduction to Astrophysics.pdf"), type: "pdf", size: "3.51 MB" },
+    { title: "Nuclear Physics", url: r2("Questions/3rd year/Nuclear Physics.pdf"), type: "pdf", size: "2.26 MB" },
+    { title: "Photonics & Lasers", url: r2("Questions/3rd year/Photonics & Lasers.pdf"), type: "pdf", size: "4.14 MB" },
+    { title: "Quantum Mechanics I", url: r2("Questions/3rd year/Quantum Mechanics I.pdf"), type: "pdf", size: "4.06 MB" },
+    { title: "Solid State Physics I", url: r2("Questions/3rd year/Solid State Physics I.pdf"), type: "pdf", size: "3.45 MB" }
   ],
 
   "Fourth Year": [
