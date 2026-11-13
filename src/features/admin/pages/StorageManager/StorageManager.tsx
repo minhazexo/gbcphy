@@ -13,6 +13,7 @@ import {
   FaList,
   FaPen,
   FaSearch,
+  FaSyncAlt,
   FaThLarge,
   FaTrash,
   FaTimes,
@@ -24,7 +25,7 @@ import { StorageApiError, r2StorageService } from "../../../../services/storage/
 import type { StorageItem } from "../../../../services/storage/r2.types.ts";
 import "./storage-manager.scss";
 
-type ModalKind = "folder" | "rename" | "move" | "delete" | "details" | "preview";
+type ModalKind = "folder" | "rename" | "move" | "replace" | "delete" | "details" | "preview";
 type UploadState = "queued" | "uploading" | "done" | "error";
 interface UploadEntry {
   id: string;
@@ -69,6 +70,7 @@ const basename = (key: string) => key.split("/").pop() || key;
 export default function StorageManager() {
   const { addToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const replaceFileInputRef = useRef<HTMLInputElement>(null);
   const [items, setItems] = useState<StorageItem[]>([]);
   const [folders, setFolders] = useState<string[]>([]);
   const [prefix, setPrefix] = useState("");
@@ -230,6 +232,24 @@ export default function StorageManager() {
     await loadEntries(null, false);
   };
 
+  const handleReplaceInput = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    const target = modal?.kind === "replace" ? modal.item : null;
+    if (!file || !target) return;
+
+    setWorking(true);
+    try {
+      await r2StorageService.uploadFile(file, target.key, { overwrite: true, etag: target.etag });
+      addToast({ type: "success", title: "File replaced", message: target.name });
+      closeModal();
+      await loadEntries(null, false);
+    } catch (cause) {
+      addToast({ type: "error", title: "Replace failed", message: cause instanceof Error ? cause.message : "Please try again." });
+      setWorking(false);
+    }
+  };
+
   const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) void processFiles(event.target.files);
     event.target.value = "";
@@ -294,6 +314,7 @@ export default function StorageManager() {
       <button type="button" title="Preview / details" aria-label={`Preview ${item.name}`} onClick={() => void openPreview(item)}><FaEye /></button>
       <button type="button" title="Download" aria-label={`Download ${item.name}`} onClick={() => void download(item)}><FaDownload /></button>
       <button type="button" title="Copy public URL" aria-label={`Copy URL for ${item.name}`} onClick={() => void copyUrl(item)}><FaCopy /></button>
+      <button type="button" title="Replace" aria-label={`Replace ${item.name}`} onClick={() => openModal("replace", item)}><FaSyncAlt /></button>
       <button type="button" title="Rename" aria-label={`Rename ${item.name}`} onClick={() => openModal("rename", item)}><FaPen /></button>
       <button type="button" title="Move" aria-label={`Move ${item.name}`} onClick={() => openModal("move", item)}><FaArrowLeft /></button>
       <button type="button" title="Delete" aria-label={`Delete ${item.name}`} onClick={() => openModal("delete", item)}><FaTrash /></button>
@@ -313,6 +334,7 @@ export default function StorageManager() {
             <Button variant="outline" size="sm" onClick={() => openModal("folder")} icon={<FaFolderPlus />}>New folder</Button>
             <Button variant="primary" size="sm" onClick={() => fileInputRef.current?.click()} icon={<FaCloudUploadAlt />}>Upload files</Button>
             <input ref={fileInputRef} type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.gif" hidden onChange={handleFileInput} />
+            <input ref={replaceFileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif" hidden onChange={handleReplaceInput} />
           </div>
         </div>
 
@@ -425,6 +447,7 @@ export default function StorageManager() {
           modal?.kind === "folder" ? "Create folder" :
           modal?.kind === "rename" ? "Rename file" :
           modal?.kind === "move" ? "Move file" :
+          modal?.kind === "replace" ? "Replace file" :
           modal?.kind === "delete" ? "Delete file?" :
           modal?.kind === "preview" ? modal.item?.name :
           modal?.kind === "details" ? "File details" : ""
@@ -437,6 +460,17 @@ export default function StorageManager() {
             <label>Folder name<input autoFocus value={modalValue} onChange={(event) => setModalValue(event.target.value)} placeholder="e.g. Admin Uploads" /></label>
             <p>Will be created inside <code>{prefix || "/"}</code>.</p>
             <div className="storage-manager__modal-actions"><Button variant="ghost" onClick={closeModal}>Cancel</Button><Button loading={working} onClick={() => void saveModal()}>Create folder</Button></div>
+          </div>
+        )}
+        {modal?.kind === "replace" && modal.item && (
+          <div className="storage-manager__modal-body">
+            <p>The existing object <strong>{modal.item.name}</strong> will be overwritten with the selected file.</p>
+            <p className="storage-manager__key-preview">{modal.item.key}</p>
+            <p>The Worker checks the current ETag before replacing it. Replacement is allowed only inside <code>Admin Uploads/</code>.</p>
+            <div className="storage-manager__modal-actions">
+              <Button variant="ghost" onClick={closeModal}>Cancel</Button>
+              <Button loading={working} onClick={() => replaceFileInputRef.current?.click()}>Choose replacement file</Button>
+            </div>
           </div>
         )}
         {(modal?.kind === "rename" || modal?.kind === "move") && modal.item && (
