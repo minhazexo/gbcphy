@@ -100,8 +100,11 @@ export default function StorageManager() {
         ? await r2StorageService.searchFiles(query.trim(), prefix, nextCursor)
         : await r2StorageService.listFiles(prefix, nextCursor, 50);
       setItems((previous) => append ? [...previous, ...response.items] : response.items);
-      if ("prefixes" in response) setFolders(response.prefixes);
-      else setFolders([]);
+      setFolders(
+        "prefixes" in response && Array.isArray(response.prefixes)
+          ? response.prefixes as string[]
+          : [],
+      );
       setCursor(response.cursor);
       setHasMore(response.truncated);
     } catch (cause) {
@@ -125,7 +128,7 @@ export default function StorageManager() {
       void loadEntries(null, false);
     }, query.trim() ? 300 : 0);
     return () => window.clearTimeout(timer);
-  }, [loadEntries]);
+  }, [loadEntries, query]);
 
   useEffect(() => {
     document.title = "Storage Manager | Department of Physics";
