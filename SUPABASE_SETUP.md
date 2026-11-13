@@ -24,7 +24,7 @@ Use only the publishable/anon key in browser code. **Never** use a service-role 
 
 ## 2. Apply database migrations
 
-Review the SQL files in `supabase/migrations/` and apply them in numeric order, from `001` through the latest migration (currently `009`). You can use the Supabase CLI or SQL Editor.
+Review the SQL files in `supabase/migrations/` and apply them in numeric order, from `001` through the latest migration (currently `010`). You can use the Supabase CLI or SQL Editor.
 
 Before applying migrations to a live project:
 - Take a database backup.
@@ -32,7 +32,7 @@ Before applying migrations to a live project:
 - Review each migration's effects, especially changes to RLS policies and role checks.
 - Do not skip migrations or apply them out of order.
 
-After applying them, verify the expected tables, indexes, policies, and Storage buckets in the Supabase dashboard. The SQL files in this repository are the source of truth for the schema; this guide intentionally does not duplicate policy definitions that may change over time.
+Apply migration `010_prevent_profile_role_escalation.sql` before enabling the R2 Storage Manager. Verify that a normal authenticated user cannot update their own `profiles.role`, while trusted server-side role assignment still works. After applying all migrations, verify the expected tables, indexes, policies, triggers, and Storage buckets in the Supabase dashboard. The SQL files in this repository are the source of truth for the schema; this guide intentionally does not duplicate policy definitions that may change over time.
 
 ## 3. Configure authentication URLs
 
