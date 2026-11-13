@@ -12,7 +12,7 @@ export interface Env {
 
 export interface AuthenticatedAdmin {
   userId: string;
-  role: "super_admin" | "department_admin";
+  role: "super_admin" | "department_admin" | "admin";
 }
 
 export interface ListedObject {
