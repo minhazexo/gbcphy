@@ -76,11 +76,20 @@ function objectToItem(object: R2Object, env: Env): ListedObject {
   };
 }
 
-function requireJson(request: Request): Promise<Record<string, unknown>> {
+async function requireJson(request: Request): Promise<Record<string, unknown>> {
   if (!request.headers.get("Content-Type")?.toLowerCase().includes("application/json")) {
     throw new ApiError(415, "JSON_REQUIRED", "Send a JSON request body.");
   }
-  return request.json() as Promise<Record<string, unknown>>;
+  try {
+    const value: unknown = await request.json();
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      throw new ApiError(400, "INVALID_JSON", "The JSON request body must be an object.");
+    }
+    return value as Record<string, unknown>;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError(400, "INVALID_JSON", "The JSON request body is malformed.");
+  }
 }
 
 async function listFiles(url: URL, env: Env): Promise<Response> {
@@ -139,7 +148,10 @@ async function uploadFile(request: Request, url: URL, env: Env): Promise<Respons
   const contentType = request.headers.get("Content-Type") ?? "";
   const mimeType = getAllowedMime(key, contentType);
   const contentLength = Number(request.headers.get("Content-Length"));
-  const maxBytes = Math.max(1, Number(env.MAX_UPLOAD_BYTES ?? 52_428_800));
+  const configuredMaxBytes = Number(env.MAX_UPLOAD_BYTES ?? 52_428_800);
+  const maxBytes = Number.isSafeInteger(configuredMaxBytes) && configuredMaxBytes > 0
+    ? configuredMaxBytes
+    : 52_428_800;
 
   if (!request.body || !Number.isSafeInteger(contentLength) || contentLength < 1) {
     throw new ApiError(400, "CONTENT_LENGTH_REQUIRED", "A non-empty upload with a known Content-Length is required.");
