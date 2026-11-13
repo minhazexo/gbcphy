@@ -33,13 +33,13 @@ export default function AdminSidebar({ onToggle, collapsed, open }: { onToggle: 
 
   const isAdminRoute = (path: string) => {
     if (path === "/admin/students" || path === "/admin/faculty" || path === "/admin/approvals" || path === "/admin/content") {
-      return userRole === "department_admin" || userRole === "super_admin";
+      return userRole === "department_admin" || userRole === "super_admin" || userRole === "admin";
     }
     if (path === "/admin/storage") {
-      return userRole === "department_admin" || userRole === "super_admin";
+      return userRole === "department_admin" || userRole === "super_admin" || userRole === "admin";
     }
     if (path === "/admin/activity-logs" || path === "/admin/settings") {
-      return userRole === "super_admin";
+      return userRole === "super_admin" || userRole === "admin";
     }
     return true;
   };
