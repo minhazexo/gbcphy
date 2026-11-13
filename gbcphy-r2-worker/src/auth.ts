@@ -6,7 +6,7 @@ import {
 import { ApiError } from "./errors.ts";
 import type { AuthenticatedAdmin, Env } from "./types.ts";
 
-const ADMIN_ROLES = new Set(["super_admin", "department_admin"]);
+const ADMIN_ROLES = new Set(["super_admin", "department_admin", "admin"]);
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 type VerifiedIdentity = { id: string };
