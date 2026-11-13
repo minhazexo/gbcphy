@@ -7,6 +7,16 @@ const MIME_BY_EXTENSION: Record<string, string> = {
   png: "image/png",
   webp: "image/webp",
   gif: "image/gif",
+  doc: "application/msword",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ppt: "application/vnd.ms-powerpoint",
+  pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  xls: "application/vnd.ms-excel",
+  xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  txt: "text/plain",
+  csv: "text/csv",
+  rtf: "application/rtf",
+  zip: "application/zip",
 };
 
 export function validateObjectKey(value: string, allowPrefix = false): string {
@@ -41,7 +51,7 @@ export function getAllowedMime(fileName: string, contentType: string): string {
   const extension = fileName.split(".").pop()?.toLowerCase() ?? "";
   const expected = MIME_BY_EXTENSION[extension];
   if (!expected || expected !== contentType.split(";")[0].trim().toLowerCase()) {
-    throw new ApiError(415, "UNSUPPORTED_FILE_TYPE", "Only matching PDF and JPEG, PNG, WebP, or GIF files are supported.");
+    throw new ApiError(415, "UNSUPPORTED_FILE_TYPE", "The file extension and MIME type must match an allowed PDF, image, Office document, text, CSV, RTF, or ZIP format.");
   }
   return expected;
 }
