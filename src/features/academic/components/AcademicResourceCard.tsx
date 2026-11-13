@@ -11,6 +11,7 @@ interface AcademicResourceCardProps {
   resource: AcademicResource;
   favorite: boolean;
   downloading: boolean;
+  downloadCount: number;
   onPreview: (resource: AcademicResource) => void;
   onDownload: (resource: AcademicResource) => void;
   onToggleFavorite: (resource: AcademicResource) => void;
@@ -20,6 +21,7 @@ export default function AcademicResourceCard({
   resource,
   favorite,
   downloading,
+  downloadCount,
   onPreview,
   onDownload,
   onToggleFavorite
@@ -49,6 +51,7 @@ export default function AcademicResourceCard({
         )}
         <div className="academic-resource-card__meta">
           <span>PDF document</span>
+          {downloadCount > 0 && <span>{downloadCount} downloads</span>}
           {resource.size && <span>{resource.size}</span>}
           {resource.fileName && resource.fileName !== "suggestion.pdf" && resource.fileName !== "syllabus.pdf" && (
             <span className="academic-resource-card__filename" title={resource.fileName}>

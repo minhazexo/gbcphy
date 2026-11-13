@@ -140,6 +140,7 @@ const staticResources: AcademicResource[] = STATIC_PDF_PATHS.map((repositoryPath
   const category: AcademicCategory =
     folderCategory === "Super Suggestion" ? "SuperSuggestion" : folderCategory as AcademicCategory;
   const year = YEAR_FOLDER_MAP[yearFolder];
+  if (!year) throw new Error("Unknown academic year in static PDF path: " + repositoryPath);
   const fileTitle = fileName.replace(/\.pdf$/i, "");
   const title = category === "Books" ? fileTitle : subject;
 

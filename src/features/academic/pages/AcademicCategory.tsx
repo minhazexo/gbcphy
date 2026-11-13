@@ -232,6 +232,7 @@ export default function AcademicCategory() {
                 resource={resource}
                 favorite={favorites.includes(favoriteKey(resource))}
                 downloading={downloadingId === resource.id}
+                downloadCount={downloadCounts[resource.title] || 0}
                 onPreview={setPreviewResource}
                 onDownload={handleDownload}
                 onToggleFavorite={handleToggleFavorite}
