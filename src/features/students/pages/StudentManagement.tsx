@@ -74,8 +74,8 @@ const StudentManagement = () => {
               .in("id", studentIds);
             if (profilesError) throw profilesError;
 
-            profilesById = new Map(
-              (profiles || []).map((profile: any) => [profile.id, profile])
+            profilesById = new Map<string, { full_name: string | null; email: string | null; phone: string | null }>(
+              (profiles || []).map((profile: any) => [profile.id, profile] as const)
             );
           }
 
@@ -85,7 +85,7 @@ const StudentManagement = () => {
               id: student.id,
               student_id: student.student_id || "",
               full_name: profile?.full_name?.trim() || "Name unavailable",
-              email: profile?.email || "",
+              email: profile?.email || "—",
               phone: profile?.phone || "",
               batch: student.batch || "",
               academic_session: student.academic_session || "",
