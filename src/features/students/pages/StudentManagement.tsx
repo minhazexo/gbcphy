@@ -55,22 +55,44 @@ const StudentManagement = () => {
       const load = async () => {
         try {
           setLoading(true);
+          // Academic details live in students; personal details live in profiles.
+          // Both tables use the authenticated user's UUID as their shared ID.
           const { data, error } = await supabase!
             .from("students")
-            .select("*")
+            .select("id, student_id, registration_number, batch, academic_session, status, department_id, created_at")
             .order("created_at", { ascending: false });
           if (error) throw error;
-          setStudents((data || []).map((s: any) => ({
-            id: s.id,
-            student_id: s.student_id || "",
-            full_name: s.full_name || "",
-            email: s.email || "",
-            phone: s.phone || "",
-            batch: s.batch || "",
-            academic_session: s.academic_session || "",
-            status: s.status || "pending",
-            department: s.department || ""
-          })));
+
+          const studentRows = data || [];
+          const studentIds = studentRows.map((student: any) => student.id).filter(Boolean);
+
+          let profilesById = new Map<string, { full_name: string | null; email: string | null; phone: string | null }>();
+          if (studentIds.length > 0) {
+            const { data: profiles, error: profilesError } = await supabase!
+              .from("profiles")
+              .select("id, full_name, email, phone")
+              .in("id", studentIds);
+            if (profilesError) throw profilesError;
+
+            profilesById = new Map(
+              (profiles || []).map((profile: any) => [profile.id, profile])
+            );
+          }
+
+          setStudents(studentRows.map((student: any) => {
+            const profile = profilesById.get(student.id);
+            return {
+              id: student.id,
+              student_id: student.student_id || "",
+              full_name: profile?.full_name?.trim() || "Name unavailable",
+              email: profile?.email || "",
+              phone: profile?.phone || "",
+              batch: student.batch || "",
+              academic_session: student.academic_session || "",
+              status: student.status || "pending",
+              department: ""
+            };
+          }));
         } catch (err: any) {
           console.error("Failed to load students:", err.message);
         } finally {
