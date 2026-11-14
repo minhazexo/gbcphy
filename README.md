@@ -157,8 +157,11 @@ For Supabase authentication, add `https://gbcphy.vercel.app` to the project's Si
 ## Quality and security
 
 - Keep `bun.lock` committed and regenerate it with Bun after dependency changes.
-- Do not commit `.env.local`, service-role keys, database credentials, or generated build output.
+- Do not commit `.env.local`, service-role keys, database credentials, or personal access tokens.
 - Keep authorization enforced by Supabase Row Level Security; frontend route guards are not a substitute for database policies.
+- Never authorize users from `auth.users.raw_user_meta_data` / JWT `user_metadata`; users can edit it. Use database-backed roles through the private RLS helper in migration 010.
+- Migration 010 blocks self-assigned profile and `user_roles` privileges while preserving administrator role assignment for other users.
+- Review the public-read policy on `public.students` before exposing production data. It currently permits anonymous access to every student row and all granted columns, including identifiers. Use a safe, column-limited public view instead if a public directory is required.
 - Add tests for new user flows and regression fixes.
 - Avoid changing existing academic resource URLs or public routes without checking their consumers.
 
@@ -173,4 +176,4 @@ This project is licensed under the [ISC License](./LICENSE).
 
 The Admin Panel includes a protected `/admin/storage` interface backed by the separate `gbcphy-r2-worker/` Cloudflare Worker project. `super_admin`, `department_admin`, and legacy `admin` accounts receive full control of every object in the existing `gbc-physics-pdfs` bucket: browse, preview, download, upload, replace, rename, move, delete, search, and folder creation. Faculty and students cannot call the Worker management API.
 
-Apply Supabase migration `010_prevent_profile_role_escalation.sql` before enabling the Worker; it prevents clients from changing their own profile role. Keep `STORAGE_ROLE_SOURCE_VERIFIED=false` until that migration has been applied to the live project and verified. See [gbcphy-r2-worker/README.md](./gbcphy-r2-worker/README.md) for setup, API details, security gates, and rollback. The Worker is source-only and is **not deployed** by this repository change.
+Apply and verify Supabase migration `010_prevent_profile_role_escalation.sql` before enabling the Worker. It replaces user-editable metadata-based admin RLS checks with database-backed role checks, prevents self-escalation through both `profiles` and `user_roles`, and keeps the `department_admin` role valid. Keep `STORAGE_ROLE_SOURCE_VERIFIED=false` until the migration is live and the role lookup has been verified. See [gbcphy-r2-worker/README.md](./gbcphy-r2-worker/README.md) for setup, API details, security gates, and rollback. The Worker is source-only and is **not deployed** by this repository change.
