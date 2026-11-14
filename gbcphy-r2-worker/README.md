@@ -15,21 +15,42 @@ These administrators can browse, search, preview, download, upload, replace, ren
 
 Renaming, moving, replacing, or deleting an existing academic object can break published links. The UI warns before destructive actions, but the administrator is responsible for checking and updating affected links/catalog entries.
 
-## Security gates
+## Supabase authorization status
 
-1. **Apply migration 010 first.** The earlier own-profile UPDATE policy did not restrict changed columns, so a client could potentially try to change `profiles.role`. Migration `supabase/migrations/010_prevent_profile_role_escalation.sql` adds a trigger that rejects role changes from user sessions. Trusted service-role operations and privileged SQL sessions remain able to assign roles.
-2. `STORAGE_ROLE_SOURCE_VERIFIED=false` is intentionally the default. After applying migration 010 to the correct live Supabase project, confirm a normal signed-in user cannot change their own role, and that admin role reads return the correct current row. Only then set the Worker variable to `true`. Do not bypass this gate.
-3. The Worker verifies the user's token, then fetches the current `profiles.role` from Supabase server-side. It does not trust a role supplied by the browser or editable JWT metadata.
-4. Prefer a Supabase `sb_secret_...` key as the Worker-only `SUPABASE_SECRET_KEY`; the legacy `service_role` key is accepted as a fallback. The key is sent in the `apikey` header only (secret API keys are not JWT bearer tokens). Never place it in Vite variables or source control.
-5. Uploads stream request bodies to R2 and require a known `Content-Length`. The default maximum is 50 MiB per file. The current browser upload queue is sequential and does not display byte-level upload progress. Multipart upload is not implemented.
-6. The in-memory write limiter is per Worker isolate and best-effort, not a global rate limit. Configure Cloudflare rate limiting/WAF before production use.
+The connected production Supabase project is `jphvkrnwcjfdbxkufjgq` in `ap-northeast-1`.
+
+Migration `supabase/migrations/010_prevent_profile_role_escalation.sql` has been applied to that project and verified on **14 November 2026**. The verification confirmed:
+
+- A normal student receives `false` from `private.has_admin_access()`.
+- A student attempting to change their own `profiles.role` to `admin` is rejected with SQLSTATE `42501`.
+- The student's stored role remained `student` after the rejected attempt.
+- The existing super-admin receives `true` from `private.has_admin_access()`.
+- The super-admin can change another user's profile role; the verification change was performed inside a transaction and rolled back.
+- No remaining public-table RLS policy references editable JWT `user_metadata`.
+- The `profiles` and `user_roles` role-guard triggers exist.
+- The shared `set_updated_at()` trigger function no longer runs as `SECURITY DEFINER`.
+
+For this verified production project, `STORAGE_ROLE_SOURCE_VERIFIED=true` is set in `wrangler.jsonc`. For a new project, staging project, or after changing the role source, keep the flag `false` until the migration and equivalent authorization tests pass.
+
+## Security gates and secrets
+
+1. The Worker verifies the user's access token using Supabase Auth/JWKS.
+2. It fetches the current `profiles.role` server-side. It never trusts a role supplied by the browser or editable JWT metadata.
+3. A server-only Supabase API key is required for the current profile-role lookup. Prefer an `sb_secret_...` key as the Worker-only `SUPABASE_SECRET_KEY`; the legacy `service_role` key is accepted as a fallback.
+4. The elevated key is sent in the `apikey` header only. Never put it in `wrangler.jsonc`, source control, browser code, or a `VITE_*` variable.
+5. Add the secret from an authenticated Cloudflare/Wrangler terminal:
+   ```bash
+   bunx wrangler secret put SUPABASE_SECRET_KEY
+   ```
+6. Uploads stream request bodies to R2 and require a known `Content-Length`. The default maximum is 50 MiB per file. The current browser upload queue is sequential and does not display byte-level upload progress. Multipart upload is not implemented.
+7. The in-memory write limiter is per Worker isolate and best-effort, not a global rate limit. Configure Cloudflare rate limiting/WAF before production use.
 
 ## API
 
 All endpoints except health require:
 - `Authorization: Bearer <Supabase user access token>`
 - A current `profiles.role` of `super_admin`, `department_admin`, or legacy `admin`
-- `STORAGE_ROLE_SOURCE_VERIFIED=true` after migration 010 is applied and verified
+- `STORAGE_ROLE_SOURCE_VERIFIED=true`
 
 | Method | Endpoint | Purpose |
 |---|---|---|
@@ -66,16 +87,11 @@ R2 operations use the bucket binding; the Worker does not expose S3 access keys.
 1. Install Bun and a supported Node.js runtime.
 2. From this directory run `bun install`.
 3. Copy `.dev.vars.example` to `.dev.vars` and fill in values only from the correct Supabase project. Keep `.dev.vars` untracked.
-4. In `wrangler.jsonc`, verify the existing bucket name and exact Supabase project URL and publishable key. Do not guess the project reference.
-5. Keep `STORAGE_ROLE_SOURCE_VERIFIED=false` until migration 010 is applied and verified against the live project.
-6. Add a Worker-only Supabase secret:
-   ```bash
-   bunx wrangler secret put SUPABASE_SECRET_KEY
-   ```
-   Use the `sb_secret_...` value supplied by Supabase (or a legacy `service_role` key if required). The Worker sends it in the `apikey` header only. Never use a browser-exposed `VITE_*` variable for it.
-7. Confirm the exact allowed origin. The initial list matches the production URL and documented local Vite port 3000. Add preview/custom domains only after confirming them.
-8. Optionally set `PUBLIC_R2_BASE_URL` only after confirming the bucket's current public visibility and whether every object may be linked publicly. The existing public base is `https://pub-f03874d54e81451fa22595f6280655a5.r2.dev`; URL copying remains disabled by default until configured.
-9. Run:
+4. `wrangler.jsonc` is already configured with the connected production Supabase URL, its publishable API key, the existing R2 bucket name, exact allowed origins, 50 MiB upload cap, and verified role-source gate.
+5. Add the Worker-only secret using `bunx wrangler secret put SUPABASE_SECRET_KEY`. Prefer the new `sb_secret_...` key; use a legacy `service_role` key only if required. Never commit or expose it.
+6. Confirm the exact allowed origin. The initial list matches the production URL and documented local Vite port 3000. Add preview/custom domains only after confirming them.
+7. Optionally set `PUBLIC_R2_BASE_URL` only after confirming the bucket's current public visibility and whether every object may be linked publicly. The existing public base is `https://pub-f03874d54e81451fa22595f6280655a5.r2.dev`; URL copying remains disabled by default until configured.
+8. Run:
    ```bash
    bun run typecheck
    bun run test
@@ -85,15 +101,23 @@ R2 operations use the bucket binding; the Worker does not expose S3 access keys.
 ## Staging and production checklist
 
 - Confirm Cloudflare account access to the existing `gbc-physics-pdfs` bucket. Never create a replacement bucket.
-- Apply migration 010 to the intended Supabase project after a backup; then verify ordinary users cannot change `profiles.role`.
-- Configure the Worker-only secret, exact CORS origins, upload cap, and optionally the public base URL.
-- Set `STORAGE_ROLE_SOURCE_VERIFIED=true` only after the migration and role-source tests pass.
-- Use a staging Worker and test objects first. Verify browse, upload, replace, rename, move, download, preview, and delete at both a legacy academic key and a disposable test key.
+- Add the Worker-only Supabase secret and verify Cloudflare has the existing bucket binding.
+- Confirm the correct Cloudflare account and deploy the Worker only after configuration and secret are present.
 - Add Cloudflare rate limiting/WAF rules and configure only exact production/preview origins.
-- Deploy only with explicit authorization. The deployment URL must come from Wrangler/Cloudflare after deployment; do not invent it.
-- Set `VITE_R2_API_URL` in Vercel only after an authorized Worker deployment, then redeploy the frontend.
+- After deployment, use the actual Wrangler URL to set `VITE_R2_API_URL` in Vercel and redeploy the frontend.
 - Verify access as a student, faculty member, department admin, super admin, and legacy admin. Students/faculty must be denied; all admin roles should have full bucket control.
+- Use disposable test objects first. Verify browse, upload, replace, rename, move, download, preview, and delete at a disposable test key before touching academic files.
 - Verify large-file upload behavior and the configured size cap. Multipart upload is a separate enhancement.
+
+## Remaining production work
+
+The Supabase database-side role security is live and verified. Deployment is still pending because this environment does not currently have Cloudflare or Vercel account actions. The following steps require the owner’s authenticated Cloudflare/Vercel access:
+
+- Upload `SUPABASE_SECRET_KEY` as a Cloudflare Worker secret.
+- Verify the R2 bucket binding in the intended Cloudflare account and deploy the Worker.
+- Set `VITE_R2_API_URL` to the actual deployed Worker URL in Vercel, then redeploy the frontend.
+
+Do not paste a secret API key into GitHub, chat, or source files.
 
 ## Rollback
 
