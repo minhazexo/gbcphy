@@ -11,10 +11,10 @@
     }
   ],
   "vars": {
-    "SUPABASE_URL": "https://YOUR_PROJECT_REF.supabase.co",
-    "SUPABASE_PUBLISHABLE_KEY": "YOUR_SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_URL": "https://jphvkrnwcjfdbxkufjgq.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_kGeB5K9mE20F9hxmQmaa4w_IhPBj09p",
     "ALLOWED_ORIGINS": "https://gbcphy.vercel.app,http://localhost:3000",
     "MAX_UPLOAD_BYTES": "52428800",
-    "STORAGE_ROLE_SOURCE_VERIFIED": "false"
+    "STORAGE_ROLE_SOURCE_VERIFIED": "true"
   }
 }
